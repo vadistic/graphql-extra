@@ -1,0 +1,33 @@
+{
+  "name": "graphql-ast-editor",
+  "description": "Node/typescript port of dgraph graphql server",
+  "author": "Jakub Wadas <vadistic@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://vadistic.netlify.com",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vadistic/dgraph-graphql-js"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint src/**/*.ts test/**/*.ts",
+    "format": "prettier --write src/** test/**",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "graphql": "^14.5.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.19",
+    "@vadistic/eslint-config-node": "^0.1.6",
+    "@vadistic/prettier-config": "^0.1.6",
+    "@vadistic/scripts": "^0.1.6",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4"
+  }
+}
