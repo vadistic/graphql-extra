@@ -44,7 +44,7 @@ import {
   DirectiveDefinitionNode,
   parseType,
 } from 'graphql'
-import { nodeOrProps, nodeOrPropsArr, isAstNode } from './utils'
+import { isAstNode, nodeFnNullableArr, nodeFn, nodeFnNullable, nodeFnArr } from './utils'
 
 // graphql/language/ast.d.ts
 
@@ -54,14 +54,7 @@ import { nodeOrProps, nodeOrPropsArr, isAstNode } from './utils'
  * NameNode
  */
 
-export function nameNode(value: string): NameNode
-export function nameNode(value?: string): NameNode | undefined
-
-export function nameNode(value?: string): NameNode | undefined {
-  if (!value) {
-    return
-  }
-
+export function nameNode(value: string): NameNode {
   return {
     kind: Kind.NAME,
     value,
@@ -76,7 +69,7 @@ export const isNameNode = (node: ASTNode): node is NameNode => node.kind === Kin
  * DocumentNode
  */
 
-export function documentNode(definitions: DefinitionNode[]): DocumentNode {
+export function documentNode(definitions: ReadonlyArray<DefinitionNode>): DocumentNode {
   return {
     kind: Kind.DOCUMENT,
     definitions,
@@ -96,9 +89,9 @@ export function isDocumentNode(node: ASTNode): node is DocumentNode {
 export interface OperationDefinitionNodeProps {
   name?: NameNode | string
   operation: OperationTypeNode
-  variableDefinitions?: (VariableDefinitionNode | VariableDefinitionNodeProps)[]
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  selections: SelectionNode[]
+  variableDefinitions?: ReadonlyArray<VariableDefinitionNode | VariableDefinitionNodeProps>
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  selections: ReadonlyArray<SelectionNode | SelectionNodeProps>
 }
 
 /**
@@ -111,10 +104,10 @@ export function operationDefinitionNode(
   return {
     kind: Kind.OPERATION_DEFINITION,
     operation: props.operation,
-    name: nodeOrProps(nameNode, props.name),
-    variableDefinitions: nodeOrPropsArr(variableDefinitionNode, props.variableDefinitions),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    selectionSet: selectionSetNode(props.selections),
+    name: nodeFnNullable(nameNode)(props.name),
+    variableDefinitions: nodeFnNullableArr(variableDefinitionNode)(props.variableDefinitions),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    selectionSet: nodeFn(selectionSetNode)(props.selections),
   }
 }
 
@@ -131,31 +124,20 @@ export interface VariableDefinitionNodeProps {
   variable: VariableNode | string
   type: TypeNode | string
   defaultValue?: ValueNode
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
 /**
  * VariableDefinitionNode
  */
 
-export function variableDefinitionNode(props: VariableDefinitionNodeProps): VariableDefinitionNode
-export function variableDefinitionNode(
-  props?: VariableDefinitionNodeProps,
-): VariableDefinitionNode | undefined
-
-export function variableDefinitionNode(
-  props?: VariableDefinitionNodeProps,
-): VariableDefinitionNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function variableDefinitionNode(props: VariableDefinitionNodeProps): VariableDefinitionNode {
   return {
     kind: Kind.VARIABLE_DEFINITION,
-    variable: nodeOrProps(variableNode, props.variable),
-    type: nodeOrProps(typeNode, props.type),
+    variable: nodeFn(variableNode)(props.variable),
+    type: nodeFn(typeNode)(props.type),
     defaultValue: props.defaultValue,
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
   }
 }
 
@@ -169,14 +151,7 @@ export function isVariableDefinitionNode(node: ASTNode): node is VariableDefinit
  * VariableNode
  */
 
-export function variableNode(name: string): VariableNode
-export function variableNode(name?: string): VariableNode | undefined
-
-export function variableNode(name?: string): VariableNode | undefined {
-  if (!name) {
-    return
-  }
-
+export function variableNode(name: string): VariableNode {
   return {
     kind: Kind.VARIABLE,
     name: nameNode(name),
@@ -200,14 +175,7 @@ export type SelectionNodeProps = SelectionNode | FieldNodeProps
  * - helper for selectionSetNode, allows shorthands for fields
  */
 
-export function selectionNode(props: SelectionNodeProps): SelectionNode
-export function selectionNode(props?: SelectionNodeProps): SelectionNode | undefined
-
-export function selectionNode(props?: SelectionNodeProps): SelectionNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function selectionNode(props: SelectionNodeProps): SelectionNode {
   if (isAstNode(props)) {
     return props
   }
@@ -219,19 +187,12 @@ export function selectionNode(props?: SelectionNodeProps): SelectionNode | undef
  * SelectionSetNode
  */
 
-export type SelectionSetNodeProps = (SelectionNodeProps)[]
+export type SelectionSetNodeProps = ReadonlyArray<SelectionNodeProps>
 
-export function selectionSetNode(props: SelectionSetNodeProps): SelectionSetNode
-export function selectionSetNode(props?: SelectionSetNodeProps): SelectionSetNode | undefined
-
-export function selectionSetNode(props?: SelectionSetNodeProps): SelectionSetNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function selectionSetNode(selections: SelectionSetNodeProps): SelectionSetNode {
   return {
     kind: Kind.SELECTION_SET,
-    selections: nodeOrPropsArr(selectionNode, props),
+    selections: nodeFnArr(selectionNode)(selections),
   }
 }
 
@@ -248,9 +209,9 @@ export function isSelectionSetNode(node: ASTNode): node is SelectionSetNode {
 export interface FieldNodePropsObj {
   name: NameNode | string
   alias?: NameNode | string
-  arguments?: (ArgumentNode | ArgumentNodeProps)[]
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  selections?: SelectionNodeProps[]
+  arguments?: ReadonlyArray<ArgumentNode | ArgumentNodeProps>
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  selections?: ReadonlyArray<SelectionNodeProps>
 }
 
 export type FieldNodeProps = FieldNodePropsObj | string
@@ -259,28 +220,21 @@ export type FieldNodeProps = FieldNodePropsObj | string
  * FieldNode
  */
 
-export function fieldNode(props: FieldNodeProps): FieldNode
-export function fieldNode(props?: FieldNodeProps): FieldNode | undefined
-
-export function fieldNode(props?: FieldNodeProps): FieldNode | undefined {
-  if (typeof props === 'undefined') {
-    return
-  }
-
-  if (typeof props === 'string') {
+export function fieldNode(field: FieldNodeProps): FieldNode {
+  if (typeof field === 'string') {
     return {
       kind: Kind.FIELD,
-      name: nameNode(props),
+      name: nameNode(field),
     }
   }
 
   return {
     kind: Kind.FIELD,
-    name: nodeOrProps(nameNode, props.name),
-    alias: nodeOrProps(nameNode, props.alias),
-    arguments: nodeOrPropsArr(argumentNode, props.arguments),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    selectionSet: selectionSetNode(props.selections),
+    name: nodeFn(nameNode)(field.name),
+    alias: nodeFnNullable(nameNode)(field.alias),
+    arguments: nodeFnNullableArr(argumentNode)(field.arguments),
+    directives: nodeFnNullableArr(directiveNode)(field.directives),
+    selectionSet: nodeFnNullable(selectionSetNode)(field.selections),
   }
 }
 
@@ -302,17 +256,11 @@ export interface ArgumentNodeProps {
 /**
  * ArgumentNode
  */
-export function argumentNode(props: ArgumentNodeProps): ArgumentNode
-export function argumentNode(props?: ArgumentNodeProps): ArgumentNode | undefined
 
-export function argumentNode(props?: ArgumentNodeProps): ArgumentNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function argumentNode(props: ArgumentNodeProps): ArgumentNode {
   return {
     kind: Kind.ARGUMENT,
-    name: nodeOrProps(nameNode, props.name),
+    name: nodeFn(nameNode)(props.name),
     value: props.value,
   }
 }
@@ -329,27 +277,18 @@ export function isArgumentNode(node: ASTNode): node is ArgumentNode {
 
 export interface FragmentSpreadNodeProps {
   name: NameNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
 /**
  * FragmentSpreadNode
  */
 
-export function fragmentSpreadNode(props: FragmentSpreadNodeProps): FragmentSpreadNode
-export function fragmentSpreadNode(props?: FragmentSpreadNodeProps): FragmentSpreadNode | undefined
-
-export function fragmentSpreadNode(
-  props?: FragmentSpreadNodeProps,
-): FragmentSpreadNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function fragmentSpreadNode(props: FragmentSpreadNodeProps): FragmentSpreadNode {
   return {
     kind: Kind.FRAGMENT_SPREAD,
-    name: nodeOrProps(nameNode, props.name),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    name: nodeFn(nameNode)(props.name),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
   }
 }
 
@@ -366,27 +305,18 @@ export function isFragmentSpreadNode(node: ASTNode): node is FragmentSpreadNode 
 export interface InlineFragmentNodeProps {
   name: NameNode | string
   typeCondition?: NamedTypeNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  selections: SelectionNode[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  selections: ReadonlyArray<SelectionNode>
 }
 
 /**
  * InlineFragmentNode
  */
-export function inlineFragmentNode(props: InlineFragmentNodeProps): InlineFragmentNode
-export function inlineFragmentNode(props?: InlineFragmentNodeProps): InlineFragmentNode | undefined
-
-export function inlineFragmentNode(
-  props?: InlineFragmentNodeProps,
-): InlineFragmentNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function inlineFragmentNode(props: InlineFragmentNodeProps): InlineFragmentNode {
   return {
     kind: Kind.INLINE_FRAGMENT,
-    typeCondition: nodeOrProps(namedTypeNode, props.typeCondition),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    typeCondition: nodeFnNullable(namedTypeNode)(props.typeCondition),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
     selectionSet: selectionSetNode(props.selections),
   }
 }
@@ -403,33 +333,23 @@ export function isInlineFragmentNode(node: ASTNode): node is InlineFragmentNode 
 
 export interface FragmentDefinitionNodeProps {
   name: NameNode | string
-  variableDefinitions?: (VariableDefinitionNode | VariableDefinitionNodeProps)[]
+  variableDefinitions?: ReadonlyArray<VariableDefinitionNode | VariableDefinitionNodeProps>
   typeCondition: NamedTypeNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  selections: SelectionNode[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  selections: ReadonlyArray<SelectionNode | SelectionNodeProps>
 }
 
 /**
  * FragmentDefinitionNode
  */
-export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): FragmentDefinitionNode
-export function fragmentDefinitionNode(
-  props?: FragmentDefinitionNodeProps,
-): FragmentDefinitionNode | undefined
 
-export function fragmentDefinitionNode(
-  props?: FragmentDefinitionNodeProps,
-): FragmentDefinitionNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): FragmentDefinitionNode {
   return {
     kind: Kind.FRAGMENT_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    variableDefinitions: nodeOrPropsArr(variableDefinitionNode, props.variableDefinitions),
-    typeCondition: nodeOrProps(namedTypeNode, props.typeCondition),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    name: nodeFn(nameNode)(props.name),
+    variableDefinitions: nodeFnNullableArr(variableDefinitionNode)(props.variableDefinitions),
+    typeCondition: nodeFn(namedTypeNode)(props.typeCondition),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
     selectionSet: selectionSetNode(props.selections),
   }
 }
@@ -444,14 +364,7 @@ export function isFragmentDefinitionNode(node: ASTNode): node is FragmentDefinit
  * IntValueNode
  */
 
-export function intValueNode(value: string | number): IntValueNode
-export function intValueNode(value?: string | number): IntValueNode | undefined
-
-export function intValueNode(value?: string | number): IntValueNode | undefined {
-  if (typeof value === 'undefined') {
-    return
-  }
-
+export function intValueNode(value: string | number): IntValueNode {
   return {
     kind: Kind.INT,
     value: '' + value,
@@ -466,14 +379,7 @@ export function isIntValueNode(node: ASTNode): node is IntValueNode {
  * FloatValueNode
  */
 
-export function floatValueNode(value: string | number): FloatValueNode
-export function floatValueNode(value?: string | number): FloatValueNode | undefined
-
-export function floatValueNode(value?: string | number): FloatValueNode | undefined {
-  if (typeof value === 'undefined') {
-    return
-  }
-
+export function floatValueNode(value: string | number): FloatValueNode {
   return {
     kind: Kind.FLOAT,
     value: '' + value,
@@ -488,14 +394,7 @@ export function isFloatValueNode(node: ASTNode): node is FloatValueNode {
  * StringValueNode
  */
 
-export function stringValueNode(value: string): StringValueNode
-export function stringValueNode(value?: string): StringValueNode | undefined
-
-export function stringValueNode(value?: string): StringValueNode | undefined {
-  if (typeof value === 'undefined') {
-    return
-  }
-
+export function stringValueNode(value: string): StringValueNode {
   return {
     kind: Kind.STRING,
     value,
@@ -510,14 +409,7 @@ export function isStringValueNode(node: ASTNode): node is StringValueNode {
  * BooleanValueNode
  */
 
-export function booleanValueNode(value: boolean): BooleanValueNode
-export function booleanValueNode(value?: boolean): BooleanValueNode | undefined
-
-export function booleanValueNode(value?: boolean): BooleanValueNode | undefined {
-  if (typeof value === 'undefined') {
-    return
-  }
-
+export function booleanValueNode(value: boolean): BooleanValueNode {
   return {
     kind: Kind.BOOLEAN,
     value,
@@ -546,14 +438,7 @@ export function isNullValueNode(node: ASTNode): node is NullValueNode {
  * EnumValueNode
  */
 
-export function enumValueNode(value: string): EnumValueNode
-export function enumValueNode(value?: string): EnumValueNode | undefined
-
-export function enumValueNode(value?: string): EnumValueNode | undefined {
-  if (typeof value === 'undefined') {
-    return
-  }
-
+export function enumValueNode(value: string): EnumValueNode {
   return {
     kind: Kind.ENUM,
     value,
@@ -568,14 +453,7 @@ export function iEnumValueNode(node: ASTNode): node is EnumValueNode {
  * ListValueNode
  */
 
-export function listValueNode(values: ValueNode[]): ListValueNode
-export function listValueNode(values?: ValueNode[]): ListValueNode | undefined
-
-export function listValueNode(values?: ValueNode[]): ListValueNode | undefined {
-  if (!values) {
-    return
-  }
-
+export function listValueNode(values: ReadonlyArray<ValueNode>): ListValueNode {
   return {
     kind: Kind.LIST,
     values: values,
@@ -590,14 +468,7 @@ export function isListValueNode(node: ASTNode): node is ListValueNode {
  * ObjectValueNode
  */
 
-export function objectValueNode(fields: ObjectFieldNode[]): ObjectValueNode
-export function objectValueNode(fields?: ObjectFieldNode[]): ObjectValueNode | undefined
-
-export function objectValueNode(fields?: ObjectFieldNode[]): ObjectValueNode | undefined {
-  if (!fields) {
-    return
-  }
-
+export function objectValueNode(fields: ReadonlyArray<ObjectFieldNode>): ObjectValueNode {
   return {
     kind: Kind.OBJECT,
     fields: fields,
@@ -617,17 +488,10 @@ export interface ObjectFieldNodeProps {
   value: ValueNode
 }
 
-export function objectFieldNode(props: ObjectFieldNodeProps): ObjectFieldNode
-export function objectFieldNode(props?: ObjectFieldNodeProps): ObjectFieldNode | undefined
-
-export function objectFieldNode(props?: ObjectFieldNodeProps): ObjectFieldNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function objectFieldNode(props: ObjectFieldNodeProps): ObjectFieldNode {
   return {
     kind: Kind.OBJECT_FIELD,
-    name: nodeOrProps(nameNode, props.name),
+    name: nodeFn(nameNode)(props.name),
     value: props.value,
   }
 }
@@ -644,7 +508,7 @@ export function isObjectFieldNode(node: ASTNode): node is ObjectFieldNode {
 
 export interface DirectiveNodePropsObj {
   name: NameNode | string
-  arguments?: (ArgumentNode | ArgumentNodeProps)[]
+  arguments?: ReadonlyArray<ArgumentNode | ArgumentNodeProps>
 }
 
 export type DirectiveNodeProps = DirectiveNodePropsObj | string
@@ -653,26 +517,19 @@ export type DirectiveNodeProps = DirectiveNodePropsObj | string
  * DirectiveNode
  */
 
-export function directiveNode(props: DirectiveNodeProps): DirectiveNode
-export function directiveNode(props?: DirectiveNodeProps): DirectiveNode | undefined
-
-export function directiveNode(props?: DirectiveNodeProps): DirectiveNode | undefined {
-  if (typeof props === 'undefined') {
-    return
-  }
-
+export function directiveNode(directive: DirectiveNodeProps): DirectiveNode {
   // shorthand
-  if (typeof props === 'string') {
+  if (typeof directive === 'string') {
     return {
       kind: Kind.DIRECTIVE,
-      name: nameNode(props),
+      name: nameNode(directive),
     }
   }
 
   return {
     kind: Kind.DIRECTIVE,
-    name: nodeOrProps(nameNode, props.name),
-    arguments: nodeOrPropsArr(argumentNode, props.arguments),
+    name: nodeFn(nameNode)(directive.name),
+    arguments: nodeFnNullableArr(argumentNode)(directive.arguments),
   }
 }
 
@@ -686,17 +543,12 @@ export function isDirectiveNode(node: ASTNode): node is DirectiveNode {
  * NamedTypeNode
  */
 
-export function namedTypeNode(name: string): NamedTypeNode
-export function namedTypeNode(name?: string): NamedTypeNode | undefined
+export type NamedtypeNodeProps = NameNode | string
 
-export function namedTypeNode(name?: string): NamedTypeNode | undefined {
-  if (typeof name === 'undefined') {
-    return
-  }
-
+export function namedTypeNode(name: NamedtypeNodeProps): NamedTypeNode {
   return {
     kind: Kind.NAMED_TYPE,
-    name: nameNode(name),
+    name: nodeFn(nameNode)(name),
   }
 }
 
@@ -708,14 +560,9 @@ export function isNamedTypeNode(node: ASTNode): node is NamedTypeNode {
  * ListTypeNode
  */
 
-export function listTypeNode(type: TypeNode | string): ListTypeNode
-export function listTypeNode(type?: TypeNode | string): ListTypeNode | undefined
+export type ListTypeNodeProps = TypeNode | string
 
-export function listTypeNode(type?: TypeNode | string): ListTypeNode | undefined {
-  if (typeof type === 'undefined') {
-    return
-  }
-
+export function listTypeNode(type: ListTypeNodeProps): ListTypeNode {
   const namedType = typeof type === 'string' ? namedTypeNode(type) : type
 
   return {
@@ -732,14 +579,9 @@ export function isListTypeNode(node: ASTNode): node is ListTypeNode {
  * NonNullTypeNode
  */
 
-export function nonNullTypeNode(type: TypeNode | string): NonNullTypeNode
-export function nonNullTypeNode(type?: TypeNode | string): NonNullTypeNode | undefined
+export type NonNullTypeNodeProps = TypeNode | string
 
-export function nonNullTypeNode(type?: TypeNode | string): NonNullTypeNode | undefined {
-  if (typeof type === 'undefined') {
-    return
-  }
-
+export function nonNullTypeNode(type: NonNullTypeNodeProps): NonNullTypeNode {
   const namedType = typeof type === 'string' ? namedTypeNode(type) : type
 
   if (namedType.kind === Kind.NON_NULL_TYPE) {
@@ -769,29 +611,22 @@ export interface TypeNodePropsObj {
 
 export type TypeNodeProps = TypeNodePropsObj | string
 
-export function typeNode(props: TypeNodeProps): TypeNode
-export function typeNode(props?: TypeNodeProps): TypeNode | undefined
-
-export function typeNode(props?: TypeNodeProps): TypeNode | undefined {
-  if (typeof props === 'undefined') {
-    return
+export function typeNode(type: TypeNodeProps): TypeNode {
+  if (typeof type === 'string') {
+    return parseType(type)
   }
 
-  if (typeof props === 'string') {
-    return parseType(props)
-  }
+  const namedType = nodeFn(namedTypeNode)(type.name)
 
-  const namedType = nodeOrProps(namedTypeNode, props.name)
-
-  if (!props.list && !props.nonNull) {
+  if (!type.list && !type.nonNull) {
     return namedType
   }
 
-  if (props.list && !props.nonNull) {
+  if (type.list && !type.nonNull) {
     return listTypeNode(namedType)
   }
 
-  if (!props.list && props.nonNull) {
+  if (!type.list && type.nonNull) {
     return nonNullTypeNode(namedType)
   }
 
@@ -806,30 +641,19 @@ export function typeNode(props?: TypeNodeProps): TypeNode | undefined {
  */
 
 export interface SchemaDefinitionNodeProps {
-  directives: (DirectiveNode | DirectiveNodeProps)[]
-  operationTypes: (OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  operationTypes: ReadonlyArray<OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
 }
 
 /**
  * SchemaDefinitionNode
  */
 
-export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): SchemaDefinitionNode
-export function schemaDefinitionNode(
-  props?: SchemaDefinitionNodeProps,
-): SchemaDefinitionNode | undefined
-
-export function schemaDefinitionNode(
-  props?: SchemaDefinitionNodeProps,
-): SchemaDefinitionNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): SchemaDefinitionNode {
   return {
     kind: Kind.SCHEMA_DEFINITION,
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    operationTypes: nodeOrPropsArr(operationTypeDefinitionNode, props.operationTypes),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    operationTypes: nodeFnArr(operationTypeDefinitionNode)(props.operationTypes),
   }
 }
 
@@ -864,22 +688,11 @@ export interface OperationTypeDefinitionNodeProps {
 
 export function operationTypeDefinitionNode(
   props: OperationTypeDefinitionNodeProps,
-): OperationTypeDefinitionNode
-export function operationTypeDefinitionNode(
-  props?: OperationTypeDefinitionNodeProps,
-): OperationTypeDefinitionNode | undefined
-
-export function operationTypeDefinitionNode(
-  props?: OperationTypeDefinitionNodeProps,
-): OperationTypeDefinitionNode | undefined {
-  if (!props) {
-    return
-  }
-
+): OperationTypeDefinitionNode {
   return {
     kind: Kind.OPERATION_TYPE_DEFINITION,
     operation: props.operation,
-    type: nodeOrProps(namedTypeNode, props.type),
+    type: nodeFn(namedTypeNode)(props.type),
   }
 }
 
@@ -896,7 +709,7 @@ export function isOperationTypeDefinitionNode(node: ASTNode): node is OperationT
 export interface ScalarTypeDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  directives: (DirectiveNode | DirectiveNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -908,9 +721,9 @@ export function scalarTypeDefinitionNode(
 ): ScalarTypeDefinitionNode {
   return {
     kind: Kind.SCALAR_TYPE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
   }
 }
 
@@ -927,9 +740,9 @@ export function isScalarTypeDefinitionNode(node: ASTNode): node is ScalarTypeDef
 export interface ObjectTypeDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  interfaces?: (NamedTypeNode | string)[]
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  fields?: (FieldDefinitionNode | FieldDefinitionNodeProps)[]
+  interfaces?: ReadonlyArray<NamedTypeNode | string>
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
 /**
@@ -941,11 +754,11 @@ export function objectTypeDefinitionNode(
 ): ObjectTypeDefinitionNode {
   return {
     kind: Kind.OBJECT_TYPE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    interfaces: nodeOrPropsArr(namedTypeNode, props.interfaces),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    fields: nodeOrPropsArr(fieldDefinitionNode, props.fields),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    interfaces: nodeFnNullableArr(namedTypeNode)(props.interfaces),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    fields: nodeFnNullableArr(fieldDefinitionNode)(props.fields),
   }
 }
 
@@ -962,9 +775,9 @@ export function isObjectTypeDefinitionNode(node: ASTNode): node is ObjectTypeDef
 export interface FieldDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  arguments?: (InputValueDefinitionNode | InputValueDefinitionNodeProps)[]
+  arguments?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
   type: TypeNode | TypeNodeProps
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 
   // shorthand
   nonNull?: boolean
@@ -975,25 +788,14 @@ export interface FieldDefinitionNodeProps {
  * FieldDefinitionNode
  */
 
-export function fieldDefinitionNode(props: FieldDefinitionNodeProps): FieldDefinitionNode
-export function fieldDefinitionNode(
-  props?: FieldDefinitionNodeProps,
-): FieldDefinitionNode | undefined
-
-export function fieldDefinitionNode(
-  props?: FieldDefinitionNodeProps,
-): FieldDefinitionNode | undefined {
-  if (!props) {
-    return
-  }
-
+export function fieldDefinitionNode(props: FieldDefinitionNodeProps): FieldDefinitionNode {
   return {
     kind: Kind.FIELD_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    arguments: nodeOrPropsArr(inputValueDefinitionNode, props.arguments),
-    type: nodeOrProps(typeNode, props.type),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    arguments: nodeFnNullableArr(inputValueDefinitionNode)(props.arguments),
+    type: nodeFn(typeNode)(props.type),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
   }
 }
 
@@ -1013,7 +815,7 @@ export interface InputValueDefinitionNodeProps {
   type: TypeNode | TypeNodeProps
   // TODO: allow coercing js value value by type?
   defaultValue?: ValueNode
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -1022,25 +824,14 @@ export interface InputValueDefinitionNodeProps {
 
 export function inputValueDefinitionNode(
   props: InputValueDefinitionNodeProps,
-): InputValueDefinitionNode
-export function inputValueDefinitionNode(
-  props?: InputValueDefinitionNodeProps,
-): InputValueDefinitionNode | undefined
-
-export function inputValueDefinitionNode(
-  props?: InputValueDefinitionNodeProps,
-): InputValueDefinitionNode | undefined {
-  if (!props) {
-    return
-  }
-
+): InputValueDefinitionNode {
   return {
     kind: Kind.INPUT_VALUE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    type: nodeOrProps(typeNode, props.type),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    type: nodeFn(typeNode)(props.type),
     defaultValue: props.defaultValue,
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
   }
 }
 
@@ -1057,8 +848,8 @@ export function isInputValueDefinitionNode(node: ASTNode): node is InputValueDef
 export interface InterfaceTypeDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  fields?: (FieldDefinitionNode | FieldDefinitionNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
 /**
@@ -1070,10 +861,10 @@ export function interfaceTypeDefinitionNode(
 ): InterfaceTypeDefinitionNode {
   return {
     kind: Kind.INTERFACE_TYPE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    fields: nodeOrPropsArr(fieldDefinitionNode, props.fields),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    fields: nodeFnNullableArr(fieldDefinitionNode)(props.fields),
   }
 }
 
@@ -1090,8 +881,8 @@ export function isInterfaceTypeDefinitionNode(node: ASTNode): node is InterfaceT
 export interface UnionTypeDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  types?: (NamedTypeNode | string)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  types?: ReadonlyArray<NamedTypeNode | string>
 }
 
 /**
@@ -1103,10 +894,10 @@ export function unionTypeDefinitionNode(
 ): UnionTypeDefinitionNode {
   return {
     kind: Kind.UNION_TYPE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    types: nodeOrPropsArr(namedTypeNode, props.types),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    types: nodeFnNullableArr(namedTypeNode)(props.types),
   }
 }
 
@@ -1123,8 +914,8 @@ export function isUnionTypeDefinitionNode(node: ASTNode): node is UnionTypeDefin
 export interface EnumTypeDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  values?: (EnumValueDefinitionNode | EnumValueDefinitionNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  values?: ReadonlyArray<EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
 }
 
 /**
@@ -1134,10 +925,10 @@ export interface EnumTypeDefinitionNodeProps {
 export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): EnumTypeDefinitionNode {
   return {
     kind: Kind.ENUM_TYPE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    values: nodeOrPropsArr(enumValueDefinitionNode, props.values),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    values: nodeFnNullableArr(enumValueDefinitionNode)(props.values),
   }
 }
 
@@ -1154,7 +945,7 @@ export function isEnumTypeDefinitionNode(node: ASTNode): node is EnumTypeDefinit
 export interface EnumValueDefinitionNodePropsObj {
   name: NameNode | string
   description?: StringValueNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
 export type EnumValueDefinitionNodeProps = EnumValueDefinitionNodePropsObj | string
@@ -1162,21 +953,10 @@ export type EnumValueDefinitionNodeProps = EnumValueDefinitionNodePropsObj | str
 /**
  * EnumValueDefinitionNode
  */
+
 export function enumValueDefinitionNode(
   props: EnumValueDefinitionNodeProps,
-): EnumValueDefinitionNode
-export function enumValueDefinitionNode(
-  props?: EnumValueDefinitionNodeProps,
-): EnumValueDefinitionNode | undefined
-
-export function enumValueDefinitionNode(
-  props?: EnumValueDefinitionNodeProps,
-): EnumValueDefinitionNode | string | undefined {
-  if (typeof props === 'undefined') {
-    return
-  }
-
-  // shorthand
+): EnumValueDefinitionNode {
   if (typeof props === 'string') {
     return {
       kind: Kind.ENUM_VALUE_DEFINITION,
@@ -1186,9 +966,9 @@ export function enumValueDefinitionNode(
 
   return {
     kind: Kind.ENUM_VALUE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
   }
 }
 
@@ -1205,8 +985,8 @@ export function isEnumValueDefinitionNode(node: ASTNode): node is EnumValueDefin
 export interface InputObjectTypeDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  directives?: (DirectiveNode | DirectiveNodeProps)[]
-  fields?: (InputValueDefinitionNode | InputValueDefinitionNodeProps)[]
+  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
 }
 
 /**
@@ -1218,10 +998,10 @@ export function inputObjectTypeDefinitionNode(
 ): InputObjectTypeDefinitionNode {
   return {
     kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    directives: nodeOrPropsArr(directiveNode, props.directives),
-    fields: nodeOrPropsArr(inputValueDefinitionNode, props.fields),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    directives: nodeFnNullableArr(directiveNode)(props.directives),
+    fields: nodeFnNullableArr(inputValueDefinitionNode)(props.fields),
   }
 }
 
@@ -1240,9 +1020,9 @@ export function isInputObjectTypeDefinitionNode(
 export interface DirectiveDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  arguments?: (InputValueDefinitionNode | InputValueDefinitionNodeProps)[]
+  arguments?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
   repeatable?: boolean
-  locations: (NameNode | DirectiveLocationEnum)[]
+  locations: ReadonlyArray<NameNode | DirectiveLocationEnum>
 }
 
 /**
@@ -1254,11 +1034,11 @@ export function directiveDefinitionNode(
 ): DirectiveDefinitionNode {
   return {
     kind: Kind.DIRECTIVE_DEFINITION,
-    name: nodeOrProps(nameNode, props.name),
-    description: nodeOrProps(stringValueNode, props.description),
-    arguments: nodeOrPropsArr(inputValueDefinitionNode, props.arguments),
+    name: nodeFn(nameNode)(props.name),
+    description: nodeFnNullable(stringValueNode)(props.description),
+    arguments: nodeFnNullableArr(inputValueDefinitionNode)(props.arguments),
     repeatable: props.repeatable || false,
-    locations: nodeOrPropsArr(nameNode, props.locations),
+    locations: nodeFnArr(nameNode)(props.locations),
   }
 }
 

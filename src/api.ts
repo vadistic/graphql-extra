@@ -20,7 +20,14 @@ import {
   FieldDefinitionNodeProps,
   fieldDefinitionNode,
 } from './node'
-import { DeepMutable, clonedNodeOrProps, upsertByName, spliceByName, appendByName } from './utils'
+import {
+  DeepMutable,
+  clonedNodeOrProps,
+  upsertByName,
+  spliceByName,
+  appendByName,
+  updateByNameWith,
+} from './utils'
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -192,13 +199,16 @@ export interface FieldsApi<This> {
   hasField(fieldname: string): boolean
 
   createField(props: FieldDefinitionNode | FieldDefinitionNodeProps): This
+  updateField(
+    fieldname: string,
+    props: Partial<FieldDefinitionNode | FieldDefinitionNodeProps>,
+  ): This
   upsertField(props: FieldDefinitionNode | FieldDefinitionNodeProps): This
   removeField(fieldname: string): This
 }
 
 function fieldDefinitionsApi<This>(node: FieldDefinitionsApiCompatibleNode): FieldsApi<This> {
   const _node = node as DeepMutable<FieldDefinitionsApiCompatibleNode>
-  const typename = node.name.value
 
   return {
     getFieldNames() {
@@ -214,7 +224,7 @@ function fieldDefinitionsApi<This>(node: FieldDefinitionsApiCompatibleNode): Fie
 
       if (!field) {
         throw Error(
-          this.getField.name + `: field '${fieldname}' on type '${typename}' does not exist`,
+          this.getField.name + `: field '${fieldname}' on type '${node.name.value}' does not exist`,
         )
       }
 
@@ -237,7 +247,26 @@ function fieldDefinitionsApi<This>(node: FieldDefinitionsApiCompatibleNode): Fie
 
       if (!isUnique) {
         throw Error(
-          this.removeField.name + `: field '${fieldname}' on type '${typename}' already exists`,
+          this.removeField.name +
+            `: field '${fieldname}' on type '${node.name.value}' already exists`,
+        )
+      }
+
+      return this as any
+    },
+
+    updateField(fieldname, props) {
+      if (!_node.fields) {
+        throw Error(
+          this.updateField + `: cannot update, because type ${node.name.value} has no fields`,
+        )
+      }
+
+      const el = updateByNameWith(_node.fields, fieldname, fieldDefinitionNode, props)
+
+      if (!el) {
+        throw Error(
+          this.updateField + `field '${fieldname}' on type '${node.name.value}' does not exists`,
         )
       }
 
@@ -258,14 +287,15 @@ function fieldDefinitionsApi<This>(node: FieldDefinitionsApiCompatibleNode): Fie
 
     removeField(fieldname) {
       if (!_node.fields || _node.fields.length === 0) {
-        throw Error(this.removeField.name + `:  type '${typename}' has no fields`)
+        throw Error(this.removeField.name + `:  type '${node.name.value}' has no fields`)
       }
 
       const isFound = spliceByName(_node.fields, fieldname)
 
       if (!isFound) {
         throw Error(
-          this.removeField.name + `: field '${fieldname}' on type '${typename}' does not exists`,
+          this.removeField.name +
+            `: field '${fieldname}' on type '${node.name.value}' does not exists`,
         )
       }
 

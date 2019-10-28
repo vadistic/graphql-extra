@@ -1,64 +1,83 @@
 import { ASTNode, TypeDefinitionNode, FieldDefinitionNode } from 'graphql'
 
+export type UnaryFn<A, R> = (args: A) => R
+
 export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }
 
-/*
- * utils for resolving node create functions overloads
- */
+//  no input no return
+export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
+  if (arg) {
+    return fn(arg)
+  }
+}
 
-/**
- * apply props to fn or pass ast node along, with nullability overload
- */
+// apply fn to array input
+export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
+  arr.map(fn)
 
-export function nodeOrProps<Node, Props>(
-  fn: (props?: Props) => Node | undefined,
+// skip fn when AstNode is provided
+export const nodeOrProps = <Props, Node>(fn: (props: Props) => Node) => (
   input: Node | Props,
-): Node
-export function nodeOrProps<Node, Props>(
-  fn: (props?: Props) => Node | undefined,
-  input: Node | Props | undefined,
-): Node | undefined
+): Node => (isAstNode<Node>(input) ? input : fn(input))
 
-export function nodeOrProps<Node, Props>(
-  fn: (props?: Props) => Node | undefined,
-  input: Node | Props | undefined,
-): Node | undefined {
-  if (!input) {
-    return
-  }
+export const nodeOrPropsArr = <A, R>(fn: UnaryFn<A, R>) => arrayable(nodeOrProps(fn))
 
-  if (isAstNode<Node>(input)) {
-    return input
-  }
+// aliases, because I cannot get compose/pipe typings to work over functions on functions
 
-  return fn(input)
+/** accept node or props */
+export const nodeFn = nodeOrProps
+/** accept array of node or props */
+export const nodeFnArr = <A, R>(fn: UnaryFn<A, R>) => arrayable(nodeOrProps(fn))
+/** accept node or props, nullable */
+export const nodeFnNullable = <A, R>(fn: UnaryFn<A, R>) => nullable(nodeOrProps(fn))
+/** accept array of node or props, nullable */
+export const nodeFnNullableArr = <A, R>(fn: UnaryFn<A, R>) => nullable(arrayable(nodeOrProps(fn)))
+
+/*
+
+// overkill idea...
+
+// takes target object when some keys are function,
+// takes props where keys match target
+// and call props on those functions where keys match
+
+export type CallOnKeys<Target, Props extends PropsObj<Target, Props>> = {
+  [K in keyof Target]: K extends keyof Props ? ReturnTypeOr<Target[K]> : Target[K]
 }
 
-/**
- * apply each arr element to to fn or pass ast nodes along, with nullability overload
- */
+export type PropsObj<Target, Props> = {
+  [K in keyof Target & keyof Props]: ParameterOrDie<Target[K]>
+}
 
-export function nodeOrPropsArr<Node, Props>(
-  fn: (props?: Props) => Node | undefined,
-  inputs: (Node | Props)[],
-): Node[]
-export function nodeOrPropsArr<Node, Props>(
-  fn: (props?: Props) => Node | undefined,
-  inputs: (Node | Props)[] | undefined,
-): Node[] | undefined
+export type ParameterOrDie<T> = T extends (arg: infer P) => any ? P : never
+export type ReturnTypeOr<T> = T extends (...args: any) => infer R ? R : T
 
-export function nodeOrPropsArr<Node, Props>(
-  fn: (props?: Props) => Node | undefined,
-  inputs: (Node | Props)[] | undefined,
-): Node[] | undefined {
-  if (!inputs) {
-    return
+export const callOnKeys = <T, P extends PropsObj<T, P>>(target: T, props: P): CallOnKeys<T, P> => {
+  const res: any = { ...target }
+
+  for (const key in Object.keys(props)) {
+    if (typeof res[key] === 'function') {
+      res[key] = res[key]((props as any)[key])
+    }
   }
 
-  return inputs.map(input => nodeOrProps(fn, input))
+  return res
 }
+
+const target = {
+  a: 'a',
+  b: (arg: string) => Number(arg),
+}
+
+const props = {
+  b: '123' as string,
+}
+
+const res = callOnKeys(target, props)
+
+*/
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -161,43 +180,43 @@ export function clonedNodeOrProps<P, N>(
 /*
  * mutable set/ array utils to reduce boilerplate on apis array operations
  *
- * uses the simplest for loops, because I'm irrationaly afraid of looping over arrays
- * and those are supposedly the fastest
+ * - uses the simplest for loop, because I'm irrationaly afraid of slow loops
+ * - pred el is untyped because typescript incoretly extends/infers type of T
  */
 
 /**
  * finds set element
  * - accepts plain pred value
  */
-export const setGetElBy = <T, R>(predFn: (el: T) => R) => (arr: T[], pred: R) =>
+const setGetOneBy = <P>(predFn: (el: any) => P) => <T>(arr: T[], pred: P) =>
   arr.find(el => predFn(el) === pred)
 
-export const setHasElBy = <T, R>(predFn: (el: T) => R) => (arr: T[], pred: R) =>
+const setHasBy = <P>(predFn: (el: any) => P) => <T>(arr: T[], pred: P) =>
   arr.some(el => predFn(el) === pred)
 
 /**
  * appends set
- * - returns `true` on success/ `false` if element already existed
+ * - returns element on success
  */
-export const setAppendBy = <T, R>(predFn: (el: T) => R) => (arr: T[], el: T) => {
+const setAppendBy = <P>(predFn: (el: any) => P) => <T>(arr: T[], el: T) => {
   const pred = predFn(el)
 
   for (const prevEl of arr) {
     if (predFn(prevEl) === pred) {
-      return false
+      return
     }
   }
 
   arr.push(el)
 
-  return true
+  return el
 }
 
 /**
  * appends or merge set element
  * - returns `true` on append / `false` on merge
  */
-export const setUpsertBy = <T, R>(predFn: (el: T) => R) => (arr: T[], el: T) => {
+const setUpsertBy = <P>(predFn: (el: any) => P) => <T>(arr: T[], el: T): boolean => {
   const pred = predFn(el)
 
   for (let i = 0; i < arr.length; i++) {
@@ -215,24 +234,64 @@ export const setUpsertBy = <T, R>(predFn: (el: T) => R) => (arr: T[], el: T) => 
 /**
  * remove set element
  * - plain pred value
- * - return `true` on success / `false` on not element found
+ * - return element
  */
-export const setSpliceBy = <T, R>(predFn: (el: T) => R) => (arr: T[], pred: R) => {
+const setSpliceBy = <P>(predFn: (el: any) => P) => <T>(arr: T[], pred: P): T | undefined => {
   for (let i = 0; i < arr.length; i++) {
     if (predFn(arr[i]) === pred) {
-      arr.splice(i, 1)
-      return true
+      return arr.splice(i, 1)[0]
     }
   }
 
-  return false
+  return
 }
 
-export const byNodeName = (node: TypeDefinitionNode | FieldDefinitionNode) => node.name.value
+const getNodeName = (node: TypeDefinitionNode | FieldDefinitionNode) => node.name.value
 
-export const getByName = setGetElBy(byNodeName)
-export const hasByName = setHasElBy(byNodeName)
+/** gets arr element by node name */
+export const getByName = setGetOneBy(getNodeName)
+/** checks arr element by node name */
+export const hasByName = setHasBy(getNodeName)
 
-export const appendByName = setAppendBy(byNodeName)
-export const upsertByName = setUpsertBy(byNodeName)
-export const spliceByName = setSpliceBy(byNodeName)
+/** push element by node name ensuring it's unique by node name */
+export const appendByName = setAppendBy(getNodeName)
+/** push element or merge arr element by node name */
+export const upsertByName = setUpsertBy(getNodeName)
+/** remove element if exist by node name */
+export const spliceByName = setSpliceBy(getNodeName)
+
+/**
+ * this type usead as SubsetKeys<Node, Props>
+ * ensures that each used fn actually allows ast node on all props
+ */
+export type SubsetKeys<Of, With> = {
+  [K in keyof With & keyof Of]: Of[K]
+}
+
+/**
+ * generalised node update on array
+ * - removes kind from previous value
+ * - clone ast in props
+ * - merges it all and run through fn
+ * - returns element if found
+ */
+export const updateByNameWith = <Node, Props>(
+  arr: Node[],
+  pred: string,
+  fn: (props: Props | SubsetKeys<Node, Props>) => Node,
+  props: Partial<Props>,
+): Node | undefined => {
+  for (let i = 0; i < arr.length; i++) {
+    if (getNodeName(arr[i] as any) === pred) {
+      // remove kind from prev so it's treated as props by cloneAST
+      const { kind, ...prev } = arr[i] as any
+
+      // clone all new ast from props and update
+      arr[i] = fn({ ...prev, ...cloneAST(props) })
+
+      return arr[i]
+    }
+  }
+
+  return
+}
