@@ -31,7 +31,6 @@ import {
   ObjectValueNode,
   OperationTypeDefinitionNode,
   SchemaDefinitionNode,
-  OperationTypeNode,
   ScalarTypeDefinitionNode,
   FieldDefinitionNode,
   ObjectTypeDefinitionNode,
@@ -43,8 +42,9 @@ import {
   InputObjectTypeDefinitionNode,
   DirectiveLocationEnum,
   DirectiveDefinitionNode,
+  parseType,
 } from 'graphql'
-import { nodeOrProps, nodeOrPropsArr } from './utils'
+import { nodeOrProps, nodeOrPropsArr, isAstNode } from './utils'
 
 // graphql/language/ast.d.ts
 
@@ -90,21 +90,77 @@ export function isDocumentNode(node: ASTNode): node is DocumentNode {
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * OperationDefinitionNode create input
+ */
+
+export interface OperationDefinitionNodeProps {
+  name?: NameNode | string
+  operation: OperationTypeNode
+  variableDefinitions?: (VariableDefinitionNode | VariableDefinitionNodeProps)[]
+  directives?: (DirectiveNode | DirectiveNodeProps)[]
+  selections: SelectionNode[]
+}
+
+/**
  * OperationDefinitionNode
  */
 
-export function operationDefinitionNode(): OperationDefinitionNode {
-  return {} as any
+export function operationDefinitionNode(
+  props: OperationDefinitionNodeProps,
+): OperationDefinitionNode {
+  return {
+    kind: Kind.OPERATION_DEFINITION,
+    operation: props.operation,
+    name: nodeOrProps(nameNode, props.name),
+    variableDefinitions: nodeOrPropsArr(variableDefinitionNode, props.variableDefinitions),
+    directives: nodeOrPropsArr(directiveNode, props.directives),
+    selectionSet: selectionSetNode(props.selections),
+  }
+}
+
+export function isOperationDefinitionNode(node: ASTNode): node is OperationDefinitionNode {
+  return node.kind === Kind.OPERATION_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * VariableDefinitionNode create input
+ */
+export interface VariableDefinitionNodeProps {
+  variable: VariableNode | string
+  type: TypeNode | string
+  defaultValue?: ValueNode
+  directives?: (DirectiveNode | DirectiveNodeProps)[]
+}
+
+/**
  * VariableDefinitionNode
  */
 
-export function variableDefinitionNode(): VariableDefinitionNode {
-  return {} as any
+export function variableDefinitionNode(props: VariableDefinitionNodeProps): VariableDefinitionNode
+export function variableDefinitionNode(
+  props?: VariableDefinitionNodeProps,
+): VariableDefinitionNode | undefined
+
+export function variableDefinitionNode(
+  props?: VariableDefinitionNodeProps,
+): VariableDefinitionNode | undefined {
+  if (!props) {
+    return
+  }
+
+  return {
+    kind: Kind.VARIABLE_DEFINITION,
+    variable: nodeOrProps(variableNode, props.variable),
+    type: nodeOrProps(typeNode, props.type),
+    defaultValue: props.defaultValue,
+    directives: nodeOrPropsArr(directiveNode, props.directives),
+  }
+}
+
+export function isVariableDefinitionNode(node: ASTNode): node is VariableDefinitionNode {
+  return node.kind === Kind.VARIABLE_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -134,22 +190,48 @@ export function isVariableNode(node: ASTNode): node is VariableNode {
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * SelectionNode create input
+ */
+export type SelectionNodeProps = SelectionNode | FieldNodeProps
+
+/**
+ * SelectionNode
+ *
+ * - helper for selectionSetNode, allows shorthands for fields
+ */
+
+export function selectionNode(props: SelectionNodeProps): SelectionNode
+export function selectionNode(props?: SelectionNodeProps): SelectionNode | undefined
+
+export function selectionNode(props?: SelectionNodeProps): SelectionNode | undefined {
+  if (!props) {
+    return
+  }
+
+  if (isAstNode(props)) {
+    return props
+  }
+
+  return fieldNode(props)
+}
+
+/**
  * SelectionSetNode
  */
 
-// ! allowing input as array of props does not make much sense here, since it's an union
+export type SelectionSetNodeProps = (SelectionNodeProps)[]
 
-export function selectionSetNode(selections: (SelectionNode)[]): SelectionSetNode
-export function selectionSetNode(selections?: (SelectionNode)[]): SelectionSetNode | undefined
+export function selectionSetNode(props: SelectionSetNodeProps): SelectionSetNode
+export function selectionSetNode(props?: SelectionSetNodeProps): SelectionSetNode | undefined
 
-export function selectionSetNode(selections?: (SelectionNode)[]): SelectionSetNode | undefined {
-  if (!selections) {
+export function selectionSetNode(props?: SelectionSetNodeProps): SelectionSetNode | undefined {
+  if (!props) {
     return
   }
 
   return {
     kind: Kind.SELECTION_SET,
-    selections,
+    selections: nodeOrPropsArr(selectionNode, props),
   }
 }
 
@@ -163,13 +245,15 @@ export function isSelectionSetNode(node: ASTNode): node is SelectionSetNode {
  * FieldNode create input
  */
 
-export interface FieldNodeProps {
+export interface FieldNodePropsObj {
   name: NameNode | string
   alias?: NameNode | string
   arguments?: (ArgumentNode | ArgumentNodeProps)[]
   directives?: (DirectiveNode | DirectiveNodeProps)[]
-  selections?: SelectionNode[]
+  selections?: SelectionNodeProps[]
 }
+
+export type FieldNodeProps = FieldNodePropsObj | string
 
 /**
  * FieldNode
@@ -178,9 +262,16 @@ export interface FieldNodeProps {
 export function fieldNode(props: FieldNodeProps): FieldNode
 export function fieldNode(props?: FieldNodeProps): FieldNode | undefined
 
-export function fieldNode(props?: FieldNodeProps | undefined): FieldNode | undefined {
-  if (!props) {
+export function fieldNode(props?: FieldNodeProps): FieldNode | undefined {
+  if (typeof props === 'undefined') {
     return
+  }
+
+  if (typeof props === 'string') {
+    return {
+      kind: Kind.FIELD,
+      name: nameNode(props),
+    }
   }
 
   return {
@@ -226,6 +317,10 @@ export function argumentNode(props?: ArgumentNodeProps): ArgumentNode | undefine
   }
 }
 
+export function isArgumentNode(node: ASTNode): node is ArgumentNode {
+  return node.kind === Kind.ARGUMENT
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -256,6 +351,10 @@ export function fragmentSpreadNode(
     name: nodeOrProps(nameNode, props.name),
     directives: nodeOrPropsArr(directiveNode, props.directives),
   }
+}
+
+export function isFragmentSpreadNode(node: ASTNode): node is FragmentSpreadNode {
+  return node.kind === Kind.FRAGMENT_SPREAD
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -292,6 +391,10 @@ export function inlineFragmentNode(
   }
 }
 
+export function isInlineFragmentNode(node: ASTNode): node is InlineFragmentNode {
+  return node.kind === Kind.INLINE_FRAGMENT
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -300,7 +403,7 @@ export function inlineFragmentNode(
 
 export interface FragmentDefinitionNodeProps {
   name: NameNode | string
-  variableDefinitions?: (VariableDefinitionNode)[]
+  variableDefinitions?: (VariableDefinitionNode | VariableDefinitionNodeProps)[]
   typeCondition: NamedTypeNode | string
   directives?: (DirectiveNode | DirectiveNodeProps)[]
   selections: SelectionNode[]
@@ -324,11 +427,15 @@ export function fragmentDefinitionNode(
   return {
     kind: Kind.FRAGMENT_DEFINITION,
     name: nodeOrProps(nameNode, props.name),
-    variableDefinitions: props.variableDefinitions,
+    variableDefinitions: nodeOrPropsArr(variableDefinitionNode, props.variableDefinitions),
     typeCondition: nodeOrProps(namedTypeNode, props.typeCondition),
     directives: nodeOrPropsArr(directiveNode, props.directives),
     selectionSet: selectionSetNode(props.selections),
   }
+}
+
+export function isFragmentDefinitionNode(node: ASTNode): node is FragmentDefinitionNode {
+  return node.kind === Kind.FRAGMENT_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -351,6 +458,10 @@ export function intValueNode(value?: string | number): IntValueNode | undefined 
   }
 }
 
+export function isIntValueNode(node: ASTNode): node is IntValueNode {
+  return node.kind === Kind.INT
+}
+
 /**
  * FloatValueNode
  */
@@ -367,6 +478,10 @@ export function floatValueNode(value?: string | number): FloatValueNode | undefi
     kind: Kind.FLOAT,
     value: '' + value,
   }
+}
+
+export function isFloatValueNode(node: ASTNode): node is FloatValueNode {
+  return node.kind === Kind.FLOAT
 }
 
 /**
@@ -387,6 +502,10 @@ export function stringValueNode(value?: string): StringValueNode | undefined {
   }
 }
 
+export function isStringValueNode(node: ASTNode): node is StringValueNode {
+  return node.kind === Kind.STRING
+}
+
 /**
  * BooleanValueNode
  */
@@ -405,6 +524,10 @@ export function booleanValueNode(value?: boolean): BooleanValueNode | undefined 
   }
 }
 
+export function isBooleanValueNode(node: ASTNode): node is BooleanValueNode {
+  return node.kind === Kind.BOOLEAN
+}
+
 /**
  * NullValueNode
  */
@@ -413,6 +536,10 @@ export function nullValueNode(): NullValueNode {
   return {
     kind: Kind.NULL,
   }
+}
+
+export function isNullValueNode(node: ASTNode): node is NullValueNode {
+  return node.kind === Kind.NULL
 }
 
 /**
@@ -433,6 +560,10 @@ export function enumValueNode(value?: string): EnumValueNode | undefined {
   }
 }
 
+export function iEnumValueNode(node: ASTNode): node is EnumValueNode {
+  return node.kind === Kind.ENUM
+}
+
 /**
  * ListValueNode
  */
@@ -447,8 +578,12 @@ export function listValueNode(values?: ValueNode[]): ListValueNode | undefined {
 
   return {
     kind: Kind.LIST,
-    values,
+    values: values,
   }
+}
+
+export function isListValueNode(node: ASTNode): node is ListValueNode {
+  return node.kind === Kind.LIST
 }
 
 /**
@@ -465,8 +600,12 @@ export function objectValueNode(fields?: ObjectFieldNode[]): ObjectValueNode | u
 
   return {
     kind: Kind.OBJECT,
-    fields,
+    fields: fields,
   }
+}
+
+export function isObjectValueNode(node: ASTNode): node is ObjectValueNode {
+  return node.kind === Kind.OBJECT
 }
 
 /**
@@ -493,16 +632,22 @@ export function objectFieldNode(props?: ObjectFieldNodeProps): ObjectFieldNode |
   }
 }
 
+export function isObjectFieldNode(node: ASTNode): node is ObjectFieldNode {
+  return node.kind === Kind.OBJECT_FIELD
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * DirectiveNode create input
  */
 
-export interface DirectiveNodeProps {
+export interface DirectiveNodePropsObj {
   name: NameNode | string
   arguments?: (ArgumentNode | ArgumentNodeProps)[]
 }
+
+export type DirectiveNodeProps = DirectiveNodePropsObj | string
 
 /**
  * DirectiveNode
@@ -512,8 +657,16 @@ export function directiveNode(props: DirectiveNodeProps): DirectiveNode
 export function directiveNode(props?: DirectiveNodeProps): DirectiveNode | undefined
 
 export function directiveNode(props?: DirectiveNodeProps): DirectiveNode | undefined {
-  if (!props) {
+  if (typeof props === 'undefined') {
     return
+  }
+
+  // shorthand
+  if (typeof props === 'string') {
+    return {
+      kind: Kind.DIRECTIVE,
+      name: nameNode(props),
+    }
   }
 
   return {
@@ -521,6 +674,10 @@ export function directiveNode(props?: DirectiveNodeProps): DirectiveNode | undef
     name: nodeOrProps(nameNode, props.name),
     arguments: nodeOrPropsArr(argumentNode, props.arguments),
   }
+}
+
+export function isDirectiveNode(node: ASTNode): node is DirectiveNode {
+  return node.kind === Kind.DIRECTIVE
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -551,17 +708,19 @@ export function isNamedTypeNode(node: ASTNode): node is NamedTypeNode {
  * ListTypeNode
  */
 
-export function listTypeNode(type: TypeNode): ListTypeNode
-export function listTypeNode(type?: TypeNode): ListTypeNode | undefined
+export function listTypeNode(type: TypeNode | string): ListTypeNode
+export function listTypeNode(type?: TypeNode | string): ListTypeNode | undefined
 
-export function listTypeNode(type?: TypeNode): ListTypeNode | undefined {
-  if (!type) {
+export function listTypeNode(type?: TypeNode | string): ListTypeNode | undefined {
+  if (typeof type === 'undefined') {
     return
   }
 
+  const namedType = typeof type === 'string' ? namedTypeNode(type) : type
+
   return {
     kind: Kind.LIST_TYPE,
-    type,
+    type: namedType,
   }
 }
 
@@ -573,22 +732,71 @@ export function isListTypeNode(node: ASTNode): node is ListTypeNode {
  * NonNullTypeNode
  */
 
-export function nonNullTypeNode(type: NamedTypeNode | ListTypeNode): NonNullTypeNode
-export function nonNullTypeNode(type?: NamedTypeNode | ListTypeNode): NonNullTypeNode | undefined
+export function nonNullTypeNode(type: TypeNode | string): NonNullTypeNode
+export function nonNullTypeNode(type?: TypeNode | string): NonNullTypeNode | undefined
 
-export function nonNullTypeNode(type?: NamedTypeNode | ListTypeNode): NonNullTypeNode | undefined {
-  if (!type) {
+export function nonNullTypeNode(type?: TypeNode | string): NonNullTypeNode | undefined {
+  if (typeof type === 'undefined') {
     return
+  }
+
+  const namedType = typeof type === 'string' ? namedTypeNode(type) : type
+
+  if (namedType.kind === Kind.NON_NULL_TYPE) {
+    return namedType
   }
 
   return {
     kind: Kind.NON_NULL_TYPE,
-    type,
+    type: namedType,
   }
 }
 
 export function isNonNullTypeNode(node: ASTNode): node is NonNullTypeNode {
   return node.kind === Kind.NON_NULL_TYPE
+}
+
+/**
+ * TypeNode
+ */
+
+export interface TypeNodePropsObj {
+  // or should it be type: ??
+  name: NamedTypeNode | string
+  list?: boolean
+  nonNull?: boolean
+}
+
+export type TypeNodeProps = TypeNodePropsObj | string
+
+export function typeNode(props: TypeNodeProps): TypeNode
+export function typeNode(props?: TypeNodeProps): TypeNode | undefined
+
+export function typeNode(props?: TypeNodeProps): TypeNode | undefined {
+  if (typeof props === 'undefined') {
+    return
+  }
+
+  if (typeof props === 'string') {
+    return parseType(props)
+  }
+
+  const namedType = nodeOrProps(namedTypeNode, props.name)
+
+  if (!props.list && !props.nonNull) {
+    return namedType
+  }
+
+  if (props.list && !props.nonNull) {
+    return listTypeNode(namedType)
+  }
+
+  if (!props.list && props.nonNull) {
+    return nonNullTypeNode(namedType)
+  }
+
+  // I've never saw nested list in GraphQL API so this is non-null lsit default
+  return nonNullTypeNode(listTypeNode(nonNullTypeNode(namedType)))
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -630,6 +838,16 @@ export function isSchemaDefinitionNode(node: ASTNode): node is SchemaDefinitionN
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * True enum for OperationTypeEnum
+ */
+
+export enum OperationTypeNode {
+  query = 'query',
+  mutation = 'mutation',
+  subscription = 'subscription',
+}
 
 /**
  * OperationTypeDefinitionNode create input
@@ -731,6 +949,10 @@ export function objectTypeDefinitionNode(
   }
 }
 
+export function isObjectTypeDefinitionNode(node: ASTNode): node is ObjectTypeDefinitionNode {
+  return node.kind === Kind.OBJECT_TYPE_DEFINITION
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -741,8 +963,12 @@ export interface FieldDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
   arguments?: (InputValueDefinitionNode | InputValueDefinitionNodeProps)[]
-  type: TypeNode
+  type: TypeNode | TypeNodeProps
   directives?: (DirectiveNode | DirectiveNodeProps)[]
+
+  // shorthand
+  nonNull?: boolean
+  list?: string
 }
 
 /**
@@ -766,9 +992,13 @@ export function fieldDefinitionNode(
     name: nodeOrProps(nameNode, props.name),
     description: nodeOrProps(stringValueNode, props.description),
     arguments: nodeOrPropsArr(inputValueDefinitionNode, props.arguments),
-    type: props.type,
+    type: nodeOrProps(typeNode, props.type),
     directives: nodeOrPropsArr(directiveNode, props.directives),
   }
+}
+
+export function isFieldDefinitionNode(node: ASTNode): node is FieldDefinitionNode {
+  return node.kind === Kind.FIELD_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -780,8 +1010,9 @@ export function fieldDefinitionNode(
 export interface InputValueDefinitionNodeProps {
   name: NameNode | string
   description?: StringValueNode | string
-  type: TypeNode
-  defaulfValue?: ValueNode
+  type: TypeNode | TypeNodeProps
+  // TODO: allow coercing js value value by type?
+  defaultValue?: ValueNode
   directives?: (DirectiveNode | DirectiveNodeProps)[]
 }
 
@@ -807,10 +1038,14 @@ export function inputValueDefinitionNode(
     kind: Kind.INPUT_VALUE_DEFINITION,
     name: nodeOrProps(nameNode, props.name),
     description: nodeOrProps(stringValueNode, props.description),
-    type: props.type,
-    defaultValue: props.defaulfValue,
+    type: nodeOrProps(typeNode, props.type),
+    defaultValue: props.defaultValue,
     directives: nodeOrPropsArr(directiveNode, props.directives),
   }
+}
+
+export function isInputValueDefinitionNode(node: ASTNode): node is InputValueDefinitionNode {
+  return node.kind === Kind.INPUT_VALUE_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -842,6 +1077,10 @@ export function interfaceTypeDefinitionNode(
   }
 }
 
+export function isInterfaceTypeDefinitionNode(node: ASTNode): node is InterfaceTypeDefinitionNode {
+  return node.kind === Kind.INTERFACE_TYPE_DEFINITION
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -859,7 +1098,9 @@ export interface UnionTypeDefinitionNodeProps {
  * UnionTypeDefinitionNode
  */
 
-export function unionTypeNode(props: UnionTypeDefinitionNodeProps): UnionTypeDefinitionNode {
+export function unionTypeDefinitionNode(
+  props: UnionTypeDefinitionNodeProps,
+): UnionTypeDefinitionNode {
   return {
     kind: Kind.UNION_TYPE_DEFINITION,
     name: nodeOrProps(nameNode, props.name),
@@ -867,6 +1108,10 @@ export function unionTypeNode(props: UnionTypeDefinitionNodeProps): UnionTypeDef
     directives: nodeOrPropsArr(directiveNode, props.directives),
     types: nodeOrPropsArr(namedTypeNode, props.types),
   }
+}
+
+export function isUnionTypeDefinitionNode(node: ASTNode): node is UnionTypeDefinitionNode {
+  return node.kind === Kind.UNION_TYPE_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -886,7 +1131,7 @@ export interface EnumTypeDefinitionNodeProps {
  * EnumTypeDefinitionNode
  */
 
-export function enumType(props: EnumTypeDefinitionNodeProps): EnumTypeDefinitionNode {
+export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): EnumTypeDefinitionNode {
   return {
     kind: Kind.ENUM_TYPE_DEFINITION,
     name: nodeOrProps(nameNode, props.name),
@@ -896,17 +1141,23 @@ export function enumType(props: EnumTypeDefinitionNodeProps): EnumTypeDefinition
   }
 }
 
+export function isEnumTypeDefinitionNode(node: ASTNode): node is EnumTypeDefinitionNode {
+  return node.kind === Kind.ENUM_TYPE_DEFINITION
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * EnumValueDefinitionNode create input
  */
 
-export interface EnumValueDefinitionNodeProps {
+export interface EnumValueDefinitionNodePropsObj {
   name: NameNode | string
   description?: StringValueNode | string
   directives?: (DirectiveNode | DirectiveNodeProps)[]
 }
+
+export type EnumValueDefinitionNodeProps = EnumValueDefinitionNodePropsObj | string
 
 /**
  * EnumValueDefinitionNode
@@ -920,9 +1171,17 @@ export function enumValueDefinitionNode(
 
 export function enumValueDefinitionNode(
   props?: EnumValueDefinitionNodeProps,
-): EnumValueDefinitionNode | undefined {
-  if (!props) {
+): EnumValueDefinitionNode | string | undefined {
+  if (typeof props === 'undefined') {
     return
+  }
+
+  // shorthand
+  if (typeof props === 'string') {
+    return {
+      kind: Kind.ENUM_VALUE_DEFINITION,
+      name: nameNode(props),
+    }
   }
 
   return {
@@ -931,6 +1190,10 @@ export function enumValueDefinitionNode(
     description: nodeOrProps(stringValueNode, props.description),
     directives: nodeOrPropsArr(directiveNode, props.directives),
   }
+}
+
+export function isEnumValueDefinitionNode(node: ASTNode): node is EnumValueDefinitionNode {
+  return node.kind === Kind.ENUM_VALUE_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -962,6 +1225,12 @@ export function inputObjectTypeDefinitionNode(
   }
 }
 
+export function isInputObjectTypeDefinitionNode(
+  node: ASTNode,
+): node is InputObjectTypeDefinitionNode {
+  return node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -991,6 +1260,10 @@ export function directiveDefinitionNode(
     repeatable: props.repeatable || false,
     locations: nodeOrPropsArr(nameNode, props.locations),
   }
+}
+
+export function isDirectiveDefinitionNode(node: ASTNode): node is DirectiveDefinitionNode {
+  return node.kind === Kind.DIRECTIVE_DEFINITION
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
