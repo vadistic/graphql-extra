@@ -1,13 +1,13 @@
 {
-  "name": "graphql-ast-editor",
-  "description": "Node/typescript port of dgraph graphql server",
+  "name": "graphql-extra",
+  "description": "GraphQL AST/SDL toolkit extending `graphql/graphql-js` with extra features for programmatic SDL generation",
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
   "homepage": "https://vadistic.netlify.com",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/vadistic/dgraph-graphql-js"
+    "url": "https://github.com/vadistic/graphql-extra"
   },
   "scripts": {
     "clean": "rm -rf dist",
