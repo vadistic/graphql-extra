@@ -16,7 +16,7 @@ import {
   isInterfaceTypeDefinitionNode,
   isUnionTypeDefinitionNode,
   isEnumTypeDefinitionNode,
-} from './node'
+} from '../node'
 import {
   TypeDefinitonApi,
   ObjectTypeApi,
@@ -29,7 +29,7 @@ import {
   ScalarTypeApi,
   UnionTypeApi,
   InterfaceTypeApi,
-} from './api-type'
+} from './definition'
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -61,8 +61,8 @@ function normaliseSDLInput(sdl: SDLInput): DefinitionNode[] {
 export type TypeMap = Map<string, TypeDefinitionNode>
 export type DirectiveMap = Map<string, DirectiveDefinitionNode>
 
-export interface AstApi {
-  addSDL(sdl: SDLInput): AstApi
+export interface DocumentApi {
+  addSDL(sdl: SDLInput): DocumentApi
 
   typeMap: TypeMap
   directiveMap: DirectiveMap
@@ -74,7 +74,7 @@ export interface AstApi {
   getType(typename: string): TypeDefinitonApi
   hasType(typename: string): boolean
 
-  removeType(typename: string): AstApi
+  removeType(typename: string): DocumentApi
 
   // specifc typedefs
   getObjectType(typename: string): ObjectTypeApi
@@ -84,7 +84,7 @@ export interface AstApi {
   getScalarType(typename: string): ScalarTypeApi
 }
 
-export function astApi(this: any, sdl?: SDLInput): AstApi {
+export function documentApi(this: any, sdl?: SDLInput): DocumentApi {
   const typeMap: TypeMap = new Map()
   const directiveMap: DirectiveMap = new Map()
 

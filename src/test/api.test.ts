@@ -1,6 +1,6 @@
-import { objectTypeApi } from '../api-type'
+import { objectTypeApi } from '../api/definition'
 import { t } from '../alias'
-import { astApi } from '../api-ast'
+import { documentApi } from '../api/document'
 
 describe(`api`, () => {
   test(`astApi > parse SDL & correct this reference`, () => {
@@ -19,7 +19,7 @@ describe(`api`, () => {
       }
     `
 
-    const ast = astApi(typeDefs)
+    const ast = documentApi(typeDefs)
 
     const _this = ast.addSDL(moreTypeDefs)
 
@@ -68,7 +68,7 @@ describe(`api`, () => {
       }
     `
 
-    const ast = astApi(typeDefs)
+    const ast = documentApi(typeDefs)
 
     const obj = ast.getType('Post')
 

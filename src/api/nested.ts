@@ -9,7 +9,8 @@ import {
   ArgumentNode,
   ValueNode,
 } from 'graphql'
-import { DeepMutable, Mutable, nodeFnCloned } from './utils'
+import { DeepMutable, Mutable, nodeFnCloned } from '../utils'
+import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../node'
 import {
   NameApiMixin,
   nameApiMixin,
@@ -21,8 +22,7 @@ import {
   typeApiMixin,
   ArgumentsApiMixin,
   argumentsApiMixin,
-} from './api-mixins'
-import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from './node'
+} from './mixins'
 
 export interface FieldApi
   extends NameApiMixin<FieldApi>,

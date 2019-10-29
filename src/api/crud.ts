@@ -1,7 +1,31 @@
-import { nodeFnCloned, cloneDeep } from './utils'
+import { nodeFnCloned, cloneDeep } from '../utils'
 
 function errPrefix(action: string, key: string) {
   return action + key[0].toUpperCase() + key.slice(1).replace(/s$/, '') + '(): '
+}
+
+export interface OneToManyGetProps {
+  node: any
+  key: string
+  elementName: string
+  parentName: string
+}
+
+export function oneToManyGet<Node>({
+  node,
+  key,
+  elementName,
+  parentName,
+}: OneToManyGetProps): Node {
+  const res = (node[key] || []).find((el: any) => el.name.value === elementName)
+
+  if (!res) {
+    throw Error(
+      errPrefix('get', key) + `${key}: '${elementName}' on '${parentName}' does not exist`,
+    )
+  }
+
+  return res
 }
 
 export interface OneToManyCreateProps<Node, Props> {
@@ -89,14 +113,7 @@ export function oneToManyUpsert<Node, Props>({
   }
 }
 
-export interface OneToManyRemoveProps {
-  node: any
-  key: string
-  elementName: string
-  parentName: string
-}
-
-export function oneToManyRemove({ node, key, elementName, parentName }: OneToManyRemoveProps) {
+export function oneToManyRemove({ node, key, elementName, parentName }: OneToManyGetProps) {
   const property = (node[key] || []) as any[]
   const index = property.findIndex(el => el.name.value === elementName)
 

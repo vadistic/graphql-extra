@@ -28,8 +28,9 @@ import {
   TypeNodeProps,
   ArgumentNodeProps,
   argumentNode,
-} from './node'
-import { DeepMutable, getName } from './utils'
+} from '../node'
+import { DeepMutable, getName } from '../utils'
+import { oneToManyRemove, oneToManyUpsert, oneToManyUpdate, oneToManyCreate } from './crud'
 import {
   FieldApi,
   fieldApi,
@@ -39,8 +40,7 @@ import {
   typeApi,
   ArgumentApi,
   argumentApi,
-} from './api-nested'
-import { oneToManyRemove, oneToManyUpsert, oneToManyUpdate, oneToManyCreate } from './api-crud'
+} from './nested'
 
 // ────────────────────────────────────────────────────────────────────────────────
 

@@ -630,7 +630,7 @@ export function typeNode(type: TypeNodeProps): TypeNode {
     return nonNullTypeNode(namedType)
   }
 
-  // I've never saw nested list in GraphQL API so this is non-null lsit default
+  // I've never saw nested list in GraphQL API so this is non-null list default
   return nonNullTypeNode(listTypeNode(nonNullTypeNode(namedType)))
 }
 

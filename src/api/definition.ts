@@ -15,7 +15,7 @@ import {
   descriptionApiMixin,
   NameApiMixin,
   nameApiMixin,
-} from './api-mixins'
+} from './mixins'
 
 export type TypeDefinitonApi =
   | ObjectTypeApi

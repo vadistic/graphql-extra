@@ -133,3 +133,5 @@ export const t = {
   document: documentNode,
   selectionSet: selectionSetNode,
 }
+
+export default t

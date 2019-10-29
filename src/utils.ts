@@ -4,14 +4,14 @@ export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }
 
-//  no input no return
+//  no input => no return
 export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
   if (arg) {
     return fn(arg)
   }
 }
 
-// apply fn to array input
+// apply fn to array of inputs
 export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
   arr.map(fn)
 
@@ -19,11 +19,11 @@ export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): R
 export const nodeFn = <Props, Node>(fn: (props: Props) => Node) => (input: Node | Props): Node =>
   isAstNode<Node>(input) ? input : fn(input)
 
-/** accept array of node or props */
+/** accept array of nodes/props */
 export const nodeFnArr = <A, R>(fn: (arg: A) => R) => arrayable(nodeFn(fn))
-/** accept node or props, nullable */
+/** accept undef or node/props */
 export const nodeFnNullable = <A, R>(fn: (arg: A) => R) => nullable(nodeFn(fn))
-/** accept array of node or props, nullable */
+/** accept undef or array of nodes/props */
 export const nodeFnNullableArr = <A, R>(fn: (arg: A) => R) => nullable(arrayable(nodeFn(fn)))
 
 /* same as nodeFn but clones props to avoid mutable magic */
