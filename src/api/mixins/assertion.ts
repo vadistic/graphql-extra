@@ -140,6 +140,9 @@ export interface TypeExtensionAssertionMixinApi {
   assertUnionExt(): UnionExtApi
 }
 
+/**
+ * @category API Mixins
+ */
 export function typeExtensionAssertionApiMixin(
   node: TypeExtensionNode,
 ): TypeExtensionAssertionMixinApi {

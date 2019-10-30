@@ -1,12 +1,16 @@
 # graphql-extra
 
-> GraphQL AST/SDL toolkit extending `graphql/graphql-js` with extra features for GraphQL generation & testing
-
-## Why
+GraphQL AST/SDL toolkit extending standard `graphql/graphql-js` with extra features for code generation & testing.
 
 Inspired by code-first schema generation tools like `graphql-compose` or `graphql-nexus`, but focused on AST/SDL, instead of schema.
 
-Lightweight and flexible utils for GraphQL generation & testing. Not a framework. It's mor eor less `graphql` library extension that aim to cut boilerplate in GraphQL projects in reliable & uniform manner.
+Lightweight and flexible utils for GraphQL generation & testing. Not a framework. The aim is to cut common boilerplate from GraphQL projects in reliable & uniform manner.
+
+## Installation
+
+```ts
+yarn add graphql-extra
+```
 
 ## Features
 
@@ -18,12 +22,22 @@ Lightweight and flexible utils for GraphQL generation & testing. Not a framework
 
 ### mutation APIs
 
-- uniform `graphql-compose`-like crud methods
-- stateless & puggable - it's just higher order function on standard ASTNode
+- uniform `graphql-compose`-like crud methods for common operations
+- stateless & puggable - it's just higher order function on any `ASTNode`
 
 ### document API
 
-- top-level entry point for other api methods, that keeps whole document reference (typeMap)
+- top-level entry point for other api methods, that keeps whole document reference (`typeMap`)
+
+### and also
+
+- good typescript support
+- no deps other than `graphql`
+- tested
+
+## Docs
+
+Check [source](https://github.com/vadistic/graphql-extra/tree/master/src) or [docs](https://graphql-extra.netlify.com/globals)
 
 ## Sneak peek
 
@@ -118,9 +132,11 @@ const obj1 = ast.getType('Person')
 
 const obj2 = ast.createObjectType({...}).addDescription('...')
 
-print(ast.toDocument())
+ast.toSDLString()
 
 /*
+  ...
+
   type Person {
     id: Int!
     name: String!
@@ -130,3 +146,9 @@ print(ast.toDocument())
 */
 
 ```
+
+## TODO
+
+- [ ] finish APIs
+- [ ] more tests
+- [ ] polish docs

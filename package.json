@@ -1,6 +1,7 @@
 {
   "name": "graphql-extra",
-  "description": "GraphQL AST/SDL toolkit extending `graphql/graphql-js` with extra features for programmatic SDL generation",
+  "description": "GraphQL AST/SDL toolkit with extra features for code generation & testing",
+  "version": "0.1.0",
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
   "homepage": "https://graphql-extra.netlify.com",
@@ -14,10 +15,12 @@
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "format": "prettier --write src/** test/**",
     "build": "tsc -p tsconfig.build.json",
-    "docs": "typedoc src"
+    "docs": "typedoc src",
+    "test": "jest",
+    "cov": "jest --coverage"
   },
   "dependencies": {
-    "graphql": "^14.5.8"
+    "graphql": ">= 14.5.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.21",

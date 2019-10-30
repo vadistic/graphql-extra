@@ -1,26 +1,32 @@
-import { DocumentApi } from './document'
+import { documentApi } from './document'
 import {
-  ScalarTypeApi,
-  ObjectTypeApi,
-  InterfaceTypeApi,
-  UnionTypeApi,
-  EnumTypeApi,
-  InputTypeApi,
-  DirectiveDefinitionApi,
-  FieldDefinitionApi,
-  InputValueApi,
-  EnumValueApi,
+  directiveDefinitionApi,
+  enumExtApi,
+  enumTypeApi,
+  enumValueApi,
+  fieldDefinitionApi,
+  inputExtApi,
+  inputTypeApi,
+  inputValueApi,
+  interfaceExtApi,
+  interfaceTypeApi,
+  objectExtApi,
+  objectTypeApi,
+  scalarExtApi,
+  scalarTypeApi,
+  unionExtApi,
+  unionTypeApi,
 } from './apis'
 
 /**
  * @category Helper
  */
-export interface AstKindToApi {
+const astKindToApiMap = {
   // NAME
   // Name
 
   // DOCUMENT
-  Document: DocumentApi
+  Document: documentApi,
   // OperationDefinition:
   // VariableDefinition:
   // SelectionSet:
@@ -57,29 +63,48 @@ export interface AstKindToApi {
   // OperationTypeDefinition:
 
   // TYPE DEFINITIONS
-  ScalarTypeDefinition: ScalarTypeApi
-  ObjectTypeDefinition: ObjectTypeApi
-  InterfaceTypeDefinition: InterfaceTypeApi
-  UnionTypeDefinition: UnionTypeApi
-  EnumTypeDefinition: EnumTypeApi
-  InputObjectTypeDefinition: InputTypeApi
+  ScalarTypeDefinition: scalarTypeApi,
+  ObjectTypeDefinition: objectTypeApi,
+  InterfaceTypeDefinition: interfaceTypeApi,
+  UnionTypeDefinition: unionTypeApi,
+  EnumTypeDefinition: enumTypeApi,
+  InputObjectTypeDefinition: inputTypeApi,
 
   // TYPE FIELD DEFINITIONS
-  FieldDefinition: FieldDefinitionApi
-  InputValueDefinition: InputValueApi
-  EnumValueDefinition: EnumValueApi
+  FieldDefinition: fieldDefinitionApi,
+  InputValueDefinition: inputValueApi,
+  EnumValueDefinition: enumValueApi,
 
   // DIRECTIVE DEFINITIONS
-  DirectiveDefinition: DirectiveDefinitionApi
+  DirectiveDefinition: directiveDefinitionApi,
 
   // TYPE SYSTEM EXTENSIONS
   // SchemaExtension:
 
   // TYPE EXTENSIONS
-  // ScalarTypeExtension:
-  // ObjectTypeExtension:
-  // InterfaceTypeExtension:
-  // UnionTypeExtension:
-  // EnumTypeExtension:
-  // InputObjectTypeExtension:
+  ScalarTypeExtension: scalarExtApi,
+  ObjectTypeExtension: objectExtApi,
+  InterfaceTypeExtension: interfaceExtApi,
+  UnionTypeExtension: unionExtApi,
+  EnumTypeExtension: enumExtApi,
+  InputObjectTypeExtension: inputExtApi,
+}
+
+/**
+ * @category Helper
+ */
+export type AstKindToApiMap = typeof astKindToApiMap
+
+/**
+ * @category Helper
+ */
+export type AstKindToApiFunction<K extends keyof AstKindToApiMap> = AstKindToApiMap[K]
+
+export type AstKindToApi<K extends keyof AstKindToApiMap> = ReturnType<AstKindToApiMap[K]>
+
+/**
+ * @category Helper
+ */
+export function astKindToApi<K extends keyof AstKindToApiMap>(kind: K): AstKindToApiFunction<K> {
+  return astKindToApiMap[kind]
 }

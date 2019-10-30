@@ -9,30 +9,49 @@ import {
   TypeDefinitionNode,
   EnumTypeDefinitionNode,
   ASTKindToNode,
+  ObjectTypeDefinitionNode,
+  InterfaceTypeDefinitionNode,
+  InputObjectTypeDefinitionNode,
+  ScalarTypeDefinitionNode,
+  UnionTypeDefinitionNode,
+  TypeExtensionNode,
+  isTypeExtensionNode,
+  print,
 } from 'graphql'
 import {
   documentNode,
   EnumTypeDefinitionNodeProps,
-  enumTypeDefinitionNode,
   isDirectiveDefinitionNode,
+  astKindToFunction,
+  ObjectTypeDefinitionNodeProps,
+  InterfaceTypeDefinitionNodeProps,
+  InputObjectTypeDefinitionNodeProps,
+  ScalarTypeDefinitionNodeProps,
+  UnionTypeDefinitionNodeProps,
+  DirectiveDefinitionNodeProps,
+  directiveDefinitionNode,
 } from '../../node'
-import { getName, applyPropsCloned } from '../../utils'
+import { getName, applyPropsCloned, cloneDeep } from '../../utils'
 
 import {
   enumTypeApi,
   EnumTypeApi,
   InterfaceTypeApi,
   interfaceTypeApi,
-  objectTypeApi,
   ObjectTypeApi,
-  scalarTypeApi,
   ScalarTypeApi,
   UnionTypeApi,
-  unionTypeApi,
   inputTypeApi,
   InputTypeApi,
   TypeDefinitonApi,
+  objectTypeApi,
+  scalarTypeApi,
+  unionTypeApi,
+  TypeExtensionApi,
+  DirectiveDefinitionApi,
+  directiveDefinitionApi,
 } from '../apis'
+import { astKindToApi } from '../kind'
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -61,51 +80,81 @@ function normaliseSDLInput(sdl: SDLInput): DefinitionNode[] {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-function typeNodeToApi(node: TypeDefinitionNode) {
-  switch (node.kind) {
-    case Kind.ENUM_TYPE_DEFINITION:
-      return enumTypeApi(node)
-    case Kind.INPUT_OBJECT_TYPE_DEFINITION:
-      return inputTypeApi(node)
-    case Kind.INTERFACE_TYPE_DEFINITION:
-      return interfaceTypeApi(node)
-    case Kind.OBJECT_TYPE_DEFINITION:
-      return objectTypeApi(node)
-    case Kind.SCALAR_TYPE_DEFINITION:
-      return scalarTypeApi(node)
-    case Kind.UNION_TYPE_DEFINITION:
-      return unionTypeApi(node)
-  }
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
 export type TypeMap = Map<string, TypeDefinitionNode>
+export type ExtMap = Map<string, TypeExtensionNode>
+
 export type DirectiveMap = Map<string, DirectiveDefinitionNode>
 
 export interface DocumentApi {
   typeMap: TypeMap
+  extMap: ExtMap
   directiveMap: DirectiveMap
 
+  /** add string or DocumentNode typeDefs */
   addSDL(sdl: SDLInput): DocumentApi
+  /** print typeDefs to string */
+  toSDLString(): string
+  /** get typeDefs in DocuemntNode */
   toDocument(): DocumentNode
+  /** deep clone all definitions and return another api instance */
+  cloneInstance(): DocumentApi
 
   hasType(typename: string): boolean
   getType(typename: string): TypeDefinitonApi
   removeType(typename: string): DocumentApi
 
-  getEnumType(typename: string): EnumTypeApi
-  getInputObjectType(typename: string): InputTypeApi
-  getInterfaceType(typename: string): InterfaceTypeApi
-  getObjectType(typename: string): ObjectTypeApi
-  getScalarType(typename: string): ScalarTypeApi
-  getUnionType(typename: string): UnionTypeApi
+  hasExt(typename: string): boolean
+  getExt(typename: string): TypeExtensionApi
+  removeExt(typename: string): DocumentApi
 
+  hasDirective(directiveName: string): boolean
+  getDirective(directiveName: string): DirectiveDefinitionApi
+  removeDirective(directiveName: string): DocumentApi
+  getOrCreateDirective(
+    props: DirectiveDefinitionNode | DirectiveDefinitionNodeProps,
+  ): DirectiveDefinitionApi
+  createDirective(
+    props: DirectiveDefinitionNode | DirectiveDefinitionNodeProps,
+  ): DirectiveDefinitionApi
+
+  getScalarType(typename: string): ScalarTypeApi
+  getObjectType(typename: string): ObjectTypeApi
+  getInterfaceType(typename: string): InterfaceTypeApi
+  getUnionType(typename: string): UnionTypeApi
+  getEnumType(typename: string): EnumTypeApi
+  getInputType(typename: string): InputTypeApi
+
+  getOrCreateScalarType(
+    props: ScalarTypeDefinitionNode | ScalarTypeDefinitionNodeProps,
+  ): ScalarTypeApi
+  getOrCreateObjectType(
+    props: ObjectTypeDefinitionNode | ObjectTypeDefinitionNodeProps,
+  ): ObjectTypeApi
+  getOrCreateInterfaceType(
+    props: InterfaceTypeDefinitionNode | InterfaceTypeDefinitionNodeProps,
+  ): InterfaceTypeApi
+  getOrCreateUnionType(props: UnionTypeDefinitionNode | UnionTypeDefinitionNodeProps): UnionTypeApi
   getOrCreateEnumType(props: EnumTypeDefinitionNode | EnumTypeDefinitionNodeProps): EnumTypeApi
+  getOrCreateInputType(
+    props: InputObjectTypeDefinitionNode | InputObjectTypeDefinitionNodeProps,
+  ): InputTypeApi
+
+  createScalarType(props: ScalarTypeDefinitionNode | ScalarTypeDefinitionNodeProps): ScalarTypeApi
+  createObjectType(props: ObjectTypeDefinitionNode | ObjectTypeDefinitionNodeProps): ObjectTypeApi
+  createInterfaceType(
+    props: InterfaceTypeDefinitionNode | InterfaceTypeDefinitionNodeProps,
+  ): InterfaceTypeApi
+  createUnionType(props: UnionTypeDefinitionNode | UnionTypeDefinitionNodeProps): UnionTypeApi
+  createEnumType(props: EnumTypeDefinitionNode | EnumTypeDefinitionNodeProps): EnumTypeApi
+  createInputType(
+    props: InputObjectTypeDefinitionNode | InputObjectTypeDefinitionNodeProps,
+  ): InputTypeApi
 }
 
 export function documentApi(): DocumentApi {
   const typeMap: TypeMap = new Map()
+  const extMap: ExtMap = new Map()
+
   const directiveMap: DirectiveMap = new Map()
 
   //
@@ -130,9 +179,27 @@ export function documentApi(): DocumentApi {
     }
   }
 
+  const getExt = (typename: string): TypeExtensionNode => {
+    const node = extMap.get(typename)
+
+    if (!node) {
+      throw Error(`type extension '${typename}' does not exist`)
+    }
+
+    return node
+  }
+
+  const removeExt = (typename: string) => {
+    const isFound = extMap.delete(typename)
+
+    if (!isFound) {
+      throw Error(`type extension '${typename}' does not exist`)
+    }
+  }
+
   const getNodeOfKind = <K extends TypeDefinitionNode['kind']>(
-    typename: string,
     kind: K,
+    typename: string,
   ): ASTKindToNode[K] => {
     const node = getNode(typename)
 
@@ -144,12 +211,13 @@ export function documentApi(): DocumentApi {
   }
 
   const createNodeOfKind = <P, K extends TypeDefinitionNode['kind']>(
-    props: P,
     kind: K,
-    onCreate: (props: P) => ASTKindToNode[K],
+    props: P,
   ): ASTKindToNode[K] => {
     const typename = getName(props)
-    const node = applyPropsCloned(onCreate, props)
+    const createFn = astKindToFunction(kind)
+    // FIXME: typings
+    const node = applyPropsCloned(createFn as () => any, props) as ASTKindToNode[K]
 
     if (node.kind !== kind) {
       throw Error(`creating '${kind}', but provided node '${typename}' is '${node.kind}'`)
@@ -165,16 +233,15 @@ export function documentApi(): DocumentApi {
   }
 
   const getOrCreateNodeOfKind = <P, K extends TypeDefinitionNode['kind']>(
-    props: P,
     kind: K,
-    onCreate: (props: P) => ASTKindToNode[K],
+    props: P,
   ): ASTKindToNode[K] => {
     const typename = getName(props)
 
     if (typeMap.has(typename)) {
-      return getNodeOfKind(typename, kind)
+      return getNodeOfKind(kind, typename)
     } else {
-      return createNodeOfKind(props, kind, onCreate)
+      return createNodeOfKind(kind, props)
     }
   }
 
@@ -184,6 +251,7 @@ export function documentApi(): DocumentApi {
 
   return {
     typeMap,
+    extMap,
     directiveMap,
 
     addSDL(sdl) {
@@ -200,6 +268,11 @@ export function documentApi(): DocumentApi {
           continue
         }
 
+        if (isTypeExtensionNode(node)) {
+          extMap.set(node.name.value, node)
+          continue
+        }
+
         throw Error(`invalid definition \n ${JSON.stringify(node, null, 2)}`)
       }
 
@@ -207,7 +280,16 @@ export function documentApi(): DocumentApi {
     },
 
     toDocument() {
-      return documentNode([...directiveMap.values(), ...typeMap.values()])
+      return documentNode([...directiveMap.values(), ...typeMap.values(), ...extMap.values()])
+    },
+
+    toSDLString() {
+      return print(this.toDocument())
+    },
+
+    // TODO: optimise a bit, maybe clone maps elements to awoid addSDL loops
+    cloneInstance() {
+      return documentApi().addSDL(cloneDeep(this.toDocument()))
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -218,8 +300,10 @@ export function documentApi(): DocumentApi {
 
     getType(typename) {
       const node = getNode(typename)
+      const apiFn = astKindToApi(node.kind)
 
-      return typeNodeToApi(node)
+      // FIXME: typings
+      return apiFn(node as any)
     },
 
     removeType(typename) {
@@ -229,36 +313,188 @@ export function documentApi(): DocumentApi {
 
     // ─────────────────────────────────────────────────────────────────
 
-    getEnumType(typename) {
-      return enumTypeApi(getNodeOfKind(typename, Kind.ENUM_TYPE_DEFINITION))
+    hasExt(typename) {
+      return extMap.has(typename)
     },
 
-    getInputObjectType(typename) {
-      return inputTypeApi(getNodeOfKind(typename, Kind.INPUT_OBJECT_TYPE_DEFINITION))
+    getExt(typename) {
+      const node = getExt(typename)
+      const apiFn = astKindToApi(node.kind)
+
+      // FIXME: typings
+      return apiFn(node as any)
     },
 
-    getInterfaceType(typename) {
-      return interfaceTypeApi(getNodeOfKind(typename, Kind.INTERFACE_TYPE_DEFINITION))
-    },
-
-    getObjectType(typename) {
-      return this.getType(typename).assertObjectType()
-    },
-
-    getScalarType(typename) {
-      return this.getType(typename).assertScalarType()
-    },
-
-    getUnionType(typename) {
-      return this.getType(typename).assertUnionType()
+    removeExt(typename) {
+      removeExt(typename)
+      return this
     },
 
     // ─────────────────────────────────────────────────────────────────
 
-    getOrCreateEnumType(props) {
-      const node = getOrCreateNodeOfKind(props, Kind.ENUM_TYPE_DEFINITION, enumTypeDefinitionNode)
+    hasDirective(directiveName) {
+      return directiveMap.has(directiveName)
+    },
+
+    getDirective(directiveName) {
+      const node = directiveMap.get(directiveName)
+
+      if (!node) {
+        throw Error(`directive '${directiveName}' does not exist`)
+      }
+
+      return directiveDefinitionApi(node)
+    },
+
+    removeDirective(directiveName) {
+      const isFound = extMap.delete(directiveName)
+
+      if (!isFound) {
+        throw Error(`directive '${directiveName}' does not exist`)
+      }
+
+      return this as any
+    },
+
+    createDirective(props) {
+      const directiveName = getName(props)
+      const node = applyPropsCloned(directiveDefinitionNode, props)
+
+      if (directiveMap.has(directiveName)) {
+        throw Error(`directive '${directiveName}' already exists`)
+      }
+
+      if (node.kind !== Kind.DIRECTIVE_DEFINITION) {
+        throw Error(`creating Directive '${directiveName}' but provided '${node.kind}'`)
+      }
+
+      directiveMap.set(directiveName, node)
+
+      return directiveDefinitionApi(node)
+    },
+
+    getOrCreateDirective(props) {
+      const directiveName = getName(props)
+
+      if (directiveMap.has(directiveName)) {
+        return this.getDirective(directiveName)
+      } else {
+        return this.createDirective(props)
+      }
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+
+    getScalarType(typename) {
+      const node = getNodeOfKind(Kind.SCALAR_TYPE_DEFINITION, typename)
+
+      return scalarTypeApi(node)
+    },
+
+    getObjectType(typename) {
+      const node = getNodeOfKind(Kind.OBJECT_TYPE_DEFINITION, typename)
+
+      return objectTypeApi(node)
+    },
+
+    getInterfaceType(typename) {
+      const node = getNodeOfKind(Kind.INTERFACE_TYPE_DEFINITION, typename)
+
+      return interfaceTypeApi(node)
+    },
+
+    getUnionType(typename) {
+      const node = getNodeOfKind(Kind.UNION_TYPE_DEFINITION, typename)
+
+      return unionTypeApi(node)
+    },
+
+    getEnumType(typename) {
+      const node = getNodeOfKind(Kind.ENUM_TYPE_DEFINITION, typename)
 
       return enumTypeApi(node)
+    },
+
+    getInputType(typename) {
+      const node = getNodeOfKind(Kind.INPUT_OBJECT_TYPE_DEFINITION, typename)
+
+      return inputTypeApi(node)
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+
+    getOrCreateScalarType(props) {
+      const node = getOrCreateNodeOfKind(Kind.SCALAR_TYPE_DEFINITION, props)
+
+      return scalarTypeApi(node)
+    },
+
+    getOrCreateObjectType(props) {
+      const node = getOrCreateNodeOfKind(Kind.OBJECT_TYPE_DEFINITION, props)
+
+      return objectTypeApi(node)
+    },
+
+    getOrCreateInterfaceType(props) {
+      const node = getOrCreateNodeOfKind(Kind.INTERFACE_TYPE_DEFINITION, props)
+
+      return interfaceTypeApi(node)
+    },
+
+    getOrCreateUnionType(props) {
+      const node = getOrCreateNodeOfKind(Kind.UNION_TYPE_DEFINITION, props)
+
+      return unionTypeApi(node)
+    },
+
+    getOrCreateEnumType(props) {
+      const node = getOrCreateNodeOfKind(Kind.ENUM_TYPE_DEFINITION, props)
+
+      return enumTypeApi(node)
+    },
+
+    getOrCreateInputType(props) {
+      const node = getOrCreateNodeOfKind(Kind.INPUT_OBJECT_TYPE_DEFINITION, props)
+
+      return inputTypeApi(node)
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+
+    createScalarType(props) {
+      const node = createNodeOfKind(Kind.SCALAR_TYPE_DEFINITION, props)
+
+      return scalarTypeApi(node)
+    },
+
+    createObjectType(props) {
+      const node = createNodeOfKind(Kind.OBJECT_TYPE_DEFINITION, props)
+
+      return objectTypeApi(node)
+    },
+
+    createInterfaceType(props) {
+      const node = createNodeOfKind(Kind.INTERFACE_TYPE_DEFINITION, props)
+
+      return interfaceTypeApi(node)
+    },
+
+    createUnionType(props) {
+      const node = createNodeOfKind(Kind.UNION_TYPE_DEFINITION, props)
+
+      return unionTypeApi(node)
+    },
+
+    createEnumType(props) {
+      const node = createNodeOfKind(Kind.ENUM_TYPE_DEFINITION, props)
+
+      return enumTypeApi(node)
+    },
+
+    createInputType(props) {
+      const node = createNodeOfKind(Kind.INPUT_OBJECT_TYPE_DEFINITION, props)
+
+      return inputTypeApi(node)
     },
   }
 }

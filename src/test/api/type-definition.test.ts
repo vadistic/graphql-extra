@@ -1,56 +1,8 @@
-import { t } from '../node'
-import { documentApi, objectTypeApi } from '../api'
-import { getFirstObjectType } from './test-utils'
+import { t } from '../../node'
+import { objectTypeApi } from '../../api'
+import { getFirstObjectType } from '../test-utils'
 
-describe(`api`, () => {
-  test(`documentApi > parse SDL & correct this reference`, () => {
-    const typeDefs = /* GraphQL */ `
-      type Person {
-        id: ID!
-        name: String!
-      }
-    `
-
-    const moreTypeDefs = /* GraphQL */ `
-      type Post {
-        id: ID!
-        body: String!
-        authot: Person!
-      }
-    `
-
-    const doc = documentApi()
-
-    const _this = doc.addSDL(typeDefs).addSDL(moreTypeDefs)
-
-    expect(Object.keys(_this)).toContain('hasType')
-  })
-
-  test(`documentApi > type guards and assertions`, () => {
-    const typeDefs = /* GraphQL */ `
-      type Person {
-        id: ID!
-        name: String!
-      }
-
-      type Post {
-        id: ID!
-        body: String!
-        authot: Person!
-      }
-    `
-
-    const ast = documentApi().addSDL(typeDefs)
-
-    const obj = ast.getType('Post')
-
-    expect(obj.isObjectType()).toBeTruthy()
-    expect(obj.isEnumType()).toBeFalsy()
-
-    expect(() => obj.assertEnumType().setDescription('abc')).toThrowError(`ObjectTypeDefinition`)
-    expect(() => ast.getEnumType('Post').setDescription('asd')).toThrowError(`ObjectTypeDefinition`)
-  })
-
+describe(`api > type-definition`, () => {
   test(`objectTypeApi > mutate node & correct this reference`, () => {
     const fix = /* GraphQL */ `
       type MyObject {
