@@ -6,7 +6,7 @@
 
 Inspired by code-first schema generation tools like `graphql-compose` or `graphql-nexus`, but focused on AST/SDL, instead of schema.
 
-Offers lightweight and flexible utils for GraphQL generation & testing. Not a framework. It's `graphql` library extension thats aim to cut boilerplate in GraphQL projects in reliable & uniform manner.
+Lightweight and flexible utils for GraphQL generation & testing. Not a framework. It's mor eor less `graphql` library extension that aim to cut boilerplate in GraphQL projects in reliable & uniform manner.
 
 ## Features
 

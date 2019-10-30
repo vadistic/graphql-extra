@@ -3,7 +3,7 @@
   "description": "GraphQL AST/SDL toolkit extending `graphql/graphql-js` with extra features for programmatic SDL generation",
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
-  "homepage": "https://vadistic.netlify.com",
+  "homepage": "https://graphql-extra.netlify.com",
   "private": false,
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "format": "prettier --write src/** test/**",
     "build": "tsc -p tsconfig.build.json",
-    "docs": "typedoc"
+    "docs": "typedoc src"
   },
   "dependencies": {
     "graphql": "^14.5.8"
@@ -27,8 +27,6 @@
     "eslint": "^6.6.0",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
     "typedoc": "^0.15.0",
