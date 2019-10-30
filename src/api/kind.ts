@@ -21,7 +21,7 @@ import {
 /**
  * @category Helper
  */
-const astKindToApiMap = {
+export const astKindToApiMap = {
   // NAME
   // Name
 

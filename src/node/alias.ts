@@ -11,21 +11,21 @@ export type RootTypeDefinitionProps = Omit<AST.ObjectTypeDefinitionNodeProps, 'n
 /**
  * @category AST Alias
  */
-export function queryType(props: RootTypeDefinitionProps): ObjectTypeDefinitionNode {
+export const queryType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => {
   return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 }
 
 /**
  * @category AST Alias
  */
-export function mutationType(props: RootTypeDefinitionProps): ObjectTypeDefinitionNode {
+export const mutationType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => {
   return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 }
 
 /**
  * @category AST Alias
  */
-export function subscriptionType(props: RootTypeDefinitionProps): ObjectTypeDefinitionNode {
+export const subscriptionType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => {
   return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 }
 
@@ -70,6 +70,9 @@ export const arg = AST.argumentNode
 
 // FRAGMENTS
 
+/**
+ * @category AST Alias
+ */
 export const fragmentSpread = AST.fragmentSpreadNode
 
 /**
