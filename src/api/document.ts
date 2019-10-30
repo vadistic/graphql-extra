@@ -83,16 +83,14 @@ export type TypeMap = Map<string, TypeDefinitionNode>
 export type DirectiveMap = Map<string, DirectiveDefinitionNode>
 
 export interface DocumentApi {
-  addSDL(sdl: SDLInput): DocumentApi
-
   typeMap: TypeMap
   directiveMap: DirectiveMap
 
+  addSDL(sdl: SDLInput): DocumentApi
   toDocument(): DocumentNode
 
   hasType(typename: string): boolean
   getType(typename: string): TypeDefinitonApi
-
   removeType(typename: string): DocumentApi
 
   getEnumType(typename: string): EnumTypeApi
@@ -108,6 +106,10 @@ export interface DocumentApi {
 export function documentApi(): DocumentApi {
   const typeMap: TypeMap = new Map()
   const directiveMap: DirectiveMap = new Map()
+
+  //
+  // ─── PRIVATE ────────────────────────────────────────────────────────────────────
+  //
 
   const getNode = (typename: string): TypeDefinitionNode => {
     const node = typeMap.get(typename)
@@ -175,6 +177,10 @@ export function documentApi(): DocumentApi {
     }
   }
 
+  //
+  // ─── PUBLIC ─────────────────────────────────────────────────────────────────────
+  //
+
   return {
     typeMap,
     directiveMap,
@@ -203,6 +209,8 @@ export function documentApi(): DocumentApi {
       return documentNode([...directiveMap.values(), ...typeMap.values()])
     },
 
+    // ─────────────────────────────────────────────────────────────────
+
     hasType(typename) {
       return typeMap.has(typename)
     },
@@ -217,6 +225,8 @@ export function documentApi(): DocumentApi {
       removeNode(typename)
       return this
     },
+
+    // ─────────────────────────────────────────────────────────────────
 
     getEnumType(typename) {
       return enumTypeApi(getNodeOfKind(typename, Kind.ENUM_TYPE_DEFINITION))
@@ -241,6 +251,8 @@ export function documentApi(): DocumentApi {
     getUnionType(typename) {
       return this.getType(typename).assertUnionType()
     },
+
+    // ─────────────────────────────────────────────────────────────────
 
     getOrCreateEnumType(props) {
       const node = getOrCreateNodeOfKind(props, Kind.ENUM_TYPE_DEFINITION, enumTypeDefinitionNode)

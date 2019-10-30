@@ -1,35 +1,35 @@
 # graphql-extra
 
-> GraphQL AST/SDL toolkit extending `graphql/graphql-js` with extra features for programmatic GraphQL generation
+> GraphQL AST/SDL toolkit extending `graphql/graphql-js` with extra features for GraphQL generation & testing
 
 ## Why
 
 Inspired by code-first schema generation tools like `graphql-compose` or `graphql-nexus`, but focused on AST/SDL, instead of schema.
 
-I hope this lib offers lightweight and flexible utils for GraphQL generation. It's dead-simple boilerplate extending standard `graphql` implementation, not a framework. The goal is to cut repetitive code from other projects in uniform way.
+Offers lightweight and flexible utils for GraphQL generation & testing. Not a framework. It's `graphql` library extension thats aim to cut boilerplate in GraphQL projects in reliable & uniform manner.
 
 ## Features
 
-### creation
+### creation functions
 
-- neat create functions for all ast nodes
-- allows mixing simplified props & ast nodes on all nesting levels
-- exports aliased function names for `graphql-nexus`-like experience
+- neat create functions for all kinds of ast nodes
+- mix simplified props & ast nodes on all nesting levels
+- aliased export for `graphql-nexus`-like experience
 
-### manipulation
+### manipulation APIs
 
-- uniform `graphql-compose`-like methods
-- stateless & puggable - it's just higher order function on ast node
+- uniform `graphql-compose`-like crud methods
+- stateless & puggable - it's just higher order function on stnadard ASTNode
 
-### document
+### document API
 
-- top-level entry point for other api methods, that also keeps whole document reference (typeMap)
+- top-level entry point for other api methods, that keeps whole document reference (typeMap)
 
 ## Sneak peek
 
-### creation
+### creation functions
 
-Create any AST Node with helper function
+Create any ASTNode with helper function
 
 ```ts
 import { namedtypeNode } from 'graphql-extra/node'
@@ -37,29 +37,29 @@ import { namedtypeNode } from 'graphql-extra/node'
 const named: NamedTypenode = namedTypeNode('Int')
 ```
 
-`graphql-nexus`-like expereince whith aliased function names
+`graphql-nexus`-like experience whith aliased function names
 
 ```ts
-import t from 'graphql-extra/alias'
+import { t } from 'graphql-extra/node'
 
 const node: ObjectTypeDefinitionNode = t.objectType({
   name: 'MyObject',
   description: 'My object',
   interfaces: [
-    // string
+    // accept string
     'MyInterface',
     // or ast node
     t.type.named('Other'),
   ],
   fields: [
-    // props object
+    // accept props object
     {
       name: 'myField',
       description: 'my description',
       // nested ast node
       type: t.type.int(),
     },
-    // ast node
+    // or ast node
     t.fieldDef({
       name: 'myOtherField',
       // entirely nestable
@@ -69,9 +69,9 @@ const node: ObjectTypeDefinitionNode = t.objectType({
 })
 ```
 
-### manipulation
+### manipulation APIs
 
-Add crud methods to any node.
+Add crud methods to (most) ASTNodes
 
 ```ts
 import { objectTypeApi } from 'graphql-extra/api'
@@ -90,7 +90,7 @@ if(node === obj.node) {
 
 ### document
 
-Top-level entry point/ reference for whole DocumentNode
+Top-level entry point/ reference for all typeDefs
 
 ```ts
 import { documentApi } from 'graphql-extra/api'
@@ -110,12 +110,23 @@ const moreTypeDefs = /* GraphQL */ `
   }
 `
 
-const ast = documentApi(typeDefs).addSDL(moreTypeDefs)
+const ast = documentApi().addSDL(typeDefs).addSDL(moreTypeDefs)
 
-const object = ast.getType('Person')
+const obj1 = ast.getType('Person')
+                .getField('id')
+                .setTypename('Int')
 
-const anotherObject = ast.createObjectType({...}).addDescription('...')
+const obj2 = ast.createObjectType({...}).addDescription('...')
 
-const doc = ast.toDocument()
+print(ast.toDocument())
+
+/*
+  type Person {
+    id: Int!
+    name: String!
+  }
+
+  ...
+*/
 
 ```

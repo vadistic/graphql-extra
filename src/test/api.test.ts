@@ -96,17 +96,14 @@ describe(`api`, () => {
 
     const obj = objectTypeApi(node)
 
-    const type = obj
-      .getField('myField')
-      .getType()
-      .setType('Int!')
+    const field = obj.getField('myField').setTypename('Int')
 
     const typePrim = obj.getField('myField').getType()
 
     expect(typePrim.getTypename()).toBe('Int')
     expect(typePrim.isNonNull()).toBeTruthy()
 
-    type.setNonNull(false)
+    field.setNonNullType(false)
 
     expect(typePrim.isNonNull()).toBeFalsy()
   })
