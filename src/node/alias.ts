@@ -2,7 +2,7 @@ import { ObjectTypeDefinitionNode, NameNode } from 'graphql'
 import * as AST from './ast'
 
 export type RootTypeDefinitionProps = Omit<AST.ObjectTypeDefinitionNodeProps, 'name'> & {
-  name?: NameNode | string
+  name?: NameNode | AST.NameNodeProps
 }
 
 export function queryType(props: RootTypeDefinitionProps): ObjectTypeDefinitionNode {
@@ -17,24 +17,23 @@ export function subscriptionType(props: RootTypeDefinitionProps): ObjectTypeDefi
   return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 }
 
-export const type = {
-  named: AST.namedTypeNode,
-  list: AST.listTypeNode,
-  nonNull: AST.nonNullTypeNode,
+// NAME
+export const name = AST.nameNode
 
-  // build-ins
-  id: () => AST.namedTypeNode('ID'),
-  int: () => AST.namedTypeNode('Int'),
-  float: () => AST.namedTypeNode('Float'),
-  bool: () => AST.namedTypeNode('Boolean'),
-  string: () => AST.namedTypeNode('String'),
+// DOCUMENT
+export const document = AST.documentNode
+export const operation = AST.operationDefinitionNode
+export const variable = AST.variableDefinitionNode
+export const selections = AST.selectionSetNode
+export const field = AST.fieldNode
+export const arg = AST.argumentNode
 
-  // extras
-  json: () => AST.namedTypeNode('Json'),
-  date: () => AST.namedTypeNode('Date'),
-  dateTime: () => AST.namedTypeNode('DateTime'),
-}
+// FRAGMENTS
+export const fragmentSpread = AST.fragmentSpreadNode
+export const inlineFragment = AST.inlineFragmentNode
+export const fragmentDef = AST.fragmentDefinitionNode
 
+// VALUES
 export const value = {
   variable: AST.variableNode,
   int: AST.intValueNode,
@@ -48,36 +47,56 @@ export const value = {
   objectField: AST.objectFieldNode,
 }
 
+// DIRECTIVES
+export const directive = AST.directiveNode
+
+// TYPES
+
+export const type = {
+  named: AST.namedTypeNode,
+  list: AST.listTypeNode,
+  nonNull: AST.nonNullTypeNode,
+
+  // build-ins
+  id: () => AST.namedTypeNode('ID'),
+  int: () => AST.namedTypeNode('Int'),
+  float: () => AST.namedTypeNode('Float'),
+  bool: () => AST.namedTypeNode('Boolean'),
+  string: () => AST.namedTypeNode('String'),
+
+  // common extras
+  json: () => AST.namedTypeNode('JSON'),
+  date: () => AST.namedTypeNode('Date'),
+  dateTime: () => AST.namedTypeNode('DateTime'),
+}
+
+// TYPE SYSTEM DEFINITIONS
+export const schemaDef = AST.schemaDefinitionNode
+export const operationType = AST.operationTypeDefinitionNode
+
+/// TYPE DEFINITIONS
+export const scalarType = AST.scalarTypeDefinitionNode
 export const objectType = AST.objectTypeDefinitionNode
 export const interfaceType = AST.interfaceTypeDefinitionNode
 export const unionType = AST.unionTypeDefinitionNode
-export const scalarType = AST.scalarTypeDefinitionNode
 export const enumType = AST.enumTypeDefinitionNode
-export const inputObjectType = AST.inputObjectTypeDefinitionNode
+export const inputType = AST.inputObjectTypeDefinitionNode
 
-// directive
-export const directiveDef = AST.directiveDefinitionNode
-
-// fields
+// TYPE FIELD DEFINITIONS
 export const fieldDef = AST.fieldDefinitionNode
 export const inputVal = AST.inputValueDefinitionNode
+export const enumVal = AST.enumValueDefinitionNode
 
-// schema
-export const schema = AST.schemaDefinitionNode
-export const operationType = AST.operationTypeDefinitionNode
+// DIRECTIVE DEFINITIONS
+export const directiveDef = AST.directiveDefinitionNode
 
-// executable
-export const operation = AST.operationDefinitionNode
-export const fragment = AST.fragmentDefinitionNode
-export const fragmentSpread = AST.fragmentSpreadNode
-export const inlineFragment = AST.inlineFragmentNode
-export const field = AST.fieldNode
-export const variable = AST.variableDefinitionNode
+// TYPE SYSTEM EXTENSIONS
+export const schemaExt = AST.schemaExtensionNode
 
-// other
-export const enumValue = AST.enumValueDefinitionNode
-export const arg = AST.argumentNode
-export const directive = AST.directiveNode
-export const name = AST.nameNode
-export const document = AST.documentNode
-export const selectionSet = AST.selectionSetNode
+// TYPE EXTENSIONS
+export const objectExt = AST.objectTypeExtensionNode
+export const interfaceExt = AST.interfaceTypeExtensionNode
+export const unionExt = AST.unionTypeExtensionNode
+export const scalarExt = AST.scalarTypeExtensionNode
+export const enumExt = AST.enumTypeExtensionNode
+export const inputObjectExt = AST.inputObjectTypeExtensionNode

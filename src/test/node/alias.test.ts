@@ -128,7 +128,7 @@ describe(`node > alias`, () => {
         // shothand value
         'B',
         // ast value
-        t.enumValue({ name: 'C', directives: [{ name: 'depreciated' }] }),
+        t.enumVal({ name: 'C', directives: [{ name: 'depreciated' }] }),
       ],
     })
 
@@ -143,9 +143,9 @@ describe(`node > alias`, () => {
     `)
   })
 
-  test(`inputObjectType`, () => {
+  test(`inputType`, () => {
     // props input
-    const res = t.inputObjectType({
+    const res = t.inputType({
       name: 'MyInput',
       description: 'My input',
       fields: [

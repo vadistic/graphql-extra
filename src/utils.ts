@@ -1,11 +1,5 @@
 import { ASTNode, Kind } from 'graphql'
 
-//
-// ──────────────────────────────────────────────────  ──────────
-//   :::::: U T I L S : :  :   :    :     :        :          :
-// ────────────────────────────────────────────────────────────
-//
-
 export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }

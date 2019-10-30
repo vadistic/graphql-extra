@@ -170,12 +170,6 @@ export function astKindToFunction<K extends KindEnum>(kind: K): AstKindToFunctio
     case Kind.OBJECT_TYPE_DEFINITION:
       return AST.objectTypeDefinitionNode as AstKindToFunction[K]
 
-    case Kind.FIELD_DEFINITION:
-      return AST.fieldDefinitionNode as AstKindToFunction[K]
-
-    case Kind.INPUT_VALUE_DEFINITION:
-      return AST.inputValueDefinitionNode as AstKindToFunction[K]
-
     case Kind.INTERFACE_TYPE_DEFINITION:
       return AST.interfaceTypeDefinitionNode as AstKindToFunction[K]
 
@@ -185,11 +179,19 @@ export function astKindToFunction<K extends KindEnum>(kind: K): AstKindToFunctio
     case Kind.ENUM_TYPE_DEFINITION:
       return AST.enumTypeDefinitionNode as AstKindToFunction[K]
 
-    case Kind.ENUM_VALUE_DEFINITION:
-      return AST.enumValueDefinitionNode as AstKindToFunction[K]
-
     case Kind.INPUT_OBJECT_TYPE_DEFINITION:
       return AST.inputObjectTypeDefinitionNode as AstKindToFunction[K]
+
+    // TYPE FIELD DEFINITIONS
+
+    case Kind.FIELD_DEFINITION:
+      return AST.fieldDefinitionNode as AstKindToFunction[K]
+
+    case Kind.INPUT_VALUE_DEFINITION:
+      return AST.inputValueDefinitionNode as AstKindToFunction[K]
+
+    case Kind.ENUM_VALUE_DEFINITION:
+      return AST.enumValueDefinitionNode as AstKindToFunction[K]
 
     // DIRECTIVE DEFINITIONS
 

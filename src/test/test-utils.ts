@@ -1,5 +1,14 @@
 import { KindEnum, Kind, ASTKindToNode, parse, ASTNode } from 'graphql'
 
+// just shortcut for jest
+export function expectEqual(a: any, b: any) {
+  if (typeof a === 'string' && typeof b === 'string') {
+    expect(normaliseString(a)).toEqual(normaliseString(b))
+  } else {
+    expect(stripEmptyKeysAndLoc(a)).toEqual(stripEmptyKeysAndLoc(b))
+  }
+}
+
 export function normaliseString(input: string) {
   return input.replace(/\s/, '')
 }
@@ -28,14 +37,7 @@ function stripEmptyKeysAndLoc(input: any): any {
   return input
 }
 
-// just shortcut
-export function expectEqual(a: any, b: any) {
-  if (typeof a === 'string' && typeof b === 'string') {
-    expect(normaliseString(a)).toEqual(normaliseString(b))
-  } else {
-    expect(stripEmptyKeysAndLoc(a)).toEqual(stripEmptyKeysAndLoc(b))
-  }
-}
+// ────────────────────────────────────────────────────────────────────────────────
 
 const getFirstNodeOfKind = <K extends KindEnum>(kind: K) => (
   input: ASTNode,
