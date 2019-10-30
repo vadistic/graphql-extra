@@ -12,6 +12,9 @@ import {
   EnumValueApi,
 } from './apis'
 
+/**
+ * @category Helper
+ */
 export interface AstKindToApi {
   // NAME
   // Name

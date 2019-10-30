@@ -16,10 +16,10 @@ Offers lightweight and flexible utils for GraphQL generation & testing. Not a fr
 - mix simplified props & ast nodes on all nesting levels
 - aliased export for `graphql-nexus`-like experience
 
-### manipulation APIs
+### mutation APIs
 
 - uniform `graphql-compose`-like crud methods
-- stateless & puggable - it's just higher order function on stnadard ASTNode
+- stateless & puggable - it's just higher order function on standard ASTNode
 
 ### document API
 

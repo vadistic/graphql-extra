@@ -26,8 +26,11 @@ import {
   argumentsApiMixin,
 } from '../mixins'
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `FieldDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface FieldDefinitionApi
   extends NameApiMixin<FieldDefinitionApi>,
     DescriptionApiMixin<FieldDefinitionApi>,
@@ -39,6 +42,11 @@ export interface FieldDefinitionApi
   toInputValue(): InputValueApi
 }
 
+/**
+ * create API for GraphQL `FieldDefinitionNode`
+ *
+ * @category API Public
+ */
 export function fieldDefinitionApi(node: FieldDefinitionNode): FieldDefinitionApi {
   return {
     node,
@@ -57,8 +65,11 @@ export function fieldDefinitionApi(node: FieldDefinitionNode): FieldDefinitionAp
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `InputValueDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface InputValueApi
   extends NameApiMixin<InputValueApi>,
     DescriptionApiMixin<InputValueApi>,
@@ -72,6 +83,11 @@ export interface InputValueApi
   setDefaultValue(value: ValueNode): InputValueApi
 }
 
+/**
+ * create API for GraphQL `InputValueDefinitionNode`
+ *
+ * @category API Public
+ */
 export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
   const _node = node as Mutable<InputValueDefinitionNode>
 
@@ -101,8 +117,11 @@ export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `TypeNode`
+ *
+ * @category API Public
+ */
 export interface TypeApi {
   node: TypeNode
 
@@ -119,6 +138,11 @@ export interface TypeApi {
   setList(value?: boolean): TypeApi
 }
 
+/**
+ * create API for GraphQL `TypeNode`
+ *
+ * @category API Public
+ */
 export function typeApi(node: TypeNode): TypeApi {
   const _node = node as DeepMutable<TypeNode>
 
@@ -214,8 +238,11 @@ export function typeApi(node: TypeNode): TypeApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `EnumValueDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface EnumValueApi
   extends NameApiMixin<EnumValueApi>,
     DescriptionApiMixin<EnumValueApi>,
@@ -223,6 +250,11 @@ export interface EnumValueApi
   node: EnumValueDefinitionNode
 }
 
+/**
+ * create API for GraphQL `EnumValueDefinitionNode`
+ *
+ * @category API Public
+ */
 export function enumValueApi(node: EnumValueDefinitionNode): EnumValueApi {
   return {
     node,
@@ -233,12 +265,20 @@ export function enumValueApi(node: EnumValueDefinitionNode): EnumValueApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `DirectiveNode`
+ *
+ * @category API Public
+ */
 export interface DirectiveApi extends NameApiMixin<DirectiveApi>, ArgumentsApiMixin<DirectiveApi> {
   node: DirectiveNode
 }
 
+/**
+ * create API for GraphQL `DirectiveNode`
+ *
+ * @category API Public
+ */
 export function directiveApi(node: DirectiveNode): DirectiveApi {
   return {
     node,
@@ -248,8 +288,11 @@ export function directiveApi(node: DirectiveNode): DirectiveApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `ArgumentNode`
+ *
+ * @category API Public
+ */
 export interface ArgumentApi extends NameApiMixin<ArgumentApi> {
   node: ArgumentNode
 
@@ -257,6 +300,11 @@ export interface ArgumentApi extends NameApiMixin<ArgumentApi> {
   setValue(value: ValueNode): ArgumentApi
 }
 
+/**
+ *  create API for GraphQL `ArgumentNode`
+ *
+ * @category API Public
+ */
 export function argumentApi(node: ArgumentNode): ArgumentApi {
   return {
     node,

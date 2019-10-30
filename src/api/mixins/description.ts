@@ -12,6 +12,9 @@ import { stringValueNode } from '../../node'
 // ─── DESCRIPTION API MIXIN ──────────────────────────────────────────────────────
 //
 
+/**
+ * @category API Mixins
+ */
 export type DescriptionApiMixinCompatibleNode =
   | TypeDefinitionNode
   | DirectiveDefinitionNode
@@ -19,12 +22,18 @@ export type DescriptionApiMixinCompatibleNode =
   | InputValueDefinitionNode
   | EnumValueDefinitionNode
 
+/**
+ * @category API Mixins
+ */
 export interface DescriptionApiMixin<This> {
   hasDescription(): boolean
   getDescription(): string | undefined
   setDescription(value?: string): This
 }
 
+/**
+ * @category API Mixins
+ */
 export function descriptionApiMixin<This>(
   node: DescriptionApiMixinCompatibleNode,
 ): DescriptionApiMixin<This> {

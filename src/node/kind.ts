@@ -1,6 +1,9 @@
 import { Kind, KindEnum } from 'graphql'
 import * as AST from './ast'
 
+/**
+ * @category Helper
+ */
 export interface AstKindToFunction {
   // NAME
   Name: typeof AST.nameNode
@@ -70,6 +73,9 @@ export interface AstKindToFunction {
   InputObjectTypeExtension: typeof AST.inputObjectTypeExtensionNode
 }
 
+/**
+ * @category Helper
+ */
 export function astKindToFunction<K extends KindEnum>(kind: K): AstKindToFunction[K] {
   switch (kind) {
     // NAME

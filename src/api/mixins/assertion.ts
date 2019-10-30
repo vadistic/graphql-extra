@@ -14,14 +14,9 @@ import {
   UnionExtApi,
 } from '../apis'
 
-export type TypeDefinitonApi =
-  | EnumTypeApi
-  | InputTypeApi
-  | InterfaceTypeApi
-  | ObjectTypeApi
-  | ScalarTypeApi
-  | UnionTypeApi
-
+/**
+ * @category API Mixins
+ */
 export interface TypeDefinitionAssertionMixinApi {
   // guards
   isEnumType(): this is EnumTypeApi
@@ -39,6 +34,9 @@ export interface TypeDefinitionAssertionMixinApi {
   assertUnionType(): UnionTypeApi
 }
 
+/**
+ * @category API Mixins
+ */
 export function typeDefinitionAssertionApiMixin(
   node: TypeDefinitionNode,
 ): TypeDefinitionAssertionMixinApi {
@@ -122,14 +120,9 @@ export function typeDefinitionAssertionApiMixin(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export type TypeExtensionApi =
-  | EnumTypeApi
-  | InputTypeApi
-  | InterfaceTypeApi
-  | ObjectTypeApi
-  | ScalarTypeApi
-  | UnionTypeApi
-
+/**
+ * @category API Mixins
+ */
 export interface TypeExtensionAssertionMixinApi {
   // guards
   isEnumExt(): this is EnumExtApi

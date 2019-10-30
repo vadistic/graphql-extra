@@ -18,9 +18,11 @@ export function subscriptionType(props: RootTypeDefinitionProps): ObjectTypeDefi
 }
 
 // NAME
+
 export const name = AST.nameNode
 
 // DOCUMENT
+
 export const document = AST.documentNode
 export const operation = AST.operationDefinitionNode
 export const variable = AST.variableDefinitionNode
@@ -29,11 +31,13 @@ export const field = AST.fieldNode
 export const arg = AST.argumentNode
 
 // FRAGMENTS
+
 export const fragmentSpread = AST.fragmentSpreadNode
 export const inlineFragment = AST.inlineFragmentNode
 export const fragmentDef = AST.fragmentDefinitionNode
 
 // VALUES
+
 export const value = {
   variable: AST.variableNode,
   int: AST.intValueNode,
@@ -48,6 +52,7 @@ export const value = {
 }
 
 // DIRECTIVES
+
 export const directive = AST.directiveNode
 
 // TYPES
@@ -71,10 +76,13 @@ export const type = {
 }
 
 // TYPE SYSTEM DEFINITIONS
+
 export const schemaDef = AST.schemaDefinitionNode
+
 export const operationType = AST.operationTypeDefinitionNode
 
 /// TYPE DEFINITIONS
+
 export const scalarType = AST.scalarTypeDefinitionNode
 export const objectType = AST.objectTypeDefinitionNode
 export const interfaceType = AST.interfaceTypeDefinitionNode
@@ -83,17 +91,21 @@ export const enumType = AST.enumTypeDefinitionNode
 export const inputType = AST.inputObjectTypeDefinitionNode
 
 // TYPE FIELD DEFINITIONS
+
 export const fieldDef = AST.fieldDefinitionNode
 export const inputVal = AST.inputValueDefinitionNode
 export const enumVal = AST.enumValueDefinitionNode
 
 // DIRECTIVE DEFINITIONS
+
 export const directiveDef = AST.directiveDefinitionNode
 
 // TYPE SYSTEM EXTENSIONS
+
 export const schemaExt = AST.schemaExtensionNode
 
 // TYPE EXTENSIONS
+
 export const objectExt = AST.objectTypeExtensionNode
 export const interfaceExt = AST.interfaceTypeExtensionNode
 export const unionExt = AST.unionTypeExtensionNode

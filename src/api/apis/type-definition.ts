@@ -21,8 +21,24 @@ import {
   typeDefinitionAssertionApiMixin,
 } from '../mixins'
 
-// ────────────────────────────────────────────────────────────────────────────────
+/**
+ * API for GraphQL `TypeDefinitionNode`
+ *
+ * @category API Public
+ */
+export type TypeDefinitonApi =
+  | EnumTypeApi
+  | InputTypeApi
+  | InterfaceTypeApi
+  | ObjectTypeApi
+  | ScalarTypeApi
+  | UnionTypeApi
 
+/**
+ * API for GraphQL `ObjectTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface ObjectTypeApi
   extends NameApiMixin<ObjectTypeApi>,
     DescriptionApiMixin<ObjectTypeApi>,
@@ -32,6 +48,11 @@ export interface ObjectTypeApi
   node: ObjectTypeDefinitionNode
 }
 
+/**
+ * create API for GraphQL `ObjectTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export function objectTypeApi(node: ObjectTypeDefinitionNode): ObjectTypeApi {
   return {
     node,
@@ -43,8 +64,11 @@ export function objectTypeApi(node: ObjectTypeDefinitionNode): ObjectTypeApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `InterfaceTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface InterfaceTypeApi
   extends NameApiMixin<ObjectTypeApi>,
     DescriptionApiMixin<ObjectTypeApi>,
@@ -54,6 +78,11 @@ export interface InterfaceTypeApi
   node: InterfaceTypeDefinitionNode
 }
 
+/**
+ * create API for GraphQL `InterfaceTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export function interfaceTypeApi(node: InterfaceTypeDefinitionNode): InterfaceTypeApi {
   return {
     node,
@@ -65,8 +94,11 @@ export function interfaceTypeApi(node: InterfaceTypeDefinitionNode): InterfaceTy
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `UnionTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface UnionTypeApi
   extends NameApiMixin<ObjectTypeApi>,
     DescriptionApiMixin<ObjectTypeApi>,
@@ -75,6 +107,11 @@ export interface UnionTypeApi
   node: UnionTypeDefinitionNode
 }
 
+/**
+ * create API for GraphQL `UnionTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export function unionTypeApi(node: UnionTypeDefinitionNode): UnionTypeApi {
   return {
     node,
@@ -85,8 +122,11 @@ export function unionTypeApi(node: UnionTypeDefinitionNode): UnionTypeApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `ScalarTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface ScalarTypeApi
   extends NameApiMixin<ObjectTypeApi>,
     DescriptionApiMixin<ObjectTypeApi>,
@@ -95,6 +135,11 @@ export interface ScalarTypeApi
   node: ScalarTypeDefinitionNode
 }
 
+/**
+ * create API for GraphQL `ScalarTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export function scalarTypeApi(node: ScalarTypeDefinitionNode): ScalarTypeApi {
   return {
     node,
@@ -105,8 +150,11 @@ export function scalarTypeApi(node: ScalarTypeDefinitionNode): ScalarTypeApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `EnumTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface EnumTypeApi
   extends NameApiMixin<ObjectTypeApi>,
     DescriptionApiMixin<ObjectTypeApi>,
@@ -115,6 +163,11 @@ export interface EnumTypeApi
   node: EnumTypeDefinitionNode
 }
 
+/**
+ * create API for GraphQL `EnumTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export function enumTypeApi(node: EnumTypeDefinitionNode): EnumTypeApi {
   return {
     node,
@@ -125,8 +178,11 @@ export function enumTypeApi(node: EnumTypeDefinitionNode): EnumTypeApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `InputObjectTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export interface InputTypeApi
   extends NameApiMixin<InputTypeApi>,
     DescriptionApiMixin<InputTypeApi>,
@@ -136,6 +192,11 @@ export interface InputTypeApi
   node: InputObjectTypeDefinitionNode
 }
 
+/**
+ * create API for GraphQL `InputObjectTypeDefinitionNode`
+ *
+ * @category API Public
+ */
 export function inputTypeApi(node: InputObjectTypeDefinitionNode): InputTypeApi {
   return {
     node,

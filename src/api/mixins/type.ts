@@ -8,15 +8,17 @@ import {
 import { TypeNodeProps } from '../../node'
 import { TypeApi, typeApi } from '..'
 
-//
-// ─── TYPE API MIXIN ─────────────────────────────────────────────────────────────
-//
-
+/**
+ * @category API Mixins
+ */
 export type TypeApiMixinCompatibleNode =
   | FieldDefinitionNode
   | InputValueDefinitionNode
   | VariableDefinitionNode
 
+/**
+ * @category API Mixins
+ */
 export interface TypeApiMixin<This> {
   getType(): TypeApi
 
@@ -33,6 +35,9 @@ export interface TypeApiMixin<This> {
   setListType(value?: boolean): This
 }
 
+/**
+ * @category API Mixins
+ */
 export function typeApiMixin<This>(node: TypeApiMixinCompatibleNode): TypeApiMixin<This> {
   return {
     getType() {

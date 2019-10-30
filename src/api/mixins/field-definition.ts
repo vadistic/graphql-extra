@@ -26,12 +26,18 @@ import { getName } from '../../utils'
 // ─── FIELD DEFINITIONS API MIXIN ────────────────────────────────────────────────
 //
 
+/**
+ * @category API Mixins
+ */
 export type FieldDefinitionsApiMixinCompatibleNode =
   | ObjectTypeDefinitionNode
   | InterfaceTypeDefinitionNode
   | ObjectTypeExtensionNode
   | InterfaceTypeExtensionNode
 
+/**
+ * @category API Mixins
+ */
 export interface FieldDefinitionsApiMixin<This> {
   getFieldNames(): string[]
   getFields(): FieldDefinitionApi[]
@@ -52,6 +58,9 @@ export interface FieldDefinitionsApiMixin<This> {
   getFieldDirectives(fieldName: string): DirectiveApi[]
 }
 
+/**
+ * @category API Mixins
+ */
 export function fieldDefinitionsApiMixin<This>(
   node: FieldDefinitionsApiMixinCompatibleNode,
 ): FieldDefinitionsApiMixin<This> {

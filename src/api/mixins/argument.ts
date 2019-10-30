@@ -14,8 +14,14 @@ import { ArgumentApi, argumentApi } from '../apis'
 // ─── ARGUMENTS API MIXIN ────────────────────────────────────────────────────────
 //
 
+/**
+ * @category API Mixins
+ */
 export type ArgumentsMixinCompatibleNode = DirectiveNode | FieldNode
 
+/**
+ * @category API Mixins
+ */
 export interface ArgumentsApiMixin<This> {
   getArgumentNames(): string[]
   getArguments(): ArgumentApi[]
@@ -29,6 +35,9 @@ export interface ArgumentsApiMixin<This> {
   removeArgument(argumentName: string): This
 }
 
+/**
+ * @category API Mixins
+ */
 export function argumentsApiMixin<This>(
   node: ArgumentsMixinCompatibleNode,
 ): ArgumentsApiMixin<This> {

@@ -31,8 +31,8 @@ import {
   unionTypeApi,
   inputTypeApi,
   InputTypeApi,
+  TypeDefinitonApi,
 } from '../apis'
-import { TypeDefinitonApi } from '../mixins'
 
 // ────────────────────────────────────────────────────────────────────────────────
 

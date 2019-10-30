@@ -63,9 +63,19 @@ import {
 // ─── NAME ───────────────────────────────────────────────────────────────────────
 //
 
+/**
+ * `NameNode` create input
+ *
+ * @category AST Node
+ */
+
 export type NameNodeProps = string
 
-/** NameNode */
+/**
+ * create `NameNode`
+ *
+ * @category AST Node
+ */
 export function nameNode(value: NameNodeProps): NameNode {
   return {
     kind: Kind.NAME,
@@ -77,9 +87,18 @@ export function nameNode(value: NameNodeProps): NameNode {
 // ─── DOCUMENT ───────────────────────────────────────────────────────────────────
 //
 
+/**
+ * `DocumentNode` create input
+ *
+ * @category AST Node
+ */
 export type DocumentNodeProps = ReadonlyArray<DefinitionNode>
 
-/** DocumentNode */
+/**
+ * create `DocumentNode`
+ *
+ * @category AST Node
+ */
 export function documentNode(definitions: DocumentNodeProps): DocumentNode {
   return {
     kind: Kind.DOCUMENT,
@@ -89,7 +108,11 @@ export function documentNode(definitions: DocumentNodeProps): DocumentNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** OperationDefinitionNode create input */
+/**
+ * `OperationDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface OperationDefinitionNodeProps {
   name?: NameNode | NameNodeProps
   operation: OperationTypeNode
@@ -98,7 +121,11 @@ export interface OperationDefinitionNodeProps {
   selections: SelectionSetNode | SelectionSetNodeProps
 }
 
-/** OperationDefinitionNode */
+/**
+ * create `OperationDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function operationDefinitionNode(
   props: OperationDefinitionNodeProps,
 ): OperationDefinitionNode {
@@ -114,7 +141,11 @@ export function operationDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** VariableDefinitionNode create input */
+/**
+ * `VariableDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface VariableDefinitionNodeProps {
   variable: VariableNode | VariableNodeProps
   type: TypeNode | TypeNodeProps
@@ -122,7 +153,11 @@ export interface VariableDefinitionNodeProps {
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
-/** VariableDefinitionNode */
+/**
+ * create `VariableDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function variableDefinitionNode(props: VariableDefinitionNodeProps): VariableDefinitionNode {
   return {
     kind: Kind.VARIABLE_DEFINITION,
@@ -135,9 +170,18 @@ export function variableDefinitionNode(props: VariableDefinitionNodeProps): Vari
 
 // ────────────────────────────────────────────────────────────────────────────────
 
+/**
+ * `VariableNode` create input
+ *
+ * @category AST Node
+ */
 export type VariableNodeProps = string
 
-/** VariableNode */
+/**
+ * create `VariableNode`
+ *
+ * @category AST Node
+ */
 export function variableNode(name: VariableNodeProps): VariableNode {
   return {
     kind: Kind.VARIABLE,
@@ -147,9 +191,18 @@ export function variableNode(name: VariableNodeProps): VariableNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** SelectionSetNode */
+/**
+ * `SelectionSetNode` create input
+ *
+ * @category AST Node
+ */
 export type SelectionSetNodeProps = ReadonlyArray<SelectionNode | FieldNodeProps>
 
+/**
+ * create `SelectionSetNode`
+ *
+ * @category AST Node
+ */
 export function selectionSetNode(selections: SelectionSetNodeProps): SelectionSetNode {
   return {
     kind: Kind.SELECTION_SET,
@@ -160,7 +213,11 @@ export function selectionSetNode(selections: SelectionSetNodeProps): SelectionSe
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** FieldNode create input */
+/**
+ * `FieldNode` create input subtype
+ *
+ * @category AST Node
+ */
 export interface FieldNodeObjProps {
   name: NameNode | NameNodeProps
   alias?: NameNode | NameNodeProps
@@ -169,9 +226,18 @@ export interface FieldNodeObjProps {
   selections?: SelectionSetNode | SelectionSetNodeProps
 }
 
+/**
+ * `FieldNode` create input
+ *
+ * @category AST Node
+ */
 export type FieldNodeProps = FieldNodeObjProps | string
 
-/** FieldNode */
+/**
+ * create `FieldNode`
+ *
+ * @category AST Node
+ */
 export function fieldNode(field: FieldNodeProps): FieldNode {
   if (typeof field === 'string') {
     return {
@@ -192,13 +258,21 @@ export function fieldNode(field: FieldNodeProps): FieldNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** ArgumentNode create input */
+/**
+ * `ArgumentNode` create input
+ *
+ * @category AST Node
+ */
 export interface ArgumentNodeProps {
   name: NameNode | NameNodeProps
   value: ValueNode
 }
 
-/** ArgumentNode */
+/**
+ * create `ArgumentNode`
+ *
+ * @category AST Node
+ */
 export function argumentNode(props: ArgumentNodeProps): ArgumentNode {
   return {
     kind: Kind.ARGUMENT,
@@ -211,13 +285,21 @@ export function argumentNode(props: ArgumentNodeProps): ArgumentNode {
 // ─── FRAGMENTS ──────────────────────────────────────────────────────────────────
 //
 
-/** FragmentSpreadNode create input */
+/**
+ * `FragmentSpreadNode` create input
+ *
+ * @category AST Node
+ */
 export interface FragmentSpreadNodeProps {
   name: NameNode | NameNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
-/** FragmentSpreadNode */
+/**
+ * create `FragmentSpreadNode`
+ *
+ * @category AST Node
+ */
 export function fragmentSpreadNode(props: FragmentSpreadNodeProps): FragmentSpreadNode {
   return {
     kind: Kind.FRAGMENT_SPREAD,
@@ -228,7 +310,11 @@ export function fragmentSpreadNode(props: FragmentSpreadNodeProps): FragmentSpre
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** InlineFragmentNode create input */
+/**
+ * `InlineFragmentNode` create input
+ *
+ * @category AST Node
+ */
 export interface InlineFragmentNodeProps {
   name: NameNode | NameNodeProps
   typeCondition?: NamedTypeNode | NamedTypeNodeProps
@@ -236,7 +322,11 @@ export interface InlineFragmentNodeProps {
   selections: SelectionSetNode | SelectionSetNodeProps
 }
 
-/** InlineFragmentNode */
+/**
+ * create `InlineFragmentNode`
+ *
+ * @category AST Node
+ */
 export function inlineFragmentNode(props: InlineFragmentNodeProps): InlineFragmentNode {
   return {
     kind: Kind.INLINE_FRAGMENT,
@@ -248,7 +338,11 @@ export function inlineFragmentNode(props: InlineFragmentNodeProps): InlineFragme
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** FragmentDefinitionNode create input */
+/**
+ * `FragmentDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface FragmentDefinitionNodeProps {
   name: NameNode | NameNodeProps
   variableDefinitions?: ReadonlyArray<VariableDefinitionNode | VariableDefinitionNodeProps>
@@ -257,7 +351,11 @@ export interface FragmentDefinitionNodeProps {
   selections: SelectionSetNode | SelectionSetNodeProps
 }
 
-/** FragmentDefinitionNode */
+/**
+ * create `FragmentDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): FragmentDefinitionNode {
   return {
     kind: Kind.FRAGMENT_DEFINITION,
@@ -273,9 +371,18 @@ export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): Frag
 // ─── VALUES ─────────────────────────────────────────────────────────────────────
 //
 
+/**
+ * `IntValueNode` create input
+ *
+ * @category AST Node
+ */
 export type IntValueNodeProps = string | number
 
-/** IntValueNode */
+/**
+ * create `IntValueNode`
+ *
+ * @category AST Node
+ */
 export function intValueNode(value: IntValueNodeProps): IntValueNode {
   return {
     kind: Kind.INT,
@@ -283,9 +390,18 @@ export function intValueNode(value: IntValueNodeProps): IntValueNode {
   }
 }
 
+/**
+ * `FloatValueNode` create input
+ *
+ * @category AST Node
+ */
 export type FloatValueNodeProps = string | number
 
-/** FloatValueNode */
+/**
+ * create `FloatValueNode`
+ *
+ * @category AST Node
+ */
 export function floatValueNode(value: string | number): FloatValueNode {
   return {
     kind: Kind.FLOAT,
@@ -293,9 +409,18 @@ export function floatValueNode(value: string | number): FloatValueNode {
   }
 }
 
+/**
+ * `StringValueNode` create input
+ *
+ * @category AST Node
+ */
 export type StringValueNodeProps = string
 
-/** StringValueNode */
+/**
+ * create `StringValueNode`
+ *
+ * @category AST Node
+ */
 export function stringValueNode(value: StringValueNodeProps): StringValueNode {
   return {
     kind: Kind.STRING,
@@ -303,9 +428,18 @@ export function stringValueNode(value: StringValueNodeProps): StringValueNode {
   }
 }
 
+/**
+ * `BooleanValueNode` create input
+ *
+ * @category AST Node
+ */
 export type BooleanValueNodeProps = boolean
 
-/** BooleanValueNode */
+/**
+ * create `BooleanValueNode`
+ *
+ * @category AST Node
+ */
 export function booleanValueNode(value: BooleanValueNodeProps): BooleanValueNode {
   return {
     kind: Kind.BOOLEAN,
@@ -313,16 +447,29 @@ export function booleanValueNode(value: BooleanValueNodeProps): BooleanValueNode
   }
 }
 
-/** NullValueNode */
+/**
+ * create `NullValueNode`
+ *
+ * @category AST Node
+ */
 export function nullValueNode(): NullValueNode {
   return {
     kind: Kind.NULL,
   }
 }
 
+/**
+ * `EnumValueNode` create input
+ *
+ * @category AST Node
+ */
 export type EnumValueNodeProps = string
 
-/** EnumValueNode */
+/**
+ * create `EnumValueNode`
+ *
+ * @category AST Node
+ */
 export function enumValueNode(value: EnumValueNodeProps): EnumValueNode {
   return {
     kind: Kind.ENUM,
@@ -330,9 +477,18 @@ export function enumValueNode(value: EnumValueNodeProps): EnumValueNode {
   }
 }
 
+/**
+ * `ListValueNode` create input
+ *
+ * @category AST Node
+ */
 export type ListValueNodeProps = ReadonlyArray<ValueNode>
 
-/** ListValueNode */
+/**
+ * `ListValueNode`
+ *
+ * @category AST Node
+ */
 export function listValueNode(values: ListValueNodeProps): ListValueNode {
   return {
     kind: Kind.LIST,
@@ -340,9 +496,18 @@ export function listValueNode(values: ListValueNodeProps): ListValueNode {
   }
 }
 
+/**
+ * `ObjectValueNode` create input
+ *
+ * @category AST Node
+ */
 export type ObjectValueNodeProps = ReadonlyArray<ObjectFieldNode>
 
-/** ObjectValueNode */
+/**
+ * create `ObjectValueNode`
+ *
+ * @category AST Node
+ */
 export function objectValueNode(fields: ObjectValueNodeProps): ObjectValueNode {
   return {
     kind: Kind.OBJECT,
@@ -350,13 +515,21 @@ export function objectValueNode(fields: ObjectValueNodeProps): ObjectValueNode {
   }
 }
 
-/** ObjectFieldNode create input */
+/**
+ * `ObjectFieldNode` create input
+ *
+ * @category AST Node
+ */
 export interface ObjectFieldNodeProps {
   name: NameNode | NameNodeProps
   value: ValueNode
 }
 
-/** ObjectFieldNode */
+/**
+ * create `ObjectFieldNode`
+ *
+ * @category AST Node
+ */
 export function objectFieldNode(props: ObjectFieldNodeProps): ObjectFieldNode {
   return {
     kind: Kind.OBJECT_FIELD,
@@ -369,15 +542,28 @@ export function objectFieldNode(props: ObjectFieldNodeProps): ObjectFieldNode {
 // ─── DIRECTIVES ─────────────────────────────────────────────────────────────────
 //
 
+/**
+ * `DirectiveNode` create input subtype
+ *
+ * @category AST Node
+ */
 export interface DirectiveNodeObjProps {
   name: NameNode | NameNodeProps
   arguments?: ReadonlyArray<ArgumentNode | ArgumentNodeProps>
 }
 
-/** DirectiveNode create input */
+/**
+ * `DirectiveNode` create input
+ *
+ * @category AST Node
+ */
 export type DirectiveNodeProps = DirectiveNodeObjProps | string
 
-/** DirectiveNode */
+/**
+ * create `DirectiveNode`
+ *
+ * @category AST Node
+ */
 export function directiveNode(directive: DirectiveNodeProps): DirectiveNode {
   // shorthand
   if (typeof directive === 'string') {
@@ -398,10 +584,18 @@ export function directiveNode(directive: DirectiveNodeProps): DirectiveNode {
 // ─── TYPES ──────────────────────────────────────────────────────────────────────
 //
 
-/** NamedTypeNode create input */
+/**
+ * `NamedTypeNode` create input
+ *
+ * @category AST Node
+ */
 export type NamedTypeNodeProps = NameNode | string
 
-/** NamedTypeNode */
+/**
+ * create `NamedTypeNode`
+ *
+ * @category AST Node
+ */
 export function namedTypeNode(value: NamedTypeNodeProps): NamedTypeNode {
   return {
     kind: Kind.NAMED_TYPE,
@@ -411,10 +605,18 @@ export function namedTypeNode(value: NamedTypeNodeProps): NamedTypeNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** ListTypeNode create input */
+/**
+ * `ListTypeNode` create input
+ *
+ * @category AST Node
+ */
 export type ListTypeNodeProps = TypeNode | string
 
-/** ListTypeNode */
+/**
+ * create `ListTypeNode`
+ *
+ * @category AST Node
+ */
 export function listTypeNode(type: ListTypeNodeProps): ListTypeNode {
   const namedType = typeof type === 'string' ? namedTypeNode(type) : type
 
@@ -426,10 +628,18 @@ export function listTypeNode(type: ListTypeNodeProps): ListTypeNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** NonNullTypeNode create input */
+/**
+ * `NonNullTypeNode` create input
+ *
+ * @category AST Node
+ */
 export type NonNullTypeNodeProps = TypeNode | string
 
-/** NonNullTypeNode */
+/**
+ * create `NonNullTypeNode`
+ *
+ * @category AST Node
+ */
 export function nonNullTypeNode(type: NonNullTypeNodeProps): NonNullTypeNode {
   const namedType = typeof type === 'string' ? namedTypeNode(type) : type
 
@@ -445,17 +655,30 @@ export function nonNullTypeNode(type: NonNullTypeNodeProps): NonNullTypeNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
+/**
+ * `TypeNode` create input subtype
+ *
+ * @category AST Node
+ */
 export interface TypeNodeObjProps {
-  // or should it be type: ??
+  // FIXME: should it be named `type` ??
   name: NamedTypeNode | string
   list?: boolean
   nonNull?: boolean
 }
 
-/** TypeNode create input */
+/**
+ * `TypeNode` create input
+ *
+ * @category AST Node
+ */
 export type TypeNodeProps = TypeNodeObjProps | string
 
-/** TypeNode */
+/**
+ * create `TypeNode`
+ *
+ * @category AST Node
+ */
 export function typeNode(type: TypeNodeProps): TypeNode {
   if (typeof type === 'string') {
     return parseType(type)
@@ -483,13 +706,21 @@ export function typeNode(type: TypeNodeProps): TypeNode {
 // ─── TYPE SYSTEM DEFINITIONS ────────────────────────────────────────────────────
 //
 
-/** SchemaDefinitionNode create input */
+/**
+ * `SchemaDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface SchemaDefinitionNodeProps {
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
   operationTypes: ReadonlyArray<OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
 }
 
-/** SchemaDefinitionNode */
+/**
+ * create `SchemaDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): SchemaDefinitionNode {
   return {
     kind: Kind.SCHEMA_DEFINITION,
@@ -500,13 +731,21 @@ export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): SchemaDe
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** OperationTypeDefinitionNode create input */
+/**
+ * `OperationTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface OperationTypeDefinitionNodeProps {
   operation: OperationTypeNode
   type: NamedTypeNode | NamedTypeNodeProps
 }
 
-/** OperationTypeDefinitionNode */
+/**
+ * create `OperationTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function operationTypeDefinitionNode(
   props: OperationTypeDefinitionNodeProps,
 ): OperationTypeDefinitionNode {
@@ -521,14 +760,22 @@ export function operationTypeDefinitionNode(
 // ─── TYPE DEFINITIONS ───────────────────────────────────────────────────────────
 //
 
-/** ScalarTypeDefinitionNode create input */
+/**
+ * `ScalarTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface ScalarTypeDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
-/** ScalarTypeDefinitionNode */
+/**
+ * create `ScalarTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function scalarTypeDefinitionNode(
   props: ScalarTypeDefinitionNodeProps,
 ): ScalarTypeDefinitionNode {
@@ -542,7 +789,11 @@ export function scalarTypeDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** ObjectTypeDefinitionNode create input */
+/**
+ * `ObjectTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface ObjectTypeDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -551,7 +802,11 @@ export interface ObjectTypeDefinitionNodeProps {
   fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
-/** ObjectTypeDefinitionNode */
+/**
+ * create `ObjectTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function objectTypeDefinitionNode(
   props: ObjectTypeDefinitionNodeProps,
 ): ObjectTypeDefinitionNode {
@@ -567,7 +822,11 @@ export function objectTypeDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** FieldDefinitionNode create input */
+/**
+ * `FieldDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface FieldDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -580,7 +839,11 @@ export interface FieldDefinitionNodeProps {
   list?: string
 }
 
-/** FieldDefinitionNode */
+/**
+ * create `FieldDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function fieldDefinitionNode(props: FieldDefinitionNodeProps): FieldDefinitionNode {
   return {
     kind: Kind.FIELD_DEFINITION,
@@ -594,7 +857,11 @@ export function fieldDefinitionNode(props: FieldDefinitionNodeProps): FieldDefin
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** InputValueDefinitionNode create input */
+/**
+ * `InputValueDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface InputValueDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -604,7 +871,11 @@ export interface InputValueDefinitionNodeProps {
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
-/** InputValueDefinitionNode */
+/**
+ * create `InputValueDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function inputValueDefinitionNode(
   props: InputValueDefinitionNodeProps,
 ): InputValueDefinitionNode {
@@ -620,7 +891,11 @@ export function inputValueDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** InterfaceTypeDefinitionNode create input */
+/**
+ * `InterfaceTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface InterfaceTypeDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -628,7 +903,11 @@ export interface InterfaceTypeDefinitionNodeProps {
   fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
-/** InterfaceTypeDefinitionNode */
+/**
+ * create `InterfaceTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function interfaceTypeDefinitionNode(
   props: InterfaceTypeDefinitionNodeProps,
 ): InterfaceTypeDefinitionNode {
@@ -643,7 +922,11 @@ export function interfaceTypeDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** UnionTypeDefinitionNode create input */
+/**
+ * `UnionTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface UnionTypeDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -651,7 +934,11 @@ export interface UnionTypeDefinitionNodeProps {
   types?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
 }
 
-/** UnionTypeDefinitionNode */
+/**
+ * create `UnionTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function unionTypeDefinitionNode(
   props: UnionTypeDefinitionNodeProps,
 ): UnionTypeDefinitionNode {
@@ -666,7 +953,11 @@ export function unionTypeDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** EnumTypeDefinitionNode create input */
+/**
+ * `EnumTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface EnumTypeDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -674,7 +965,11 @@ export interface EnumTypeDefinitionNodeProps {
   values?: ReadonlyArray<EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
 }
 
-/** EnumTypeDefinitionNode */
+/**
+ * create `EnumTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): EnumTypeDefinitionNode {
   return {
     kind: Kind.ENUM_TYPE_DEFINITION,
@@ -687,7 +982,11 @@ export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): Enum
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** EnumValueDefinitionNode create input */
+/**
+ * `EnumValueDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface EnumValueDefinitionNodeObjProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -696,7 +995,11 @@ export interface EnumValueDefinitionNodeObjProps {
 
 export type EnumValueDefinitionNodeProps = EnumValueDefinitionNodeObjProps | string
 
-/** EnumValueDefinitionNode */
+/**
+ * create `EnumValueDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function enumValueDefinitionNode(
   props: EnumValueDefinitionNodeProps,
 ): EnumValueDefinitionNode {
@@ -717,7 +1020,11 @@ export function enumValueDefinitionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** InputObjectTypeDefinitionNode create input */
+/**
+ * `InputObjectTypeDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface InputObjectTypeDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -725,7 +1032,11 @@ export interface InputObjectTypeDefinitionNodeProps {
   fields?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
 }
 
-/** InputObjectTypeDefinitionNode */
+/**
+ * create `InputObjectTypeDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function inputObjectTypeDefinitionNode(
   props: InputObjectTypeDefinitionNodeProps,
 ): InputObjectTypeDefinitionNode {
@@ -742,7 +1053,11 @@ export function inputObjectTypeDefinitionNode(
 // ─── DIRECTIVE DEFINITIONS ──────────────────────────────────────────────────────
 //
 
-/** DirectiveDefinitionNode create input */
+/**
+ * `DirectiveDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export interface DirectiveDefinitionNodeProps {
   name: NameNode | NameNodeProps
   description?: StringValueNode | StringValueNodeProps
@@ -751,7 +1066,11 @@ export interface DirectiveDefinitionNodeProps {
   locations: ReadonlyArray<NameNode | DirectiveLocationEnum>
 }
 
-/** DirectiveDefinitionNode */
+/**
+ * create `DirectiveDefinitionNode`
+ *
+ * @category AST Node
+ */
 export function directiveDefinitionNode(
   props: DirectiveDefinitionNodeProps,
 ): DirectiveDefinitionNode {
@@ -769,13 +1088,21 @@ export function directiveDefinitionNode(
 // ─── TYPE SYSTEM EXTENSIONS ─────────────────────────────────────────────────────
 //
 
-/** SchemaExtensionNode create input */
+/**
+ * `SchemaExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface SchemaExtensionNodeProps {
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
   operationTypes: ReadonlyArray<OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
 }
 
-/** SchemaExtensionNode */
+/**
+ * create `SchemaExtensionNode`
+ *
+ * @category AST Node
+ */
 export function schemaExtensionNode(props: SchemaExtensionNodeProps): SchemaExtensionNode {
   return {
     kind: Kind.SCHEMA_EXTENSION,
@@ -788,13 +1115,21 @@ export function schemaExtensionNode(props: SchemaExtensionNodeProps): SchemaExte
 // ─── TYPE EXTENSIONS ────────────────────────────────────────────────────────────
 //
 
-/** ScalarTypeExtensionNode create input */
+/**
+ * `ScalarTypeExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface ScalarTypeExtensionNodeProps {
   name: NameNode | NameNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
-/** ScalarTypeExtensionNode */
+/**
+ * create `ScalarTypeExtensionNode`
+ *
+ * @category AST Node
+ */
 export function scalarTypeExtensionNode(
   props: ScalarTypeExtensionNodeProps,
 ): ScalarTypeExtensionNode {
@@ -807,7 +1142,11 @@ export function scalarTypeExtensionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** ObjectTypeExtensionNode create input */
+/**
+ * `ObjectTypeExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface ObjectTypeExtensionNodeProps {
   name: NameNode | NameNodeProps
   interfaces?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
@@ -815,7 +1154,11 @@ export interface ObjectTypeExtensionNodeProps {
   fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
-/** ObjectTypeExtensionNode */
+/**
+ * create `ObjectTypeExtensionNode`
+ *
+ * @category AST Node
+ */
 export function objectTypeExtensionNode(
   props: ObjectTypeExtensionNodeProps,
 ): ObjectTypeExtensionNode {
@@ -830,14 +1173,22 @@ export function objectTypeExtensionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** InterfaceTypeExtensionNode create input */
+/**
+ * `InterfaceTypeExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface InterfaceTypeExtensionNodeProps {
   name: NameNode | NameNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
   fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
-/** InterfaceTypeExtensionNode */
+/**
+ * create `InterfaceTypeExtensionNode`
+ *
+ * @category AST Node
+ */
 export function interfaceTypeExtensionNode(
   props: InterfaceTypeExtensionNodeProps,
 ): InterfaceTypeExtensionNode {
@@ -851,14 +1202,22 @@ export function interfaceTypeExtensionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** UnionTypeExtensionNode create input */
+/**
+ * `UnionTypeExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface UnionTypeExtensionNodeProps {
   name: NameNode | NameNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
   types?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
 }
 
-/** UnionTypeExtensionNode */
+/**
+ * create `UnionTypeExtensionNode`
+ *
+ * @category AST Node
+ */
 export function unionTypeExtensionNode(
   props: UnionTypeDefinitionNodeProps,
 ): UnionTypeExtensionNode {
@@ -872,14 +1231,22 @@ export function unionTypeExtensionNode(
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** EnumTypeExtensionNode create input */
+/**
+ * `EnumTypeExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface EnumTypeExtensionNodeProps {
   name: NameNode | NameNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
   values?: ReadonlyArray<EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
 }
 
-/** EnumTypeExtensionNode */
+/**
+ * create `EnumTypeExtensionNode`
+ *
+ * @category AST Node
+ */
 export function enumTypeExtensionNode(props: EnumTypeDefinitionNodeProps): EnumTypeExtensionNode {
   return {
     kind: Kind.ENUM_TYPE_EXTENSION,
@@ -891,14 +1258,22 @@ export function enumTypeExtensionNode(props: EnumTypeDefinitionNodeProps): EnumT
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** InputObjectTypeExtensionNode create input */
+/**
+ * `InputObjectTypeExtensionNode` create input
+ *
+ * @category AST Node
+ */
 export interface InputObjectTypeExtensionNodeProps {
   name: NameNode | NameNodeProps
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
   fields?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
 }
 
-/** InputObjectTypeExtensionNode */
+/**
+ * create `InputObjectTypeExtensionNode`
+ *
+ * @category AST Node
+ */
 export function inputObjectTypeExtensionNode(
   props: InputObjectTypeDefinitionNodeProps,
 ): InputObjectTypeExtensionNode {

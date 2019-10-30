@@ -10,6 +10,9 @@ import {
 import { DeepMutable, getName, applyPropsArr, applyProps } from '../../utils'
 import { nameNode } from '../../node'
 
+/**
+ * @category API Public
+ */
 export interface DirectiveDefinitionApi
   extends NameApiMixin<DirectiveDefinitionApi>,
     DescriptionApiMixin<DirectiveDefinitionApi>,
@@ -30,6 +33,9 @@ export interface DirectiveDefinitionApi
   removeLocation(value: NameNode | DirectiveLocationEnum): DirectiveDefinitionApi
 }
 
+/**
+ * @category API Public
+ */
 export function directiveDefinitionApi(node: DirectiveDefinitionNode): DirectiveDefinitionApi {
   const _node = node as DeepMutable<DirectiveDefinitionNode>
 

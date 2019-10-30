@@ -22,6 +22,9 @@ import { getName } from '../../utils'
 // ─── DIRECTIVES API MIXIN ───────────────────────────────────────────────────────
 //
 
+/**
+ * @category API Mixins
+ */
 export type DirectivesApiMixinCompatibleNode =
   | SchemaDefinitionNode
   | TypeDefinitionNode
@@ -30,6 +33,9 @@ export type DirectivesApiMixinCompatibleNode =
   | InputValueDefinitionNode
   | EnumValueDefinitionNode
 
+/**
+ * @category API Mixins
+ */
 export interface DirectivesApiMixin<This> {
   getDirectiveNames(): string[]
   getDirectives(): DirectiveApi[]
@@ -43,6 +49,9 @@ export interface DirectivesApiMixin<This> {
   removeDirective(directiveName: string): This
 }
 
+/**
+ * @category API Mixins
+ */
 export function directivesApiMixin<This>(
   node: DirectivesApiMixinCompatibleNode,
 ): DirectivesApiMixin<This> {

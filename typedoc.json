@@ -1,0 +1,9 @@
+{
+  "mode": "file",
+  "out": "docs",
+
+  "exclude": "**/test/**",
+  "excludeNotExported": true,
+  "categorizeByGroup": true,
+  "defaultCategory": "Other"
+}

@@ -19,8 +19,24 @@ import {
   inputValuesAsFieldsApiMixin,
 } from '../mixins'
 
-// ────────────────────────────────────────────────────────────────────────────────
+/**
+ * API for GraphQL `TypeExtensionNode`
+ *
+ * @category API Public
+ */
+export type TypeExtensionApi =
+  | EnumExtApi
+  | InputExtApi
+  | InterfaceExtApi
+  | ObjectExtApi
+  | ScalarExtApi
+  | UnionExtApi
 
+/**
+ * API for GraphQL `ObjectTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export interface ObjectExtApi
   extends NameApiMixin<ObjectExtApi>,
     DirectivesApiMixin<ObjectExtApi>,
@@ -29,6 +45,11 @@ export interface ObjectExtApi
   node: ObjectTypeExtensionNode
 }
 
+/**
+ * create API for GraphQL `ObjectTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export function objectExtApi(node: ObjectTypeExtensionNode): ObjectExtApi {
   return {
     node,
@@ -39,8 +60,11 @@ export function objectExtApi(node: ObjectTypeExtensionNode): ObjectExtApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `InterfaceTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export interface InterfaceExtApi
   extends NameApiMixin<ObjectExtApi>,
     DirectivesApiMixin<ObjectExtApi>,
@@ -49,6 +73,11 @@ export interface InterfaceExtApi
   node: InterfaceTypeExtensionNode
 }
 
+/**
+ * create API for GraphQL `InterfaceTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export function interfaceExtApi(node: InterfaceTypeExtensionNode): InterfaceExtApi {
   return {
     node,
@@ -59,8 +88,11 @@ export function interfaceExtApi(node: InterfaceTypeExtensionNode): InterfaceExtA
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `UnionTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export interface UnionExtApi
   extends NameApiMixin<ObjectExtApi>,
     DirectivesApiMixin<ObjectExtApi>,
@@ -68,6 +100,11 @@ export interface UnionExtApi
   node: UnionTypeExtensionNode
 }
 
+/**
+ * create API for GraphQL `UnionTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export function unionExtApi(node: UnionTypeExtensionNode): UnionExtApi {
   return {
     node,
@@ -77,8 +114,11 @@ export function unionExtApi(node: UnionTypeExtensionNode): UnionExtApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `ScalarTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export interface ScalarExtApi
   extends NameApiMixin<ObjectExtApi>,
     DirectivesApiMixin<ObjectExtApi>,
@@ -86,6 +126,11 @@ export interface ScalarExtApi
   node: ScalarTypeExtensionNode
 }
 
+/**
+ * create API for GraphQL `ScalarTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export function scalarExtApi(node: ScalarTypeExtensionNode): ScalarExtApi {
   return {
     node,
@@ -95,8 +140,11 @@ export function scalarExtApi(node: ScalarTypeExtensionNode): ScalarExtApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `EnumTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export interface EnumExtApi
   extends NameApiMixin<ObjectExtApi>,
     DirectivesApiMixin<ObjectExtApi>,
@@ -104,6 +152,11 @@ export interface EnumExtApi
   node: EnumTypeExtensionNode
 }
 
+/**
+ * create API for GraphQL `EnumTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export function enumExtApi(node: EnumTypeExtensionNode): EnumExtApi {
   return {
     node,
@@ -113,8 +166,11 @@ export function enumExtApi(node: EnumTypeExtensionNode): EnumExtApi {
   }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-
+/**
+ * API for GraphQL `InputObjectTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export interface InputExtApi
   extends NameApiMixin<InputExtApi>,
     DirectivesApiMixin<InputExtApi>,
@@ -123,6 +179,11 @@ export interface InputExtApi
   node: InputObjectTypeExtensionNode
 }
 
+/**
+ * create API for GraphQL `InputObjectTypeExtensionNode`
+ *
+ * @category API Public
+ */
 export function inputExtApi(node: InputObjectTypeExtensionNode): InputExtApi {
   return {
     node,

@@ -16,17 +16,21 @@ import {
   oneToManyRemove,
 } from '../crud'
 
-//
-// ─── INPUT VALUES AS ARGUMENTS API MIXIN ────────────────────────────────────────
-//
+/**
+ * For some reason FieldDefinition & DirectiveDefinition InputValues are branded as arguments
+ * Getting repetitive and verboose here to keep this convention
+ */
 
-// For some reason FieldDefinition & DirectiveDefinition InputValues are branded as arguments
-// Getting repetitive and verboose here to keep this convention
-
+/**
+ * @category API Mixins
+ */
 export type InputValuesAsArgumentsApiMixinCompatibleNode =
   | FieldDefinitionNode
   | DirectiveDefinitionNode
 
+/**
+ * @category API Mixins
+ */
 export interface InputValuesAsArgumentsApiMixin<This> {
   getArgumentNames(): string[]
   getArguments(): InputValueApi[]
@@ -43,6 +47,9 @@ export interface InputValuesAsArgumentsApiMixin<This> {
   removeArgument(argumentName: string): This
 }
 
+/**
+ * @category API Mixins
+ */
 export function inputValuesAsArgumentsApiMixin<This>(
   node: InputValuesAsArgumentsApiMixinCompatibleNode,
 ): InputValuesAsArgumentsApiMixin<This> {
@@ -122,14 +129,16 @@ export function inputValuesAsArgumentsApiMixin<This>(
   }
 }
 
-//
-// ─── INPUT VALUES AS FIELDS API MIXIN ───────────────────────────────────────────
-//
-
+/**
+ * @category API Mixins
+ */
 export type InputValuesAsFieldsApiMixinCompatibleNode =
   | InputObjectTypeDefinitionNode
   | InputObjectTypeExtensionNode
 
+/**
+ * @category API Mixins
+ */
 export interface InputValuesAsFieldsApiMixin<This> {
   getFieldNames(): string[]
   getFields(): InputValueApi[]
@@ -146,6 +155,9 @@ export interface InputValuesAsFieldsApiMixin<This> {
   removeField(fieldName: string): This
 }
 
+/**
+ * @category API Mixins
+ */
 export function inputValuesAsFieldsApiMixin<This>(
   node: InputValuesAsFieldsApiMixinCompatibleNode,
 ): InputValuesAsFieldsApiMixin<This> {
