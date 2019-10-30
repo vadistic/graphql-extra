@@ -1,8 +1,10 @@
-import { nodeFnCloned, cloneDeep } from '../utils'
+import { applyPropsCloned, cloneDeep } from '../utils'
 
-function errPrefix(action: string, key: string) {
-  return action + key[0].toUpperCase() + key.slice(1).replace(/s$/, '') + '(): '
-}
+//
+// ────────────────────────────────────────────────  ──────────
+//   :::::: C R U D : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────
+//
 
 export interface OneToManyGetProps {
   node: any
@@ -20,13 +22,13 @@ export function oneToManyGet<Node>({
   const res = (node[key] || []).find((el: any) => el.name.value === elementName)
 
   if (!res) {
-    throw Error(
-      errPrefix('get', key) + `${key}: '${elementName}' on '${parentName}' does not exist`,
-    )
+    throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
   }
 
   return res
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 export interface OneToManyCreateProps<Node, Props> {
   node: any
@@ -53,13 +55,13 @@ export function oneToManyCreate<Node, Props>({
   const index = property.findIndex(el => el.name.value === elementName)
 
   if (index !== -1) {
-    throw Error(
-      errPrefix('create', key) + `${key}: '${elementName}' on '${parentName}' already exists`,
-    )
+    throw Error(`${singular(key)} '${elementName}' on '${parentName}' already exist`)
   }
 
-  property.push(nodeFnCloned(nodeCreateFn)(props))
+  property.push(applyPropsCloned(nodeCreateFn, props))
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 export interface OneToManyUpdateProps<Node, Props> {
   node: any
@@ -82,7 +84,7 @@ export function oneToManyUpdate<Node, Props>({
   const index = property.findIndex(el => el.name.value === elementName)
 
   if (property.length === 0 || index === -1) {
-    throw Error(errPrefix('update', key) + `'${elementName}' on '${parentName}' does not exist`)
+    throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
   }
 
   const { kind, ...prev } = property[index]
@@ -90,6 +92,8 @@ export function oneToManyUpdate<Node, Props>({
   // clone only new part
   property[index] = nodeCreateFn({ ...prev, ...cloneDeep(props) })
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 export function oneToManyUpsert<Node, Props>({
   node,
@@ -104,7 +108,7 @@ export function oneToManyUpsert<Node, Props>({
 
   const property = (node[key] || []) as any[]
   const index = property.findIndex(el => el.name.value === elementName)
-  const next = nodeFnCloned(nodeCreateFn)(props)
+  const next = applyPropsCloned(nodeCreateFn, props)
 
   if (index === -1) {
     property[index] = next
@@ -113,13 +117,21 @@ export function oneToManyUpsert<Node, Props>({
   }
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
+
 export function oneToManyRemove({ node, key, elementName, parentName }: OneToManyGetProps) {
   const property = (node[key] || []) as any[]
   const index = property.findIndex(el => el.name.value === elementName)
 
   if (index === -1) {
-    throw Error(errPrefix('remove', key) + `'${elementName}' on '${parentName}' does not exist`)
+    throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
   }
 
   property.splice(index, 1)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+function singular(key: string) {
+  return key.replace(/s$/, '')
 }

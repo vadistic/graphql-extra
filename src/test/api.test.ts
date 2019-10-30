@@ -1,9 +1,9 @@
-import { objectTypeApi } from '../api/definition'
-import { t } from '../alias'
-import { documentApi } from '../api/document'
+import { t } from '../node'
+import { documentApi, objectTypeApi } from '../api'
+import { getFirstObjectType } from './test-utils'
 
 describe(`api`, () => {
-  test(`astApi > parse SDL & correct this reference`, () => {
+  test(`documentApi > parse SDL & correct this reference`, () => {
     const typeDefs = /* GraphQL */ `
       type Person {
         id: ID!
@@ -19,42 +19,14 @@ describe(`api`, () => {
       }
     `
 
-    const ast = documentApi(typeDefs)
+    const doc = documentApi()
 
-    const _this = ast.addSDL(moreTypeDefs)
+    const _this = doc.addSDL(typeDefs).addSDL(moreTypeDefs)
 
     expect(Object.keys(_this)).toContain('hasType')
   })
 
-  test(`objectTypeApi > mutate node & correct this reference`, () => {
-    const node = t.objectType({
-      name: 'MyObject',
-      fields: [{ name: 'myField', type: { name: 'ID', nonNull: true } }],
-    })
-
-    const fields = objectTypeApi(node)
-      .setDescription('My description')
-      .getFieldNames()
-
-    expect(fields).toEqual(['myField'])
-    expect(node.description && node.description.value).toEqual('My description')
-  })
-
-  test(`objectTypeApi > fieldDefinitionsApi`, () => {
-    const node = t.objectType({
-      name: 'MyObject',
-      fields: [{ name: 'myField', type: { name: 'ID', nonNull: true } }],
-    })
-
-    const obj = objectTypeApi(node)
-      .removeField('myField')
-      .createField({ name: 'otherField', type: t.type.int() })
-      .updateField('otherField', { name: 'renamedField' })
-
-    expect(obj.getFieldNames()).toEqual(['renamedField'])
-  })
-
-  test(`objectTypeApi > type guards and assertions`, () => {
+  test(`documentApi > type guards and assertions`, () => {
     const typeDefs = /* GraphQL */ `
       type Person {
         id: ID!
@@ -68,22 +40,59 @@ describe(`api`, () => {
       }
     `
 
-    const ast = documentApi(typeDefs)
+    const ast = documentApi().addSDL(typeDefs)
 
     const obj = ast.getType('Post')
 
     expect(obj.isObjectType()).toBeTruthy()
     expect(obj.isEnumType()).toBeFalsy()
 
-    expect(() => obj.assertEnumType().setDescription('abc')).toThrowError(`asserted`)
-    expect(() => ast.getEnumType('Post').setDescription('asd')).toThrowError(`asserted`)
+    expect(() => obj.assertEnumType().setDescription('abc')).toThrowError(`ObjectTypeDefinition`)
+    expect(() => ast.getEnumType('Post').setDescription('asd')).toThrowError(`ObjectTypeDefinition`)
   })
 
-  test(`typeApi > set/update preserve this node reference`, () => {
-    const node = t.objectType({
-      name: 'MyObject',
-      fields: [{ name: 'myField', type: { name: 'ID', nonNull: true } }],
-    })
+  test(`objectTypeApi > mutate node & correct this reference`, () => {
+    const fix = /* GraphQL */ `
+      type MyObject {
+        myField: ID!
+      }
+    `
+
+    const node = getFirstObjectType(fix)
+
+    const fields = objectTypeApi(node)
+      .setDescription('My description')
+      .getFieldNames()
+
+    expect(fields).toEqual(['myField'])
+    expect(node.description && node.description.value).toEqual('My description')
+  })
+
+  test(`objectTypeApi > fieldDefinitionsApi`, () => {
+    const fix = /* GraphQL */ `
+      type MyObject {
+        myField: ID!
+      }
+    `
+
+    const node = getFirstObjectType(fix)
+
+    const obj = objectTypeApi(node)
+      .removeField('myField')
+      .createField({ name: 'otherField', type: t.type.int() })
+      .updateField('otherField', { name: 'renamedField' })
+
+    expect(obj.getFieldNames()).toEqual(['renamedField'])
+  })
+
+  test(`typeApi > set/update correct this and node reference`, () => {
+    const fix = /* GraphQL */ `
+      type MyObject {
+        myField: ID!
+      }
+    `
+
+    const node = getFirstObjectType(fix)
 
     const obj = objectTypeApi(node)
 

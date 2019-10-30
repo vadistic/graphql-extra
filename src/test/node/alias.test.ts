@@ -1,97 +1,7 @@
-import { print, NameNode, Kind, DocumentNode, VariableDefinitionNode, VariableNode } from 'graphql'
-import { t } from '../alias'
-import { stripLoc } from './utils'
+import { print } from 'graphql'
+import { t } from '../../node'
 
-describe(`node`, () => {
-  test(`nameNode`, () => {
-    const res = t.name('hello')
-
-    const fix: NameNode = {
-      kind: Kind.NAME,
-      value: 'hello',
-    }
-
-    expect(res).toEqual(fix)
-  })
-
-  test(`documentNode`, () => {
-    const res = t.document([])
-
-    const fix: DocumentNode = {
-      kind: Kind.DOCUMENT,
-      definitions: [],
-    }
-
-    expect(res).toEqual(fix)
-  })
-
-  test(`operationDefinitionNode`, () => {
-    // TODO
-  })
-
-  test(`variableDefinitionNode`, () => {
-    const fromAst = t.variable({
-      variable: t.value.variable('var'),
-      type: t.type.int(),
-    })
-
-    const fromShorthand = t.variable({
-      variable: 'var',
-      type: 'Int',
-    })
-
-    const fixture: VariableDefinitionNode = {
-      kind: Kind.VARIABLE_DEFINITION,
-      variable: { kind: Kind.VARIABLE, name: { kind: Kind.NAME, value: 'var' } },
-      type: { kind: Kind.NAMED_TYPE, name: { kind: Kind.NAME, value: 'Int' } },
-    }
-
-    expect(stripLoc(fromAst)).toEqual(fixture)
-    expect(stripLoc(fromShorthand)).toEqual(fixture)
-  })
-
-  test(`variableNode`, () => {
-    const res = t.value.variable('abc')
-
-    const fixture: VariableNode = {
-      kind: Kind.VARIABLE,
-      name: {
-        kind: Kind.NAME,
-        value: 'abc',
-      },
-    }
-
-    expect(res).toEqual(fixture)
-  })
-
-  test(`selectionSetNode`, () => {
-    const res = t.selectionSet([
-      // ast node
-      t.field({ name: 'myField' }),
-      // fragment node
-      t.fragmentSpread({ name: 'MyFragment' }),
-      // field shorthand
-      'myOtherField',
-      // field props
-      {
-        name: 'myNestedField',
-        selections: ['ab', 'bc'],
-      },
-    ])
-
-    expect(print(res)).toMatchInlineSnapshot(`
-      "{
-        myField
-        ...MyFragment
-        myOtherField
-        myNestedField {
-          ab
-          bc
-        }
-      }"
-    `)
-  })
-
+describe(`node > alias`, () => {
   test(`objectType`, () => {
     // props input
     const res = t.objectType({
@@ -229,6 +139,25 @@ describe(`node`, () => {
         A
         B
         C @depreciated
+      }"
+    `)
+  })
+
+  test(`inputObjectType`, () => {
+    // props input
+    const res = t.inputObjectType({
+      name: 'MyInput',
+      description: 'My input',
+      fields: [
+        { name: 'id', description: 'field description', type: { name: 'ID', nonNull: true } },
+      ],
+    })
+
+    expect(print(res)).toMatchInlineSnapshot(`
+      "\\"My input\\"
+      input MyInput {
+        \\"field description\\"
+        id: ID!
       }"
     `)
   })

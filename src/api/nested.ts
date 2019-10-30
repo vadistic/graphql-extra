@@ -1,33 +1,36 @@
 import {
+  ArgumentNode,
+  DirectiveNode,
+  EnumValueDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
-  TypeNode,
-  EnumValueDefinitionNode,
   Kind,
   NamedTypeNode,
-  DirectiveNode,
-  ArgumentNode,
+  TypeNode,
   ValueNode,
 } from 'graphql'
-import { DeepMutable, Mutable, nodeFnCloned } from '../utils'
-import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../node'
+import { DeepMutable, Mutable, applyPropsCloned } from '../utils'
+import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../node/ast'
 import {
-  NameApiMixin,
-  nameApiMixin,
+  ArgumentsApiMixin,
+  argumentsApiMixin,
   DescriptionApiMixin,
   descriptionApiMixin,
   DirectivesApiMixin,
   directivesApiMixin,
-  TypeApiMixin,
+  inputValuesAsArgumentsApiMixin,
+  InputValuesAsArgumentsApiMixin,
+  nameApiMixin,
+  NameApiMixin,
   typeApiMixin,
-  ArgumentsApiMixin,
-  argumentsApiMixin,
+  TypeApiMixin,
 } from './mixins'
 
 export interface FieldApi
   extends NameApiMixin<FieldApi>,
     DescriptionApiMixin<FieldApi>,
     DirectivesApiMixin<FieldApi>,
+    InputValuesAsArgumentsApiMixin<FieldApi>,
     TypeApiMixin<FieldApi> {
   node: FieldDefinitionNode
 
@@ -41,6 +44,7 @@ export function fieldApi(node: FieldDefinitionNode): FieldApi {
     ...nameApiMixin(node),
     ...descriptionApiMixin(node),
     ...directivesApiMixin(node),
+    ...inputValuesAsArgumentsApiMixin(node),
     ...typeApiMixin(node),
 
     toInputValue() {
@@ -61,9 +65,14 @@ export interface InputValueApi
   node: InputValueDefinitionNode
 
   toField(): FieldApi
+
+  getDefaultValue(): ValueNode | undefined
+  setDefaultValue(value: ValueNode): InputValueApi
 }
 
 export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
+  const _node = node as Mutable<InputValueDefinitionNode>
+
   return {
     node,
 
@@ -77,6 +86,16 @@ export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
 
       return fieldApi({ kind: Kind.FIELD_DEFINITION, ...rest })
     },
+
+    getDefaultValue() {
+      return node.defaultValue
+    },
+
+    setDefaultValue(value) {
+      _node.defaultValue = value
+
+      return this as any
+    },
   }
 }
 
@@ -85,19 +104,15 @@ export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
 export interface TypeApi {
   node: TypeNode
 
-  // getters
   getNamedType(): NamedTypeNode
   getTypename(): string
 
-  // setters
   setTypename(value: string): TypeApi
   setType(props: TypeNode | TypeNodeProps): TypeApi
 
-  // list-null guards
   isNonNull(deep?: boolean): boolean
   isList(deep?: boolean): boolean
 
-  // list-null setters
   setNonNull(value?: boolean): TypeApi
   setList(value?: boolean): TypeApi
 }
@@ -146,7 +161,7 @@ export function typeApi(node: TypeNode): TypeApi {
     },
 
     setType(props) {
-      Object.assign(node, nodeFnCloned(typeNode)(props))
+      Object.assign(node, applyPropsCloned(typeNode, props))
 
       return this as any
     },

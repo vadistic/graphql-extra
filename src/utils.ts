@@ -1,8 +1,16 @@
 import { ASTNode, Kind } from 'graphql'
 
+//
+// ──────────────────────────────────────────────────  ──────────
+//   :::::: U T I L S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────
+//
+
 export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 //  no input => no return
 export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
@@ -15,24 +23,29 @@ export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined =>
 export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
   arr.map(fn)
 
+export const propsOrNode = <P, N>(fn: (props: P) => N) => (props: P | N) =>
+  isAstNode<N>(props) ? props : fn(props)
+
 /** accept node or props */
-export const nodeFn = <Props, Node>(fn: (props: Props) => Node) => (input: Node | Props): Node =>
-  isAstNode<Node>(input) ? input : fn(input)
+export const applyProps = <P, N>(fn: (props: P) => N, props: P | N) => propsOrNode(fn)(props)
 
 /** accept array of nodes/props */
-export const nodeFnArr = <A, R>(fn: (arg: A) => R) => arrayable(nodeFn(fn))
+export const applyPropsArr = <P, N>(fn: (props: P) => N, props: ReadonlyArray<P | N>) =>
+  arrayable(propsOrNode(fn))(props)
+
 /** accept undef or node/props */
-export const nodeFnNullable = <A, R>(fn: (arg: A) => R) => nullable(nodeFn(fn))
+export const applyPropsNullable = <P, N>(fn: (props: P) => N, props?: P | N) =>
+  nullable(propsOrNode(fn))(props)
+
 /** accept undef or array of nodes/props */
-export const nodeFnNullableArr = <A, R>(fn: (arg: A) => R) => nullable(arrayable(nodeFn(fn)))
+export const applyPropsNullableArr = <P, N>(fn: (props: P) => N, props?: ReadonlyArray<P | N>) =>
+  nullable(arrayable(propsOrNode(fn)))(props)
 
 /* same as nodeFn but clones props to avoid mutable magic */
-export const nodeFnCloned = <Props, Node>(fn: (props: Props) => Node) => (
-  input: Node | Props,
-): Node => {
-  const cloned = cloneDeep(input)
+export const applyPropsCloned = <P, N>(fn: (props: P) => N, props: N | P): N => {
+  const cloned = cloneDeep(props)
 
-  return isAstNode<Node>(cloned) ? cloned : fn(cloned)
+  return isAstNode<N>(cloned) ? cloned : fn(cloned)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -85,14 +98,14 @@ export function cloneDeep<T>(target: T): T {
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * gets name from everything or fallback to kind
+ * gets name from stuff
  */
 export function getName(input: any): string {
   if (typeof input === 'string') {
     return input
   }
 
-  if (input.kind === Kind.NAME) {
+  if ('kind' in input && input.kind === Kind.NAME) {
     return input.value
   }
 
@@ -100,7 +113,7 @@ export function getName(input: any): string {
     return getName(input.name)
   }
 
-  if ('kind' in input) {
+  if ('kind' in input && !!input.kind) {
     return input.kind
   }
 
