@@ -45,13 +45,15 @@ export interface AstKindToFunction {
   // TYPE DEFINITIONS
   ScalarTypeDefinition: typeof AST.scalarTypeDefinitionNode
   ObjectTypeDefinition: typeof AST.objectTypeDefinitionNode
-  FieldDefinition: typeof AST.fieldDefinitionNode
-  InputValueDefinition: typeof AST.inputValueDefinitionNode
   InterfaceTypeDefinition: typeof AST.interfaceTypeDefinitionNode
   UnionTypeDefinition: typeof AST.unionTypeDefinitionNode
-  EnumTypeDefinition: typeof AST.enumTypeDefinitionNode
   EnumValueDefinition: typeof AST.enumValueDefinitionNode
   InputObjectTypeDefinition: typeof AST.inputObjectTypeDefinitionNode
+
+  // TYPE FIELD DEFINITIONS
+  FieldDefinition: typeof AST.fieldDefinitionNode
+  InputValueDefinition: typeof AST.inputValueDefinitionNode
+  EnumTypeDefinition: typeof AST.enumTypeDefinitionNode
 
   // DIRECTIVE DEFINITIONS
   DirectiveDefinition: typeof AST.directiveDefinitionNode

@@ -10,9 +10,14 @@ import {
   EnumTypeDefinitionNode,
   ASTKindToNode,
 } from 'graphql'
-import { documentNode, EnumTypeDefinitionNodeProps, enumTypeDefinitionNode } from '../node/ast'
-import { getName, applyPropsCloned } from '../utils'
-import { isDirectiveDefinitionNode } from '../node'
+import {
+  documentNode,
+  EnumTypeDefinitionNodeProps,
+  enumTypeDefinitionNode,
+  isDirectiveDefinitionNode,
+} from '../../node'
+import { getName, applyPropsCloned } from '../../utils'
+
 import {
   enumTypeApi,
   EnumTypeApi,
@@ -22,18 +27,14 @@ import {
   ObjectTypeApi,
   scalarTypeApi,
   ScalarTypeApi,
-  TypeDefinitonApi,
   UnionTypeApi,
   unionTypeApi,
-  inputObjectTypeApi,
-  InputObjectTypeApi,
-} from './type'
+  inputTypeApi,
+  InputTypeApi,
+} from '../apis'
+import { TypeDefinitonApi } from '../mixins'
 
-//
-// ────────────────────────────────────────────────────────  ──────────
-//   :::::: D O C U M E N T : :  :   :    :     :        :          :
-// ──────────────────────────────────────────────────────────────────
-//
+// ────────────────────────────────────────────────────────────────────────────────
 
 export type SDLInput = string | DocumentNode | (string | DocumentNode)[]
 
@@ -65,7 +66,7 @@ function typeNodeToApi(node: TypeDefinitionNode) {
     case Kind.ENUM_TYPE_DEFINITION:
       return enumTypeApi(node)
     case Kind.INPUT_OBJECT_TYPE_DEFINITION:
-      return inputObjectTypeApi(node)
+      return inputTypeApi(node)
     case Kind.INTERFACE_TYPE_DEFINITION:
       return interfaceTypeApi(node)
     case Kind.OBJECT_TYPE_DEFINITION:
@@ -94,7 +95,7 @@ export interface DocumentApi {
   removeType(typename: string): DocumentApi
 
   getEnumType(typename: string): EnumTypeApi
-  getInputObjectType(typename: string): InputObjectTypeApi
+  getInputObjectType(typename: string): InputTypeApi
   getInterfaceType(typename: string): InterfaceTypeApi
   getObjectType(typename: string): ObjectTypeApi
   getScalarType(typename: string): ScalarTypeApi
@@ -233,7 +234,7 @@ export function documentApi(): DocumentApi {
     },
 
     getInputObjectType(typename) {
-      return inputObjectTypeApi(getNodeOfKind(typename, Kind.INPUT_OBJECT_TYPE_DEFINITION))
+      return inputTypeApi(getNodeOfKind(typename, Kind.INPUT_OBJECT_TYPE_DEFINITION))
     },
 
     getInterfaceType(typename) {

@@ -1,3 +1,3 @@
 export * from './document'
-export * from './nested'
-export * from './type'
+export * from './apis'
+export * from './kind'

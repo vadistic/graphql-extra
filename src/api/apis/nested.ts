@@ -9,35 +9,37 @@ import {
   TypeNode,
   ValueNode,
 } from 'graphql'
-import { DeepMutable, Mutable, applyPropsCloned } from '../utils'
-import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../node/ast'
+import { DeepMutable, Mutable, applyPropsCloned } from '../../utils'
+import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../../node'
 import {
-  ArgumentsApiMixin,
-  argumentsApiMixin,
+  NameApiMixin,
   DescriptionApiMixin,
-  descriptionApiMixin,
   DirectivesApiMixin,
+  InputValuesAsArgumentsApiMixin,
+  TypeApiMixin,
+  nameApiMixin,
+  descriptionApiMixin,
   directivesApiMixin,
   inputValuesAsArgumentsApiMixin,
-  InputValuesAsArgumentsApiMixin,
-  nameApiMixin,
-  NameApiMixin,
   typeApiMixin,
-  TypeApiMixin,
-} from './mixins'
+  ArgumentsApiMixin,
+  argumentsApiMixin,
+} from '../mixins'
 
-export interface FieldApi
-  extends NameApiMixin<FieldApi>,
-    DescriptionApiMixin<FieldApi>,
-    DirectivesApiMixin<FieldApi>,
-    InputValuesAsArgumentsApiMixin<FieldApi>,
-    TypeApiMixin<FieldApi> {
+// ────────────────────────────────────────────────────────────────────────────────
+
+export interface FieldDefinitionApi
+  extends NameApiMixin<FieldDefinitionApi>,
+    DescriptionApiMixin<FieldDefinitionApi>,
+    DirectivesApiMixin<FieldDefinitionApi>,
+    InputValuesAsArgumentsApiMixin<FieldDefinitionApi>,
+    TypeApiMixin<FieldDefinitionApi> {
   node: FieldDefinitionNode
 
   toInputValue(): InputValueApi
 }
 
-export function fieldApi(node: FieldDefinitionNode): FieldApi {
+export function fieldDefinitionApi(node: FieldDefinitionNode): FieldDefinitionApi {
   return {
     node,
 
@@ -60,11 +62,11 @@ export function fieldApi(node: FieldDefinitionNode): FieldApi {
 export interface InputValueApi
   extends NameApiMixin<InputValueApi>,
     DescriptionApiMixin<InputValueApi>,
-    DirectivesApiMixin<FieldApi>,
-    TypeApiMixin<FieldApi> {
+    DirectivesApiMixin<FieldDefinitionApi>,
+    TypeApiMixin<FieldDefinitionApi> {
   node: InputValueDefinitionNode
 
-  toField(): FieldApi
+  toField(): FieldDefinitionApi
 
   getDefaultValue(): ValueNode | undefined
   setDefaultValue(value: ValueNode): InputValueApi
@@ -84,7 +86,7 @@ export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
     toField() {
       const { kind, defaultValue, loc, ...rest } = node
 
-      return fieldApi({ kind: Kind.FIELD_DEFINITION, ...rest })
+      return fieldDefinitionApi({ kind: Kind.FIELD_DEFINITION, ...rest })
     },
 
     getDefaultValue() {
