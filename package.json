@@ -10,8 +10,13 @@
     "type": "git",
     "url": "https://github.com/vadistic/graphql-extra"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist && rm -rf docs && rm -rf coverage",
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "format": "prettier --write src/** test/**",
     "build": "tsc -p tsconfig.build.json",

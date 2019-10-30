@@ -23,16 +23,16 @@ export type ArgumentsMixinCompatibleNode = DirectiveNode | FieldNode
  * @category API Mixins
  */
 export interface ArgumentsApiMixin<This> {
-  getArgumentNames(): string[]
+  getargnames(): string[]
   getArguments(): ArgumentApi[]
 
-  hasArgument(argumentName: string): boolean
-  getArgument(argumentName: string): ArgumentApi
+  hasArgument(argname: string): boolean
+  getArgument(argname: string): ArgumentApi
 
   createArgument(props: ArgumentNode | ArgumentNodeProps): This
-  updateArgument(argumentName: string, props: ArgumentNode | ArgumentNodeProps): This
+  updateArgument(argname: string, props: ArgumentNode | ArgumentNodeProps): This
   upsertArgument(props: ArgumentNode | ArgumentNodeProps): This
-  removeArgument(argumentName: string): This
+  removeArgument(argname: string): This
 }
 
 /**
@@ -42,7 +42,7 @@ export function argumentsApiMixin<This>(
   node: ArgumentsMixinCompatibleNode,
 ): ArgumentsApiMixin<This> {
   return {
-    getArgumentNames() {
+    getargnames() {
       return (node.arguments || []).map(arg => arg.name.value)
     },
 
@@ -78,11 +78,11 @@ export function argumentsApiMixin<This>(
       return this as any
     },
 
-    updateArgument(argumentName, props) {
+    updateArgument(argname, props) {
       oneToManyUpdate({
         node,
         key: 'arguments',
-        elementName: argumentName,
+        elementName: argname,
         parentName: node.name.value,
         nodeCreateFn: argumentNode,
         props,
@@ -104,11 +104,11 @@ export function argumentsApiMixin<This>(
       return this as any
     },
 
-    removeArgument(argumentName) {
+    removeArgument(argname) {
       oneToManyRemove({
         node,
         key: 'arguments',
-        elementName: argumentName,
+        elementName: argname,
         parentName: node.name.value,
       })
 

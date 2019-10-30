@@ -14,7 +14,7 @@ describe(`api > type-definition`, () => {
 
     const fields = objectTypeApi(node)
       .setDescription('My description')
-      .getFieldNames()
+      .getfieldnames()
 
     expect(fields).toEqual(['myField'])
     expect(node.description && node.description.value).toEqual('My description')
@@ -34,7 +34,7 @@ describe(`api > type-definition`, () => {
       .createField({ name: 'otherField', type: t.type.int() })
       .updateField('otherField', { name: 'renamedField' })
 
-    expect(obj.getFieldNames()).toEqual(['renamedField'])
+    expect(obj.getfieldnames()).toEqual(['renamedField'])
   })
 
   test(`typeApi > set/update correct this and node reference`, () => {

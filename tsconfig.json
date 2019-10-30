@@ -3,14 +3,15 @@
     "moduleResolution": "node",
     "module": "commonjs",
 
+    "allowJs": false,
+
     "target": "es2018",
     "lib": ["esnext"],
 
     "esModuleInterop": true,
 
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-
     "strict": true
-  }
+  },
+
+  "exclude": ["node_modules/**", "coverage/**", "dist/**"]
 }

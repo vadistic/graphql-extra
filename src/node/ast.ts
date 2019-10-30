@@ -68,7 +68,6 @@ import {
  *
  * @category AST Node
  */
-
 export type NameNodeProps = string
 
 /**

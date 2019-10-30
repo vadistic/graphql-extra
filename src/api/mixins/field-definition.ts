@@ -4,6 +4,7 @@ import {
   ObjectTypeExtensionNode,
   InterfaceTypeExtensionNode,
   FieldDefinitionNode,
+  TypeNode,
 } from 'graphql'
 import {
   FieldDefinitionApi,
@@ -12,7 +13,7 @@ import {
   DirectiveApi,
   fieldDefinitionApi,
 } from '../apis'
-import { FieldDefinitionNodeProps, fieldDefinitionNode } from '../../node'
+import { FieldDefinitionNodeProps, fieldDefinitionNode, TypeNodeProps } from '../../node'
 import {
   oneToManyGet,
   oneToManyCreate,
@@ -39,11 +40,14 @@ export type FieldDefinitionsApiMixinCompatibleNode =
  * @category API Mixins
  */
 export interface FieldDefinitionsApiMixin<This> {
-  getFieldNames(): string[]
+  getfieldnames(): string[]
   getFields(): FieldDefinitionApi[]
 
-  hasField(fieldName: string): boolean
-  getField(fieldName: string): FieldDefinitionApi
+  getFieldsByTypename(typename: string): FieldDefinitionApi[]
+  // TODO: getFieldsByType iwth type compare fn
+
+  hasField(fieldname: string): boolean
+  getField(fieldname: string): FieldDefinitionApi
 
   createField(props: FieldDefinitionNode | FieldDefinitionNodeProps): This
   updateField(
@@ -51,11 +55,16 @@ export interface FieldDefinitionsApiMixin<This> {
     props: Partial<FieldDefinitionNode | FieldDefinitionNodeProps>,
   ): This
   upsertField(props: FieldDefinitionNode | FieldDefinitionNodeProps): This
-  removeField(fieldName: string): This
+  removeField(fieldname: string): This
+
+  getFieldTypename(fieldname: string): string
+  setFieldTypename(fieldname: string, value: string): This
 
   getFieldType(fieldname: string): TypeApi
+  setFieldType(fieldname: string, props: TypeNode | TypeNodeProps): This
+
   getFieldArguments(fieldname: string): InputValueApi[]
-  getFieldDirectives(fieldName: string): DirectiveApi[]
+  getFieldDirectives(fieldname: string): DirectiveApi[]
 }
 
 /**
@@ -65,7 +74,7 @@ export function fieldDefinitionsApiMixin<This>(
   node: FieldDefinitionsApiMixinCompatibleNode,
 ): FieldDefinitionsApiMixin<This> {
   return {
-    getFieldNames() {
+    getfieldnames() {
       return (node.fields || []).map(field => field.name.value)
     },
 
@@ -73,15 +82,19 @@ export function fieldDefinitionsApiMixin<This>(
       return (node.fields || []).map(fieldDefinitionApi)
     },
 
-    hasField(fieldName) {
-      return !!node.fields && node.fields.some(field => field.name.value === fieldName)
+    getFieldsByTypename(typename) {
+      return this.getFields().filter(field => field.getTypename() === typename)
     },
 
-    getField(fieldName) {
+    hasField(fieldname) {
+      return !!node.fields && node.fields.some(field => field.name.value === fieldname)
+    },
+
+    getField(fieldname) {
       const field = oneToManyGet<FieldDefinitionNode>({
         node,
         key: 'fields',
-        elementName: fieldName,
+        elementName: fieldname,
         parentName: node.name.value,
       })
 
@@ -101,11 +114,11 @@ export function fieldDefinitionsApiMixin<This>(
       return this as any
     },
 
-    updateField(fieldName, props) {
+    updateField(fieldname, props) {
       oneToManyUpdate({
         node,
         key: 'fields',
-        elementName: fieldName,
+        elementName: fieldname,
         parentName: node.name.value,
         nodeCreateFn: fieldDefinitionNode,
         props,
@@ -127,22 +140,38 @@ export function fieldDefinitionsApiMixin<This>(
       return this as any
     },
 
-    removeField(fieldName) {
-      oneToManyRemove({ node, key: 'fields', elementName: fieldName, parentName: node.name.value })
+    removeField(fieldname) {
+      oneToManyRemove({ node, key: 'fields', elementName: fieldname, parentName: node.name.value })
 
       return this as any
     },
 
-    getFieldType(fieldName) {
-      return this.getField(fieldName).getType()
+    getFieldTypename(fieldname) {
+      return this.getField(fieldname).getTypename()
+    },
+
+    setFieldTypename(fieldname, value) {
+      this.getField(fieldname).setTypename(value)
+
+      return this as any
+    },
+
+    getFieldType(fieldname) {
+      return this.getField(fieldname).getType()
+    },
+
+    setFieldType(fieldname, props) {
+      this.getField(fieldname).setType(props)
+
+      return this as any
     },
 
     getFieldArguments(fieldname) {
       return this.getField(fieldname).getArguments()
     },
 
-    getFieldDirectives(fieldName) {
-      return this.getField(fieldName).getDirectives()
+    getFieldDirectives(fieldname) {
+      return this.getField(fieldname).getDirectives()
     },
   }
 }

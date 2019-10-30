@@ -4,7 +4,7 @@ GraphQL AST/SDL toolkit extending standard `graphql/graphql-js` with extra featu
 
 Inspired by code-first schema generation tools like `graphql-compose` or `graphql-nexus`, but focused on AST/SDL, instead of schema.
 
-Lightweight and flexible utils for GraphQL generation & testing. Not a framework. The aim is to cut common boilerplate from GraphQL projects in reliable & uniform manner.
+The aim is to provide lightweight and flexible utils for GraphQL generation & testing. Not a framework. This lib should cut common boilerplate from GraphQL projects in reliable & uniform manner.
 
 ## Installation
 
@@ -150,5 +150,6 @@ ast.toSDLString()
 ## TODO
 
 - [ ] finish APIs
-- [ ] more tests
 - [ ] polish docs
+- [ ] more tests
+- [ ] dogfood it

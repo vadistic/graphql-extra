@@ -4,9 +4,11 @@ import {
   InputValueDefinitionNode,
   InputObjectTypeDefinitionNode,
   InputObjectTypeExtensionNode,
+  TypeNode,
+  ValueNode,
 } from 'graphql'
-import { InputValueApi, inputValueApi } from '../apis'
-import { InputValueDefinitionNodeProps, inputValueDefinitionNode } from '../../node'
+import { InputValueApi, inputValueApi, TypeApi } from '../apis'
+import { InputValueDefinitionNodeProps, inputValueDefinitionNode, TypeNodeProps } from '../../node'
 import { getName } from '../../utils'
 import {
   oneToManyGet,
@@ -32,19 +34,28 @@ export type InputValuesAsArgumentsApiMixinCompatibleNode =
  * @category API Mixins
  */
 export interface InputValuesAsArgumentsApiMixin<This> {
-  getArgumentNames(): string[]
+  getargnames(): string[]
   getArguments(): InputValueApi[]
 
-  hasArgument(argumentName: string): boolean
-  getArgument(argumentName: string): InputValueApi
+  getArgumentsByTypename(typename: string): InputValueApi[]
+  // TODO: getFieldsByType iwth type compare fn
+
+  hasArgument(argname: string): boolean
+  getArgument(argname: string): InputValueApi
 
   createArgument(props: InputValueDefinitionNode | InputValueDefinitionNodeProps): This
   upsertArgument(props: InputValueDefinitionNode | InputValueDefinitionNodeProps): This
   updateArgument(
-    argumentName: string,
+    argname: string,
     props: InputValueDefinitionNode | InputValueDefinitionNodeProps,
   ): This
-  removeArgument(argumentName: string): This
+  removeArgument(argname: string): This
+
+  getArgumentType(argname: string): TypeApi
+  setArgumentType(argname: string, props: TypeNode | TypeNodeProps): TypeApi
+
+  getArgumentDefaultValue(argname: string): ValueNode | undefined
+  setArgumentDefualtValue(argname: string, props: ValueNode): This
 }
 
 /**
@@ -54,7 +65,7 @@ export function inputValuesAsArgumentsApiMixin<This>(
   node: InputValuesAsArgumentsApiMixinCompatibleNode,
 ): InputValuesAsArgumentsApiMixin<This> {
   return {
-    getArgumentNames() {
+    getargnames() {
       return (node.arguments || []).map(getName)
     },
 
@@ -62,15 +73,19 @@ export function inputValuesAsArgumentsApiMixin<This>(
       return (node.arguments || []).map(inputValueApi)
     },
 
-    hasArgument(argumentName) {
-      return (node.arguments || []).some(arg => arg.name.value === argumentName)
+    getArgumentsByTypename(typename) {
+      return this.getArguments().filter(arg => arg.getTypename() === typename)
     },
 
-    getArgument(argumentName) {
+    hasArgument(argname) {
+      return (node.arguments || []).some(arg => arg.name.value === argname)
+    },
+
+    getArgument(argname) {
       const arg = oneToManyGet<InputValueDefinitionNode>({
         node,
         key: 'arguments',
-        elementName: argumentName,
+        elementName: argname,
         parentName: node.name.value,
       })
 
@@ -103,11 +118,11 @@ export function inputValuesAsArgumentsApiMixin<This>(
       return this as any
     },
 
-    updateArgument(argumentName, props) {
+    updateArgument(argname, props) {
       oneToManyUpdate({
         node,
         key: 'arguments',
-        elementName: argumentName,
+        elementName: argname,
         parentName: node.name.value,
         nodeCreateFn: inputValueDefinitionNode,
         props,
@@ -116,13 +131,33 @@ export function inputValuesAsArgumentsApiMixin<This>(
       return this as any
     },
 
-    removeArgument(argumentName) {
+    removeArgument(argname) {
       oneToManyRemove({
         node,
         key: 'arguments',
-        elementName: argumentName,
+        elementName: argname,
         parentName: node.name.value,
       })
+
+      return this as any
+    },
+
+    getArgumentType(argname) {
+      return this.getArgument(argname).getType()
+    },
+
+    setArgumentType(argname, props: TypeNode | TypeNodeProps) {
+      this.getArgument(argname).setType(props)
+
+      return this as any
+    },
+
+    getArgumentDefaultValue(argname) {
+      return this.getArgument(argname).getDefaultValue()
+    },
+
+    setArgumentDefualtValue(argname: string, props: ValueNode) {
+      this.getArgument(argname).setDefaultValue(props)
 
       return this as any
     },
@@ -140,19 +175,28 @@ export type InputValuesAsFieldsApiMixinCompatibleNode =
  * @category API Mixins
  */
 export interface InputValuesAsFieldsApiMixin<This> {
-  getFieldNames(): string[]
+  getfieldnames(): string[]
   getFields(): InputValueApi[]
 
-  hasField(fieldName: string): boolean
-  getField(fieldName: string): InputValueApi
+  getFieldsByTypename(typename: string): InputValueApi[]
+  // TODO: getFieldsByType iwth type compare fn
+
+  hasField(fieldname: string): boolean
+  getField(fieldname: string): InputValueApi
 
   createField(props: InputValueDefinitionNode | InputValueDefinitionNodeProps): This
   upsertField(props: InputValueDefinitionNode | InputValueDefinitionNodeProps): This
   updateField(
-    fieldName: string,
+    fieldname: string,
     props: InputValueDefinitionNode | InputValueDefinitionNodeProps,
   ): This
-  removeField(fieldName: string): This
+  removeField(fieldname: string): This
+
+  getFieldType(fieldname: string): TypeApi
+  setFieldType(fieldname: string, props: TypeNode | TypeNodeProps): TypeApi
+
+  getFieldDefaultValue(fieldname: string): ValueNode | undefined
+  setFieldDefualtValue(fieldname: string, props: ValueNode): This
 }
 
 /**
@@ -162,7 +206,7 @@ export function inputValuesAsFieldsApiMixin<This>(
   node: InputValuesAsFieldsApiMixinCompatibleNode,
 ): InputValuesAsFieldsApiMixin<This> {
   return {
-    getFieldNames() {
+    getfieldnames() {
       return (node.fields || []).map(getName)
     },
 
@@ -170,15 +214,19 @@ export function inputValuesAsFieldsApiMixin<This>(
       return (node.fields || []).map(inputValueApi)
     },
 
-    hasField(fieldName) {
-      return (node.fields || []).some(field => field.name.value === fieldName)
+    getFieldsByTypename(typename) {
+      return this.getFields().filter(field => field.getType().getTypename() === typename)
     },
 
-    getField(fieldName) {
+    hasField(fieldname) {
+      return (node.fields || []).some(field => field.name.value === fieldname)
+    },
+
+    getField(fieldname) {
       const arg = oneToManyGet<InputValueDefinitionNode>({
         node,
         key: 'fields',
-        elementName: fieldName,
+        elementName: fieldname,
         parentName: node.name.value,
       })
 
@@ -211,11 +259,11 @@ export function inputValuesAsFieldsApiMixin<This>(
       return this as any
     },
 
-    updateField(fieldName, props) {
+    updateField(fieldname, props) {
       oneToManyUpdate({
         node,
         key: 'fields',
-        elementName: fieldName,
+        elementName: fieldname,
         parentName: node.name.value,
         nodeCreateFn: inputValueDefinitionNode,
         props,
@@ -224,13 +272,33 @@ export function inputValuesAsFieldsApiMixin<This>(
       return this as any
     },
 
-    removeField(fieldName) {
+    removeField(fieldname) {
       oneToManyRemove({
         node,
         key: 'fields',
-        elementName: fieldName,
+        elementName: fieldname,
         parentName: node.name.value,
       })
+
+      return this as any
+    },
+
+    getFieldType(fieldname) {
+      return this.getField(fieldname).getType()
+    },
+
+    setFieldType(fieldname, props: TypeNode | TypeNodeProps) {
+      this.getField(fieldname).setType(props)
+
+      return this as any
+    },
+
+    getFieldDefaultValue(fieldname) {
+      return this.getField(fieldname).getDefaultValue()
+    },
+
+    setFieldDefualtValue(fieldname: string, props: ValueNode) {
+      this.getField(fieldname).setDefaultValue(props)
 
       return this as any
     },
