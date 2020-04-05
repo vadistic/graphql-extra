@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
-    "module": "commonjs",
-
     "allowJs": false,
-
-    "target": "es2018",
-    "lib": ["esnext"],
-
     "esModuleInterop": true,
+    "lib": ["esnext"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "es2018",
+    "incremental": true,
 
-    "strict": true
+    "baseUrl": ".",
+    "rootDir": "src"
   },
-
-  "exclude": ["node_modules/**", "coverage/**", "dist/**"]
+  "include": ["src/**"],
+  "exclude": ["node_modules/**", "coverage/**", "pkg/**", "tmp/**", "docs/**"]
 }

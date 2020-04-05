@@ -16,6 +16,7 @@ yarn add graphql-extra
 
 - no deps (other than `graphql` peerDependency)
 - semantic, verboose aprroach - no magic
+- multi build thanks to [@pika](`https://github.com/pikapkg/pack`)
 
 ### creation functions
 
