@@ -140,3 +140,15 @@ ast.toSDLString()
 */
 
 ```
+
+## Tips
+
+Commonjs build is bundled, so if you're consuming it (not es modules) - you'll need to use only top import
+
+```ts
+// GOOD
+import { a, b, c } from 'graphql-extra'
+
+// BAD
+import { a, b, c } from 'graphql-extra/api'
+```
