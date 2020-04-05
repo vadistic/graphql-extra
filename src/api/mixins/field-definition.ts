@@ -75,19 +75,19 @@ export function fieldDefinitionsApiMixin<This>(
 ): FieldDefinitionsApiMixin<This> {
   return {
     getfieldnames() {
-      return (node.fields || []).map(field => field.name.value)
+      return (node.fields ?? []).map((field) => field.name.value)
     },
 
     getFields() {
-      return (node.fields || []).map(fieldDefinitionApi)
+      return (node.fields ?? []).map(fieldDefinitionApi)
     },
 
     getFieldsByTypename(typename) {
-      return this.getFields().filter(field => field.getTypename() === typename)
+      return this.getFields().filter((field) => field.getTypename() === typename)
     },
 
     hasField(fieldname) {
-      return !!node.fields && node.fields.some(field => field.name.value === fieldname)
+      return !!node.fields && node.fields.some((field) => field.name.value === fieldname)
     },
 
     getField(fieldname) {

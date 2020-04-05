@@ -15,9 +15,7 @@ describe(`api > documentApi`, () => {
       authot: Person!
     }
   `
-  const doc = documentApi()
-    .addSDL(typeDefs)
-    .addSDL(moreTypeDefs)
+  const doc = documentApi().addSDL(typeDefs).addSDL(moreTypeDefs)
 
   test(`parse SDL & correct this reference`, () => {
     expect(Object.keys(doc)).toContain('hasType')

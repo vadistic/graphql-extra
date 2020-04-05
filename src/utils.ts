@@ -73,13 +73,13 @@ export function cloneDeep<T>(target: T): T {
   if (Array.isArray(target)) {
     const copy = [...target] as any[]
 
-    return copy.map(n => cloneDeep(n)) as any
+    return copy.map((n) => cloneDeep(n)) as any
   }
 
   if (typeof target === 'object' && target !== {}) {
     const copy = { ...target } as { [key: string]: any }
 
-    for (const key in Object.keys(copy)) {
+    for (const key of Object.keys(copy)) {
       copy[key] = cloneDeep<any>(copy[key])
     }
 

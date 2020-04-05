@@ -52,7 +52,7 @@ export function oneToManyCreate<Node, Props>({
   }
 
   const property = (node[key] || []) as any[]
-  const index = property.findIndex(el => el.name.value === elementName)
+  const index = property.findIndex((el) => el.name.value === elementName)
 
   if (index !== -1) {
     throw Error(`${singular(key)} '${elementName}' on '${parentName}' already exist`)
@@ -81,7 +81,7 @@ export function oneToManyUpdate<Node, Props>({
   nodeCreateFn,
 }: OneToManyUpdateProps<Node, Props>) {
   const property = (node[key] || []) as any[]
-  const index = property.findIndex(el => el.name.value === elementName)
+  const index = property.findIndex((el) => el.name.value === elementName)
 
   if (property.length === 0 || index === -1) {
     throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
@@ -107,7 +107,7 @@ export function oneToManyUpsert<Node, Props>({
   }
 
   const property = (node[key] || []) as any[]
-  const index = property.findIndex(el => el.name.value === elementName)
+  const index = property.findIndex((el) => el.name.value === elementName)
   const next = applyPropsCloned(nodeCreateFn, props)
 
   if (index === -1) {
@@ -121,7 +121,7 @@ export function oneToManyUpsert<Node, Props>({
 
 export function oneToManyRemove({ node, key, elementName, parentName }: OneToManyGetProps) {
   const property = (node[key] || []) as any[]
-  const index = property.findIndex(el => el.name.value === elementName)
+  const index = property.findIndex((el) => el.name.value === elementName)
 
   if (index === -1) {
     throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)

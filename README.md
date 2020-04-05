@@ -1,6 +1,6 @@
 # graphql-extra
 
-GraphQL AST/SDL toolkit extending standard `graphql/graphql-js` with extra features for code generation & testing.
+> GraphQL AST/SDL toolkit extending standard `graphql/graphql-js` with extra features for code generation & testing.
 
 Inspired by code-first schema generation tools like `graphql-compose` or `graphql-nexus`, but focused on AST/SDL, instead of schema.
 
@@ -13,6 +13,9 @@ yarn add graphql-extra
 ```
 
 ## Features
+
+- no deps (other than `graphql` peerDependency)
+- semantic, verboose aprroach - no magic
 
 ### creation functions
 
@@ -29,21 +32,13 @@ yarn add graphql-extra
 
 - top-level entry point for other api methods, that keeps whole document reference (`typeMap`)
 
-### and also
-
-- good typescript support
-- no deps other than `graphql`
-- tested
-
 ## Docs
 
 Check [source](https://github.com/vadistic/graphql-extra/tree/master/src) or [docs](https://graphql-extra.netlify.com/globals)
 
 ## Sneak peek
 
-### creation functions
-
-Create any ASTNode with helper function
+### create AST node
 
 ```ts
 import { namedtypeNode } from 'graphql-extra/node'
@@ -83,9 +78,7 @@ const node: ObjectTypeDefinitionNode = t.objectType({
 })
 ```
 
-### manipulation APIs
-
-Add crud methods to (most) ASTNodes
+### modify object
 
 ```ts
 import { objectTypeApi } from 'graphql-extra/api'
@@ -102,7 +95,7 @@ if(node === obj.node) {
 }
 ```
 
-### document
+### modify document
 
 Top-level entry point/ reference for all typeDefs
 
@@ -146,10 +139,3 @@ ast.toSDLString()
 */
 
 ```
-
-## TODO
-
-- [ ] finish APIs
-- [ ] polish docs
-- [ ] more tests
-- [ ] dogfood it

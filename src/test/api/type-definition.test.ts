@@ -12,9 +12,7 @@ describe(`api > type-definition`, () => {
 
     const node = getFirstObjectType(fix)
 
-    const fields = objectTypeApi(node)
-      .setDescription('My description')
-      .getfieldnames()
+    const fields = objectTypeApi(node).setDescription('My description').getfieldnames()
 
     expect(fields).toEqual(['myField'])
     expect(node.description && node.description.value).toEqual('My description')

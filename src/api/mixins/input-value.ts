@@ -66,19 +66,19 @@ export function inputValuesAsArgumentsApiMixin<This>(
 ): InputValuesAsArgumentsApiMixin<This> {
   return {
     getargnames() {
-      return (node.arguments || []).map(getName)
+      return (node.arguments ?? []).map(getName)
     },
 
     getArguments() {
-      return (node.arguments || []).map(inputValueApi)
+      return (node.arguments ?? []).map(inputValueApi)
     },
 
     getArgumentsByTypename(typename) {
-      return this.getArguments().filter(arg => arg.getTypename() === typename)
+      return this.getArguments().filter((arg) => arg.getTypename() === typename)
     },
 
     hasArgument(argname) {
-      return (node.arguments || []).some(arg => arg.name.value === argname)
+      return (node.arguments ?? []).some((arg) => arg.name.value === argname)
     },
 
     getArgument(argname) {
@@ -207,19 +207,19 @@ export function inputValuesAsFieldsApiMixin<This>(
 ): InputValuesAsFieldsApiMixin<This> {
   return {
     getfieldnames() {
-      return (node.fields || []).map(getName)
+      return (node.fields ?? []).map(getName)
     },
 
     getFields() {
-      return (node.fields || []).map(inputValueApi)
+      return (node.fields ?? []).map(inputValueApi)
     },
 
     getFieldsByTypename(typename) {
-      return this.getFields().filter(field => field.getType().getTypename() === typename)
+      return this.getFields().filter((field) => field.getType().getTypename() === typename)
     },
 
     hasField(fieldname) {
-      return (node.fields || []).some(field => field.name.value === fieldname)
+      return (node.fields ?? []).some((field) => field.name.value === fieldname)
     },
 
     getField(fieldname) {

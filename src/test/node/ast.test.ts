@@ -11,7 +11,7 @@ import {
   DirectiveNode,
 } from 'graphql'
 import { AST } from '../../node'
-import { expectEqual } from '../test-utils'
+import { normaliseGql } from '../test-utils'
 
 describe(`node > ast`, () => {
   test(`nameNode`, () => {
@@ -22,7 +22,7 @@ describe(`node > ast`, () => {
       value: 'hello',
     }
 
-    expectEqual(res, fix)
+    expect(normaliseGql(res)).toEqual(normaliseGql(fix))
   })
 
   test(`documentNode`, () => {
@@ -33,7 +33,7 @@ describe(`node > ast`, () => {
       definitions: [],
     }
 
-    expectEqual(res, fix)
+    expect(normaliseGql(res)).toEqual(normaliseGql(fix))
   })
 
   test(`operationDefinitionNode`, () => {
@@ -65,8 +65,8 @@ describe(`node > ast`, () => {
       },
     }
 
-    expectEqual(short, fix)
-    expectEqual(long, fix)
+    expect(normaliseGql(short)).toEqual(normaliseGql(fix))
+    expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
   test(`variableDefinitionNode`, () => {
@@ -107,8 +107,8 @@ describe(`node > ast`, () => {
       },
     }
 
-    expectEqual(short, fix)
-    expectEqual(long, fix)
+    expect(normaliseGql(short)).toEqual(normaliseGql(fix))
+    expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
   test(`variableNode`, () => {
@@ -122,7 +122,7 @@ describe(`node > ast`, () => {
       },
     }
 
-    expectEqual(res, fix)
+    expect(normaliseGql(res)).toEqual(normaliseGql(fix))
   })
 
   test(`selectionSetNode`, () => {
@@ -162,8 +162,8 @@ describe(`node > ast`, () => {
       ],
     }
 
-    expectEqual(short, fix)
-    expectEqual(long, fix)
+    expect(normaliseGql(short)).toEqual(normaliseGql(fix))
+    expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
   test(`fieldNode`, () => {
@@ -175,8 +175,8 @@ describe(`node > ast`, () => {
       name: { kind: Kind.NAME, value: 'field' },
     }
 
-    expectEqual(short, fix)
-    expectEqual(long, fix)
+    expect(normaliseGql(short)).toEqual(normaliseGql(fix))
+    expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
   test(`argumentNode`, () => {
@@ -189,8 +189,8 @@ describe(`node > ast`, () => {
       value: { kind: Kind.VARIABLE, name: { kind: Kind.NAME, value: 'id' } },
     }
 
-    expectEqual(short, fix)
-    expectEqual(long, fix)
+    expect(normaliseGql(short)).toEqual(normaliseGql(fix))
+    expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
   test(`directiveNode`, () => {
@@ -226,9 +226,9 @@ describe(`node > ast`, () => {
       ],
     }
 
-    expectEqual(short, fix)
-    expectEqual(long, fix)
+    expect(normaliseGql(short)).toEqual(normaliseGql(fix))
+    expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
-  // TODO: Types, the rest will be tested in alias test & in api tests
+  // TODO: Types??, the rest will be tested in alias test & in api tests
 })

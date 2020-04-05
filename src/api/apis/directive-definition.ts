@@ -67,13 +67,13 @@ export function directiveDefinitionApi(node: DirectiveDefinitionNode): Directive
 
     hasLocation(value) {
       const name = getName(value)
-      return node.locations.some(loc => loc.value === name)
+      return node.locations.some((loc) => loc.value === name)
     },
 
     createLocation(value) {
       const next = applyProps(nameNode, value)
 
-      if (node.locations.some(loc => loc.value === next.value)) {
+      if (node.locations.some((loc) => loc.value === next.value)) {
         throw Error(`location '${next.value}' on ${node.name.value} already exists`)
       }
 
@@ -85,7 +85,7 @@ export function directiveDefinitionApi(node: DirectiveDefinitionNode): Directive
     upsertLocation(value) {
       const next = applyProps(nameNode, value)
 
-      const index = node.locations.findIndex(loc => loc.value === next.value)
+      const index = node.locations.findIndex((loc) => loc.value === next.value)
 
       if (index !== -1) {
         _node.locations[index] = next
@@ -98,7 +98,7 @@ export function directiveDefinitionApi(node: DirectiveDefinitionNode): Directive
 
     removeLocation(value) {
       const name = getName(value)
-      const index = node.locations.findIndex(loc => loc.value === name)
+      const index = node.locations.findIndex((loc) => loc.value === name)
 
       if (index === -1) {
         throw Error(`location '${name}' on ${node.name.value} does not exist`)

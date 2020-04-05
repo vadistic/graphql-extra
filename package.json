@@ -17,28 +17,29 @@
   ],
   "scripts": {
     "clean": "rm -rf dist && rm -rf docs && rm -rf coverage",
-    "lint": "eslint src/**/*.ts",
-    "format": "prettier --write src/** test/**",
+    "lint": "eslint --ext .ts src/**",
+    "format": "prettier --write src/**",
     "build": "tsc -p tsconfig.build.json",
     "docs": "typedoc src",
     "test": "jest",
     "cov": "jest --coverage",
     "prepublishOnly": "yarn format && yarn lint && yarn test && yarn docs && yarn clean && yarn build "
   },
-  "dependencies": {
-    "graphql": "^14.6.0"
+  "peerDependencies": {
+    "graphql": ">=14.6.0"
   },
   "devDependencies": {
-    "@types/jest": "^25.1.4",
-    "@vadistic/eslint-config-node": "^0.1.8",
-    "@vadistic/prettier-config": "^0.1.8",
-    "@vadistic/scripts": "^0.1.8",
+    "@types/jest": "^25.2.1",
+    "@vadistic/eslint-config-base": "^0.2.2",
+    "@vadistic/prettier-config": "^0.2.2",
+    "@vadistic/scripts": "^0.2.0",
     "eslint": "^6.8.0",
-    "jest": "^25.1.0",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.2.1",
-    "ts-node": "^8.6.2",
-    "typedoc": "^0.16.11",
+    "graphql": "^15.0.0",
+    "jest": "^25.2.7",
+    "prettier": "^2.0.2",
+    "ts-jest": "^25.3.1",
+    "ts-node": "^8.8.2",
+    "typedoc": "^0.17.3",
     "typescript": "^3.8.3"
   }
 }

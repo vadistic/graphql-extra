@@ -206,7 +206,7 @@ export function selectionSetNode(selections: SelectionSetNodeProps): SelectionSe
   return {
     kind: Kind.SELECTION_SET,
     // bit unconventional because selection node is union, and fn is applied only for field props
-    selections: selections.map(el => (isAstNode(el) ? el : applyProps(fieldNode, el))),
+    selections: selections.map((el) => (isAstNode(el) ? el : applyProps(fieldNode, el))),
   }
 }
 
@@ -1078,7 +1078,7 @@ export function directiveDefinitionNode(
     name: applyProps(nameNode, props.name),
     description: applyPropsNullable(stringValueNode, props.description),
     arguments: applyPropsNullableArr(inputValueDefinitionNode, props.arguments),
-    repeatable: props.repeatable || false,
+    repeatable: props.repeatable ?? false,
     locations: applyPropsArr(nameNode, props.locations),
   }
 }

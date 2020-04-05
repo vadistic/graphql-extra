@@ -43,15 +43,15 @@ export function argumentsApiMixin<This>(
 ): ArgumentsApiMixin<This> {
   return {
     getargnames() {
-      return (node.arguments || []).map(arg => arg.name.value)
+      return (node.arguments ?? []).map((arg) => arg.name.value)
     },
 
     hasArgument(argName) {
-      return !!node.arguments && node.arguments.some(arg => arg.name.value === argName)
+      return !!node.arguments && node.arguments.some((arg) => arg.name.value === argName)
     },
 
     getArguments() {
-      return (node.arguments || []).map(argumentApi)
+      return (node.arguments ?? []).map(argumentApi)
     },
 
     getArgument(argName) {

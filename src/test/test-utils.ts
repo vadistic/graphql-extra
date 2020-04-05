@@ -1,11 +1,10 @@
 import { KindEnum, Kind, ASTKindToNode, parse, ASTNode } from 'graphql'
 
-// just shortcut for jest
-export function expectEqual(a: any, b: any) {
-  if (typeof a === 'string' && typeof b === 'string') {
-    expect(normaliseString(a)).toEqual(normaliseString(b))
+export function normaliseGql(input: any) {
+  if (typeof input === 'string') {
+    return normaliseString(input)
   } else {
-    expect(stripEmptyKeysAndLoc(a)).toEqual(stripEmptyKeysAndLoc(b))
+    stripEmptyKeysAndLoc(input)
   }
 }
 

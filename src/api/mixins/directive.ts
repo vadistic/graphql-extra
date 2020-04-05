@@ -57,15 +57,15 @@ export function directivesApiMixin<This>(
 ): DirectivesApiMixin<This> {
   return {
     getDirectiveNames() {
-      return (node.directives || []).map(dir => dir.name.value)
+      return (node.directives ?? []).map((dir) => dir.name.value)
     },
 
     hasDirective(directiveName) {
-      return !!node.directives && node.directives.some(dir => dir.name.value === directiveName)
+      return !!node.directives && node.directives.some((dir) => dir.name.value === directiveName)
     },
 
     getDirectives() {
-      return (node.directives || []).map(directiveApi)
+      return (node.directives ?? []).map(directiveApi)
     },
 
     getDirective(directiveName) {
