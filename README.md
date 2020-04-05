@@ -9,13 +9,13 @@ The aim is to provide lightweight and flexible utils for GraphQL generation & te
 ## Installation
 
 ```ts
-yarn add graphql-extra
+$ yarn add graphql-extra
 ```
 
 ## Features
 
 - no deps (other than `graphql` peerDependency)
-- semantic, verboose aprroach - no magic
+- semantic, verbose aprroach - no magic
 - multi build thanks to [@pika](`https://github.com/pikapkg/pack`)
 
 ### creation functions
