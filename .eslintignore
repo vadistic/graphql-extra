@@ -2,3 +2,6 @@ dist
 pkg
 coverage
 docs
+
+
+*.js

@@ -42,7 +42,7 @@ Check [source](https://github.com/vadistic/graphql-extra/tree/master/src) or [do
 ### create AST node
 
 ```ts
-import { namedtypeNode } from 'graphql-extra/node'
+import { namedtypeNode } from 'graphql-extra'
 
 const named: NamedTypenode = namedTypeNode('Int')
 ```
@@ -50,7 +50,7 @@ const named: NamedTypenode = namedTypeNode('Int')
 `graphql-nexus`-like experience whith aliased function names
 
 ```ts
-import { t } from 'graphql-extra/node'
+import { t } from 'graphql-extra'
 
 const node: ObjectTypeDefinitionNode = t.objectType({
   name: 'MyObject',
@@ -82,7 +82,7 @@ const node: ObjectTypeDefinitionNode = t.objectType({
 ### modify object
 
 ```ts
-import { objectTypeApi } from 'graphql-extra/api'
+import { objectTypeApi } from 'graphql-extra'
 
 const node: ObjectTypeDefinitionNode = {...}
 
@@ -101,7 +101,7 @@ if(node === obj.node) {
 Top-level entry point/ reference for all typeDefs
 
 ```ts
-import { documentApi } from 'graphql-extra/api'
+import { documentApi } from 'graphql-extra'
 
 const typeDefs = /* GraphQL */ `
   type Person {
@@ -141,9 +141,11 @@ ast.toSDLString()
 
 ```
 
-## Tips
+## using packages
 
-Commonjs build is bundled, so if you're consuming it (not es modules) - you'll need to use only top import
+Both commonjs and esm builds are bundled with @pika/pack, so if you're consuming it - you'll need to use only top import.
+
+There is also unbundled ES modules ES2020 build in `dist-src` that can be quite easily consumed by rewiring whatever build tool you're using (or importing from `graphql-extra/pkg/dist-src/*`)
 
 ```ts
 // GOOD
@@ -151,4 +153,8 @@ import { a, b, c } from 'graphql-extra'
 
 // BAD
 import { a, b, c } from 'graphql-extra/api'
+
+// WEIRD
+import { a, b, c } from 'graphql-extra/pkg/dist-src/api'
+
 ```

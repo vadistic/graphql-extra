@@ -9,6 +9,7 @@
     "target": "es2018",
     "incremental": true,
 
+    "declaration": true,
     "baseUrl": ".",
     "rootDir": "src"
   },

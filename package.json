@@ -5,42 +5,51 @@
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
   "homepage": "https://graphql-extra.netlify.com",
-  "private": false,
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/vadistic/graphql-extra"
   },
   "scripts": {
-    "clean": "rm -rf pkg coverage tmp",
+    "clean": "rm -rf pkg coverage tmp docs",
     "lint": "eslint --ext .ts src/**",
     "format": "prettier --write src/**",
-    "typecheck": "tsc -p tsconfig.json --outDir tmp",
+    "typecheck": "tsc -p tsconfig.json --noEmit --incremental false",
     "build": "pika build",
     "docs": "typedoc src",
     "test": "jest",
     "cov": "jest --coverage",
-    "prepublishOnly": "yarn format && yarn lint && yarn typecheck && yarn test && yarn docs && yarn clean && yarn build "
+    "all": "yarn format && yarn lint && yarn typecheck && yarn test && yarn docs && yarn clean && yarn build "
   },
   "peerDependencies": {
     "graphql": ">=14.6.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
+    "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@pika/pack": "^0.5.0",
-    "@pika/plugin-build-node": "^0.9.2",
-    "@pika/plugin-build-types": "^0.9.2",
-    "@pika/plugin-standard-pkg": "^0.9.2",
+    "@pika/plugin-build-node": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-build-node/pkg",
+    "@pika/plugin-build-types": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-build-types/pkg",
+    "@pika/plugin-build-web": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-build-web/pkg",
+    "@pika/plugin-standard-pkg": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-standard-pkg/pkg",
     "@types/jest": "^25.2.1",
     "@vadistic/eslint-config-base": "^0.2.2",
     "@vadistic/prettier-config": "^0.2.2",
-    "@vadistic/scripts": "^0.2.0",
     "eslint": "^6.8.0",
     "graphql": "^15.0.0",
     "jest": "^25.2.7",
     "prettier": "^2.0.2",
+    "rollup": "^2.3.3",
     "ts-jest": "^25.3.1",
     "ts-node": "^8.8.2",
     "typedoc": "^0.17.3",
     "typescript": "^3.8.3"
+  },
+  "resolutions": {
+    "rollup": "^2.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "@pika/pack": {
     "pipeline": [
@@ -53,13 +62,19 @@
         }
       ],
       [
-        "@pika/plugin-build-node"
-      ],
-      [
         "@pika/plugin-build-types",
         {
           "tsconfig": "./tsconfig.build.json"
         }
+      ],
+      [
+        "./pika-plugin-private-field"
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
       ]
     ]
   }
