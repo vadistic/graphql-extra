@@ -9,5 +9,12 @@
     "project": "./tsconfig.json"
   },
 
-  "rules": {}
+  "rules": {
+    "no-useless-concat": "off",
+
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "*", "next": "return" }
+    ]
+  }
 }

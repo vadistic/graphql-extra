@@ -51,6 +51,7 @@ export class InputValuesAsArgumentsApiMixin {
 
   hasArgument(argname: Argname) {
     if (!this.node.arguments) return false
+
     return this.node.arguments.some((arg) => arg.name.value === argname)
   }
 

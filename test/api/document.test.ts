@@ -1,4 +1,4 @@
-import { documentApi } from '../../src'
+import { documentSchemaApi } from '../../src'
 
 describe(`api > documentApi`, () => {
   const typeDefs = /* GraphQL */ `
@@ -12,13 +12,17 @@ describe(`api > documentApi`, () => {
     type Post {
       id: ID!
       body: String!
-      authot: Person!
+      author: Person!
     }
   `
-  const doc = documentApi().addSDL(typeDefs).addSDL(moreTypeDefs)
+  const doc = documentSchemaApi()
 
-  test(`parse SDL & correct this reference`, () => {
-    expect(Object.keys(doc)).toContain('hasType')
+  doc.addSDL(typeDefs)
+  doc.addSDL(moreTypeDefs)
+
+  test(`parse SDL`, () => {
+    expect(doc.getObjectType('Person').getName()).toBe('Person')
+    expect(doc.getObjectType('Post').getFieldnames()).toEqual(['id', 'body', 'author'])
   })
 
   test(`type guards and assertions`, () => {

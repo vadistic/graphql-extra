@@ -1,5 +1,3 @@
-import type { KindEnum } from 'graphql'
-
 import {
   argumentNode,
   booleanValueNode,
@@ -49,7 +47,7 @@ import {
 /**
  * @category Helper
  */
-export const astKindToFunctionMap = {
+export const astKindToNodeFnMap = {
   // NAME
   Name: nameNode,
 
@@ -121,16 +119,29 @@ export const astKindToFunctionMap = {
 /**
  * @category Helper
  */
-export type AstKindToFunctionMap = typeof astKindToFunctionMap
+export type AstKindToNodeFnMap = typeof astKindToNodeFnMap
 
 /**
  * @category Helper
  */
-export type AstKindToFunction<K extends KindEnum> = AstKindToFunctionMap[K]
+export type AstKindToNodeFnParm<K> = K extends keyof AstKindToNodeFnMap
+  ? Parameters<AstKindToNodeFnMap[K]>[0]
+  : never
 
 /**
  * @category Helper
  */
-export function astKindToFunction<K extends KindEnum>(kind: K) {
-  return astKindToFunctionMap[kind]
+export type AstKindToNodeFn<K> = K extends keyof AstKindToNodeFnMap
+  ? (props: Parameters<typeof astKindToNodeFnMap[K]>[0]) => ReturnType<typeof astKindToNodeFnMap[K]>
+  : never
+
+/**
+ * @category Helper
+ */
+export function astKindToNodeFn<K extends keyof AstKindToNodeFnMap>(
+  kind: K,
+): (
+  props: Parameters<typeof astKindToNodeFnMap[K]>[0],
+) => ReturnType<typeof astKindToNodeFnMap[K]> {
+  return (astKindToNodeFnMap as any)[kind]
 }

@@ -48,6 +48,7 @@ export class InputValuesAsFieldsApiMixin {
 
   hasField(fieldname: Fieldname): boolean {
     if (!this.node.fields) return false
+
     return this.node.fields.some((field) => field.name.value === fieldname)
   }
 

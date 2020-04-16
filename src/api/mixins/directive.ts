@@ -43,6 +43,7 @@ export class DirectivesApiMixin {
 
   hasDirective(directivename: Directivename): boolean {
     if (!this.node.directives) return false
+
     return this.node.directives.some((dir) => dir.name.value === directivename)
   }
 

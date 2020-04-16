@@ -1,5 +1,11 @@
 import { ASTNode, Kind } from 'graphql'
 
+export type GuardType<T> = T extends (o: any) => o is infer U ? U : never
+
+export type ContstructorType<T> = T extends new (...args: any) => infer U ? U : never
+
+// ────────────────────────────────────────────────────────────────────────────────
+
 export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }

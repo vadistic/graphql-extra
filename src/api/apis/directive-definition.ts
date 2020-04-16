@@ -42,6 +42,7 @@ export class DirectiveDefinitionApi extends Mix(
 
   hasLocation(value: NameNode | DirectiveLocationEnum): boolean {
     const name = getName(value)
+
     return this.node.locations.some((loc) => loc.value === name)
   }
 

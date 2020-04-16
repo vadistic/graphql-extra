@@ -29,6 +29,7 @@ export class ArgumentsApiMixin {
 
   hasArgument(argname: Argname): boolean {
     if (!this.node.arguments) return false
+
     return this.node.arguments.some((argument) => argument.name.value === argname)
   }
 

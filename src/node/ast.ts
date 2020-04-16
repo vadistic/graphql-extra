@@ -982,7 +982,7 @@ export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): Enum
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * `EnumValueDefinitionNode` create input
+ * `EnumValueDefinitionNode` create input subtype
  *
  * @category AST Node
  */
@@ -992,6 +992,11 @@ export interface EnumValueDefinitionNodeObjProps {
   directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
 }
 
+/**
+ * `EnumValueDefinitionNode` create input
+ *
+ * @category AST Node
+ */
 export type EnumValueDefinitionNodeProps = EnumValueDefinitionNodeObjProps | string
 
 /**
