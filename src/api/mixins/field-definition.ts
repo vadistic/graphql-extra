@@ -22,15 +22,12 @@ import {
   oneToManyRemove,
 } from '../crud'
 import { getName } from '../../utils'
-
-//
-// ─── FIELD DEFINITIONS API MIXIN ────────────────────────────────────────────────
-//
+import { Fieldname, Typename } from '../types'
 
 /**
  * @category API Mixins
  */
-export type FieldDefinitionsApiMixinCompatibleNode =
+export type FieldDefinitionsApiMixinNode =
   | ObjectTypeDefinitionNode
   | InterfaceTypeDefinitionNode
   | ObjectTypeExtensionNode
@@ -39,139 +36,125 @@ export type FieldDefinitionsApiMixinCompatibleNode =
 /**
  * @category API Mixins
  */
-export interface FieldDefinitionsApiMixin<This> {
-  getfieldnames(): string[]
-  getFields(): FieldDefinitionApi[]
+export class FieldDefinitionsApiMixin {
+  constructor(readonly node: FieldDefinitionsApiMixinNode) {}
 
-  getFieldsByTypename(typename: string): FieldDefinitionApi[]
-  // TODO: getFieldsByType iwth type compare fn
+  getFieldnames(): Fieldname[] {
+    return this.node.fields?.map((field) => field.name.value) ?? []
+  }
 
-  hasField(fieldname: string): boolean
-  getField(fieldname: string): FieldDefinitionApi
+  getFields(): FieldDefinitionApi[] {
+    return (this.node.fields ?? []).map(fieldDefinitionApi)
+  }
 
-  createField(props: FieldDefinitionNode | FieldDefinitionNodeProps): This
+  getFieldsByTypename(typename: Typename): FieldDefinitionApi[] {
+    return this.getFields().filter((field) => field.getTypename() === typename)
+  }
+
+  hasField(fieldname: Fieldname): boolean {
+    if (!this.node.fields) {
+      return false
+    }
+
+    return this.node.fields.some((field) => field.name.value === fieldname)
+  }
+
+  getField(fieldname: Fieldname): FieldDefinitionApi {
+    const field = oneToManyGet<FieldDefinitionNode>({
+      node: this.node,
+      key: 'fields',
+      elementName: fieldname,
+      parentName: this.node.name.value,
+    })
+
+    return fieldDefinitionApi(field)
+  }
+
+  createField(props: FieldDefinitionNode | FieldDefinitionNodeProps): this {
+    oneToManyCreate({
+      node: this.node,
+      key: 'fields',
+      elementName: getName(props.name),
+      parentName: this.node.name.value,
+      nodeCreateFn: fieldDefinitionNode,
+      props,
+    })
+
+    return this
+  }
+
   updateField(
-    fieldname: string,
+    fieldname: Fieldname,
     props: Partial<FieldDefinitionNode | FieldDefinitionNodeProps>,
-  ): This
-  upsertField(props: FieldDefinitionNode | FieldDefinitionNodeProps): This
-  removeField(fieldname: string): This
+  ): this {
+    oneToManyUpdate({
+      node: this.node,
+      key: 'fields',
+      elementName: fieldname,
+      parentName: this.node.name.value,
+      nodeCreateFn: fieldDefinitionNode,
+      props,
+    })
 
-  getFieldTypename(fieldname: string): string
-  setFieldTypename(fieldname: string, value: string): This
+    return this
+  }
 
-  getFieldType(fieldname: string): TypeApi
-  setFieldType(fieldname: string, props: TypeNode | TypeNodeProps): This
+  upsertField(props: FieldDefinitionNode | FieldDefinitionNodeProps): this {
+    oneToManyUpsert({
+      node: this.node,
+      key: 'fields',
+      elementName: getName(props.name),
+      parentName: this.node.name.value,
+      nodeCreateFn: fieldDefinitionNode,
+      props,
+    })
 
-  getFieldArguments(fieldname: string): InputValueApi[]
-  getFieldDirectives(fieldname: string): DirectiveApi[]
+    return this
+  }
+
+  removeField(fieldname: Fieldname): this {
+    oneToManyRemove({
+      node: this.node,
+      key: 'fields',
+      elementName: fieldname,
+      parentName: this.node.name.value,
+    })
+
+    return this
+  }
+
+  getFieldTypename(fieldname: Fieldname): Typename {
+    return this.getField(fieldname).getTypename()
+  }
+
+  setFieldTypename(fieldname: Fieldname, value: Typename): this {
+    this.getField(fieldname).setTypename(value)
+
+    return this
+  }
+
+  getFieldType(fieldname: Fieldname): TypeApi {
+    return this.getField(fieldname).getType()
+  }
+
+  setFieldType(fieldname: Fieldname, props: TypeNode | TypeNodeProps): this {
+    this.getField(fieldname).setType(props)
+
+    return this
+  }
+
+  getFieldArguments(fieldname: Fieldname): InputValueApi[] {
+    return this.getField(fieldname).getArguments()
+  }
+
+  getFieldDirectives(fieldname: Fieldname): DirectiveApi[] {
+    return this.getField(fieldname).getDirectives()
+  }
 }
 
 /**
  * @category API Mixins
  */
-export function fieldDefinitionsApiMixin<This>(
-  node: FieldDefinitionsApiMixinCompatibleNode,
-): FieldDefinitionsApiMixin<This> {
-  return {
-    getfieldnames() {
-      return (node.fields ?? []).map((field) => field.name.value)
-    },
-
-    getFields() {
-      return (node.fields ?? []).map(fieldDefinitionApi)
-    },
-
-    getFieldsByTypename(typename) {
-      return this.getFields().filter((field) => field.getTypename() === typename)
-    },
-
-    hasField(fieldname) {
-      return !!node.fields && node.fields.some((field) => field.name.value === fieldname)
-    },
-
-    getField(fieldname) {
-      const field = oneToManyGet<FieldDefinitionNode>({
-        node,
-        key: 'fields',
-        elementName: fieldname,
-        parentName: node.name.value,
-      })
-
-      return fieldDefinitionApi(field)
-    },
-
-    createField(props) {
-      oneToManyCreate({
-        node,
-        key: 'fields',
-        elementName: getName(props.name),
-        parentName: node.name.value,
-        nodeCreateFn: fieldDefinitionNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    updateField(fieldname, props) {
-      oneToManyUpdate({
-        node,
-        key: 'fields',
-        elementName: fieldname,
-        parentName: node.name.value,
-        nodeCreateFn: fieldDefinitionNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    upsertField(props) {
-      oneToManyUpsert({
-        node,
-        key: 'fields',
-        elementName: getName(props.name),
-        parentName: node.name.value,
-        nodeCreateFn: fieldDefinitionNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    removeField(fieldname) {
-      oneToManyRemove({ node, key: 'fields', elementName: fieldname, parentName: node.name.value })
-
-      return this as any
-    },
-
-    getFieldTypename(fieldname) {
-      return this.getField(fieldname).getTypename()
-    },
-
-    setFieldTypename(fieldname, value) {
-      this.getField(fieldname).setTypename(value)
-
-      return this as any
-    },
-
-    getFieldType(fieldname) {
-      return this.getField(fieldname).getType()
-    },
-
-    setFieldType(fieldname, props) {
-      this.getField(fieldname).setType(props)
-
-      return this as any
-    },
-
-    getFieldArguments(fieldname) {
-      return this.getField(fieldname).getArguments()
-    },
-
-    getFieldDirectives(fieldname) {
-      return this.getField(fieldname).getDirectives()
-    },
-  }
+export function fieldDefinitionsApiMixin(node: FieldDefinitionsApiMixinNode) {
+  return new FieldDefinitionsApiMixin(node)
 }

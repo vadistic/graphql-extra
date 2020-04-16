@@ -1,5 +1,4 @@
-import { t } from '../../node'
-import { objectTypeApi } from '../../api'
+import { objectTypeApi, t } from '../../src'
 import { getFirstObjectType } from '../test-utils'
 
 describe(`api > type-definition`, () => {
@@ -12,7 +11,7 @@ describe(`api > type-definition`, () => {
 
     const node = getFirstObjectType(fix)
 
-    const fields = objectTypeApi(node).setDescription('My description').getfieldnames()
+    const fields = objectTypeApi(node).setDescription('My description').getFieldnames()
 
     expect(fields).toEqual(['myField'])
     expect(node.description && node.description.value).toEqual('My description')
@@ -32,7 +31,7 @@ describe(`api > type-definition`, () => {
       .createField({ name: 'otherField', type: t.type.int() })
       .updateField('otherField', { name: 'renamedField' })
 
-    expect(obj.getfieldnames()).toEqual(['renamedField'])
+    expect(obj.getFieldnames()).toEqual(['renamedField'])
   })
 
   test(`typeApi > set/update correct this and node reference`, () => {

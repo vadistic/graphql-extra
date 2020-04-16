@@ -1,4 +1,4 @@
-import {
+import type {
   EnumTypeDefinitionNode,
   InputObjectTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
@@ -6,19 +6,15 @@ import {
   ScalarTypeDefinitionNode,
   UnionTypeDefinitionNode,
 } from 'graphql'
+import { Mix } from 'mix-classes'
+
 import {
   DescriptionApiMixin,
-  descriptionApiMixin,
   DirectivesApiMixin,
-  directivesApiMixin,
   FieldDefinitionsApiMixin,
-  fieldDefinitionsApiMixin,
   InputValuesAsFieldsApiMixin,
-  inputValuesAsFieldsApiMixin,
-  nameApiMixin,
   NameApiMixin,
-  TypeDefinitionAssertionMixinApi,
-  typeDefinitionAssertionApiMixin,
+  TypeDefinitionAssertionApiMixin,
 } from '../mixins'
 
 /**
@@ -34,176 +30,167 @@ export type TypeDefinitonApi =
   | ScalarTypeApi
   | UnionTypeApi
 
+// ────────────────────────────────────────────────────────────────────────────────
+
 /**
  * API for GraphQL `ObjectTypeDefinitionNode`
  *
  * @category API Public
  */
-export interface ObjectTypeApi
-  extends NameApiMixin<ObjectTypeApi>,
-    DescriptionApiMixin<ObjectTypeApi>,
-    DirectivesApiMixin<ObjectTypeApi>,
-    FieldDefinitionsApiMixin<ObjectTypeApi>,
-    TypeDefinitionAssertionMixinApi {
-  node: ObjectTypeDefinitionNode
+export class ObjectTypeApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  FieldDefinitionsApiMixin,
+  TypeDefinitionAssertionApiMixin,
+) {
+  constructor(readonly node: ObjectTypeDefinitionNode) {
+    super([node], [node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `ObjectTypeDefinitionNode`
+ * `ObjectTypeApi` constructor fn
  *
  * @category API Public
  */
 export function objectTypeApi(node: ObjectTypeDefinitionNode): ObjectTypeApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...fieldDefinitionsApiMixin(node),
-    ...typeDefinitionAssertionApiMixin(node),
-  }
+  return new ObjectTypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `InterfaceTypeDefinitionNode`
  *
  * @category API Public
  */
-export interface InterfaceTypeApi
-  extends NameApiMixin<ObjectTypeApi>,
-    DescriptionApiMixin<ObjectTypeApi>,
-    DirectivesApiMixin<ObjectTypeApi>,
-    FieldDefinitionsApiMixin<ObjectTypeApi>,
-    TypeDefinitionAssertionMixinApi {
-  node: InterfaceTypeDefinitionNode
+export class InterfaceTypeApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  FieldDefinitionsApiMixin,
+  TypeDefinitionAssertionApiMixin,
+) {
+  constructor(readonly node: InterfaceTypeDefinitionNode) {
+    super([node], [node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `InterfaceTypeDefinitionNode`
+ * `InterfaceTypeApi` constructor fn
  *
  * @category API Public
  */
 export function interfaceTypeApi(node: InterfaceTypeDefinitionNode): InterfaceTypeApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...fieldDefinitionsApiMixin(node),
-    ...typeDefinitionAssertionApiMixin(node),
-  }
+  return new InterfaceTypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `UnionTypeDefinitionNode`
  *
  * @category API Public
  */
-export interface UnionTypeApi
-  extends NameApiMixin<ObjectTypeApi>,
-    DescriptionApiMixin<ObjectTypeApi>,
-    DirectivesApiMixin<ObjectTypeApi>,
-    TypeDefinitionAssertionMixinApi {
-  node: UnionTypeDefinitionNode
+export class UnionTypeApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  TypeDefinitionAssertionApiMixin,
+) {
+  constructor(readonly node: UnionTypeDefinitionNode) {
+    super([node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `UnionTypeDefinitionNode`
+ * `UnionTypeApi` constructor fn
  *
  * @category API Public
  */
 export function unionTypeApi(node: UnionTypeDefinitionNode): UnionTypeApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeDefinitionAssertionApiMixin(node),
-  }
+  return new UnionTypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `ScalarTypeDefinitionNode`
  *
  * @category API Public
  */
-export interface ScalarTypeApi
-  extends NameApiMixin<ObjectTypeApi>,
-    DescriptionApiMixin<ObjectTypeApi>,
-    DirectivesApiMixin<ObjectTypeApi>,
-    TypeDefinitionAssertionMixinApi {
-  node: ScalarTypeDefinitionNode
+export class ScalarTypeApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  TypeDefinitionAssertionApiMixin,
+) {
+  constructor(readonly node: ScalarTypeDefinitionNode) {
+    super([node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `ScalarTypeDefinitionNode`
+ * `ScalarTypeApi` constructor fn
  *
  * @category API Public
  */
 export function scalarTypeApi(node: ScalarTypeDefinitionNode): ScalarTypeApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeDefinitionAssertionApiMixin(node),
-  }
+  return new ScalarTypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `EnumTypeDefinitionNode`
  *
  * @category API Public
  */
-export interface EnumTypeApi
-  extends NameApiMixin<ObjectTypeApi>,
-    DescriptionApiMixin<ObjectTypeApi>,
-    DirectivesApiMixin<ObjectTypeApi>,
-    TypeDefinitionAssertionMixinApi {
-  node: EnumTypeDefinitionNode
+export class EnumTypeApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  TypeDefinitionAssertionApiMixin,
+) {
+  constructor(readonly node: EnumTypeDefinitionNode) {
+    super([node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `EnumTypeDefinitionNode`
+ * `EnumTypeApi` constructor fn
  *
  * @category API Public
  */
 export function enumTypeApi(node: EnumTypeDefinitionNode): EnumTypeApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeDefinitionAssertionApiMixin(node),
-  }
+  return new EnumTypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `InputObjectTypeDefinitionNode`
  *
  * @category API Public
  */
-export interface InputTypeApi
-  extends NameApiMixin<InputTypeApi>,
-    DescriptionApiMixin<InputTypeApi>,
-    DirectivesApiMixin<InputTypeApi>,
-    InputValuesAsFieldsApiMixin<InputTypeApi>,
-    TypeDefinitionAssertionMixinApi {
-  node: InputObjectTypeDefinitionNode
+export class InputTypeApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  InputValuesAsFieldsApiMixin,
+  TypeDefinitionAssertionApiMixin,
+) {
+  constructor(readonly node: InputObjectTypeDefinitionNode) {
+    super([node], [node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `InputObjectTypeDefinitionNode`
+ * `InputTypeApi` constructor fn
  *
  * @category API Public
  */
 export function inputTypeApi(node: InputObjectTypeDefinitionNode): InputTypeApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...inputValuesAsFieldsApiMixin(node),
-    ...typeDefinitionAssertionApiMixin(node),
-  }
+  return new InputTypeApi(node)
 }

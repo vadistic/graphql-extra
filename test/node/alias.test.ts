@@ -1,5 +1,5 @@
 import { print } from 'graphql'
-import { t } from '../../node'
+import { t } from '../../src'
 
 describe(`node > alias`, () => {
   test(`objectType`, () => {

@@ -1,4 +1,4 @@
-import { documentApi } from '../../api'
+import { documentApi } from '../../src'
 
 describe(`api > documentApi`, () => {
   const typeDefs = /* GraphQL */ `

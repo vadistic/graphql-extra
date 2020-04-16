@@ -5,7 +5,7 @@ import {
   InputValueDefinitionNode,
   EnumValueDefinitionNode,
 } from 'graphql'
-import { DeepMutable } from '../../utils'
+import { mutable } from '../../utils'
 import { stringValueNode } from '../../node'
 
 //
@@ -15,7 +15,7 @@ import { stringValueNode } from '../../node'
 /**
  * @category API Mixins
  */
-export type DescriptionApiMixinCompatibleNode =
+export type DescriptionApiMixinNode =
   | TypeDefinitionNode
   | DirectiveDefinitionNode
   | FieldDefinitionNode
@@ -25,37 +25,32 @@ export type DescriptionApiMixinCompatibleNode =
 /**
  * @category API Mixins
  */
-export interface DescriptionApiMixin<This> {
-  hasDescription(): boolean
-  getDescription(): string | undefined
-  setDescription(value?: string): This
+export class DescriptionApiMixin {
+  constructor(readonly node: DescriptionApiMixinNode) {}
+
+  // FIXME: by undefined??
+  hasDescription(): boolean {
+    return !!this.node.description
+  }
+
+  getDescription(): string | undefined {
+    return this.node.description?.value
+  }
+
+  setDescription(value: string): this {
+    if (typeof value === 'undefined') {
+      mutable(this.node).description = undefined
+    } else {
+      mutable(this.node).description = stringValueNode(value)
+    }
+
+    return this
+  }
 }
 
 /**
  * @category API Mixins
  */
-export function descriptionApiMixin<This>(
-  node: DescriptionApiMixinCompatibleNode,
-): DescriptionApiMixin<This> {
-  const _node = node as DeepMutable<TypeDefinitionNode>
-
-  return {
-    hasDescription() {
-      return !!node.description
-    },
-
-    getDescription() {
-      return node.description ? node.description.value : undefined
-    },
-
-    setDescription(value) {
-      if (typeof value === 'undefined') {
-        _node.description = undefined
-      } else {
-        _node.description = stringValueNode(value)
-      }
-
-      return this as any
-    },
-  }
+export function descriptionApiMixin(node: DescriptionApiMixinNode) {
+  return new DescriptionApiMixin(node)
 }

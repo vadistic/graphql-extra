@@ -1,4 +1,4 @@
-import {
+import type {
   ArgumentNode,
   ASTNode,
   BooleanValueNode,
@@ -21,7 +21,6 @@ import {
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
   IntValueNode,
-  Kind,
   ListTypeNode,
   ListValueNode,
   NamedTypeNode,
@@ -45,6 +44,7 @@ import {
   VariableDefinitionNode,
   VariableNode,
 } from 'graphql'
+import { Kind } from 'graphql'
 
 //
 // ─── NAME ───────────────────────────────────────────────────────────────────────

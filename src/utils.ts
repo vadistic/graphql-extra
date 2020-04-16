@@ -4,6 +4,29 @@ export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }
 
+/**
+ * gets name from stuff
+ */
+export function getName(input: any): string {
+  if (typeof input === 'string') {
+    return input
+  }
+
+  if ('kind' in input && input.kind === Kind.NAME) {
+    return input.value
+  }
+
+  if ('name' in input && !!input.name) {
+    return getName(input.name)
+  }
+
+  if ('kind' in input && !!input.kind) {
+    return input.kind
+  }
+
+  return 'unknown'
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 //  no input => no return
@@ -56,6 +79,10 @@ export type DeepMutable<T> = {
   -readonly [P in keyof T]: DeepMutable<T[P]>
 }
 
+export const deepMutable = <T>(node: T) => node as DeepMutable<T>
+
+export const mutable = <T>(node: T) => node as Mutable<T>
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -87,29 +114,4 @@ export function cloneDeep<T>(target: T): T {
   }
 
   return target
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-/**
- * gets name from stuff
- */
-export function getName(input: any): string {
-  if (typeof input === 'string') {
-    return input
-  }
-
-  if ('kind' in input && input.kind === Kind.NAME) {
-    return input.value
-  }
-
-  if ('name' in input && !!input.name) {
-    return getName(input.name)
-  }
-
-  if ('kind' in input && !!input.kind) {
-    return input.kind
-  }
-
-  return '???'
 }

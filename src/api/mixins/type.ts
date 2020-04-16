@@ -6,12 +6,12 @@ import {
   TypeNode,
 } from 'graphql'
 import { TypeNodeProps } from '../../node'
-import { TypeApi, typeApi } from '..'
+import { TypeApi, typeApi } from '../apis'
 
 /**
  * @category API Mixins
  */
-export type TypeApiMixinCompatibleNode =
+export type TypeApiMixinNode =
   | FieldDefinitionNode
   | InputValueDefinitionNode
   | VariableDefinitionNode
@@ -19,69 +19,57 @@ export type TypeApiMixinCompatibleNode =
 /**
  * @category API Mixins
  */
-export interface TypeApiMixin<This> {
-  getType(): TypeApi
+export class TypeApiMixin {
+  constructor(protected node: TypeApiMixinNode) {}
 
-  getNamedType(): NamedTypeNode
-  getTypename(): string
+  getType(): TypeApi {
+    return typeApi(this.node.type)
+  }
 
-  setTypename(value: string): This
-  setType(props: TypeNode | TypeNodeProps): This
+  getTypename(): string {
+    return this.getType().getTypename()
+  }
 
-  isNonNullType(deep?: boolean): boolean
-  isListType(deep?: boolean): boolean
+  getNamedType(): NamedTypeNode {
+    return this.getType().getNamedType()
+  }
 
-  setNonNullType(value?: boolean): This
-  setListType(value?: boolean): This
+  setTypename(value: string): this {
+    this.getType().setTypename(value)
+
+    return this
+  }
+
+  setType(props: TypeNode | TypeNodeProps): this {
+    this.getType().setType(props)
+
+    return this
+  }
+
+  isNonNullType(deep?: boolean): boolean {
+    return this.getType().isNonNull(deep)
+  }
+
+  isListType(deep?: boolean): boolean {
+    return this.getType().isList(deep)
+  }
+
+  setNonNullType(value = true): this {
+    this.getType().setNonNull(value)
+
+    return this
+  }
+
+  setListType(value = true): this {
+    this.getType().setList(value)
+
+    return this
+  }
 }
 
 /**
  * @category API Mixins
  */
-export function typeApiMixin<This>(node: TypeApiMixinCompatibleNode): TypeApiMixin<This> {
-  return {
-    getType() {
-      return typeApi(node.type)
-    },
-
-    getTypename() {
-      return this.getType().getTypename()
-    },
-
-    getNamedType() {
-      return this.getType().getNamedType()
-    },
-
-    setTypename(value) {
-      this.getType().setTypename(value)
-
-      return this as any
-    },
-
-    setType(props) {
-      this.getType().setType(props)
-
-      return this as any
-    },
-
-    isNonNullType(deep) {
-      return this.getType().isNonNull(deep)
-    },
-
-    isListType(deep) {
-      return this.getType().isList(deep)
-    },
-
-    setNonNullType(value) {
-      this.getType().setNonNull(value)
-
-      return this as any
-    },
-
-    setListType(value) {
-      this.getType().setList(value)
-
-      return this as any
-    },
-  }
+export function typeApiMixin(node: TypeApiMixinNode) {
+  return new TypeApiMixin(node)
 }

@@ -17,6 +17,7 @@ import {
   oneToManyRemove,
 } from '../crud'
 import { getName } from '../../utils'
+import { Directivename } from '../types'
 
 //
 // ─── DIRECTIVES API MIXIN ───────────────────────────────────────────────────────
@@ -25,7 +26,7 @@ import { getName } from '../../utils'
 /**
  * @category API Mixins
  */
-export type DirectivesApiMixinCompatibleNode =
+export type DirectivesApiMixinNode =
   | SchemaDefinitionNode
   | TypeDefinitionNode
   | TypeSystemExtensionNode
@@ -36,97 +37,90 @@ export type DirectivesApiMixinCompatibleNode =
 /**
  * @category API Mixins
  */
-export interface DirectivesApiMixin<This> {
-  getDirectiveNames(): string[]
-  getDirectives(): DirectiveApi[]
+export class DirectivesApiMixin {
+  constructor(readonly node: DirectivesApiMixinNode) {}
 
-  hasDirective(directiveName: string): boolean
-  getDirective(directiveName: string): DirectiveApi
+  getDirectiveNames(): Directivename[] {
+    return this.node.directives?.map((dir) => dir.name.value) ?? []
+  }
 
-  createDirective(props: DirectiveNode | DirectiveNodeProps): This
-  updateDirective(directiveName: string, props: DirectiveNode | DirectiveNodeProps): This
-  upsertDirective(props: DirectiveNode | DirectiveNodeProps): This
-  removeDirective(directiveName: string): This
+  hasDirective(directivename: Directivename): boolean {
+    if (!this.node.directives) return false
+    return this.node.directives.some((dir) => dir.name.value === directivename)
+  }
+
+  getDirectives(): DirectiveApi[] {
+    return this.node.directives?.map(directiveApi) ?? []
+  }
+
+  getDirective(directivename: Directivename): DirectiveApi {
+    const directive = oneToManyGet<DirectiveNode>({
+      node: this.node,
+      key: 'directives',
+      elementName: directivename,
+      parentName: getName(this.node),
+    })
+
+    return directiveApi(directive)
+  }
+
+  createDirective(props: DirectiveNode | DirectiveNodeProps): this {
+    oneToManyCreate({
+      node: this.node,
+      key: 'directives',
+      elementName: getName(props),
+      parentName: getName(this.node),
+      nodeCreateFn: directiveNode,
+      props,
+    })
+
+    return this
+  }
+
+  updateDirective(
+    directivename: Directivename,
+    props: DirectiveNodeProps | Partial<DirectiveNode | DirectiveNodeProps>,
+  ): this {
+    oneToManyUpdate({
+      node: this.node,
+      key: 'directives',
+      elementName: directivename,
+      parentName: getName(this.node),
+      nodeCreateFn: directiveNode,
+      props,
+    })
+
+    return this
+  }
+
+  upsertDirective(props: DirectiveNode | DirectiveNodeProps): this {
+    oneToManyUpsert({
+      node: this.node,
+      key: 'directives',
+      elementName: getName(props),
+      parentName: getName(this.node),
+      nodeCreateFn: directiveNode,
+      props,
+    })
+
+    return this
+  }
+
+  removeDirective(directivename: Directivename): this {
+    oneToManyRemove({
+      node: this.node,
+      key: 'directives',
+      elementName: directivename,
+      parentName: getName(this.node),
+    })
+
+    return this
+  }
 }
 
 /**
  * @category API Mixins
  */
-export function directivesApiMixin<This>(
-  node: DirectivesApiMixinCompatibleNode,
-): DirectivesApiMixin<This> {
-  return {
-    getDirectiveNames() {
-      return (node.directives ?? []).map((dir) => dir.name.value)
-    },
-
-    hasDirective(directiveName) {
-      return !!node.directives && node.directives.some((dir) => dir.name.value === directiveName)
-    },
-
-    getDirectives() {
-      return (node.directives ?? []).map(directiveApi)
-    },
-
-    getDirective(directiveName) {
-      const directive = oneToManyGet<DirectiveNode>({
-        node,
-        key: 'directives',
-        elementName: directiveName,
-        parentName: getName(node),
-      })
-
-      return directiveApi(directive)
-    },
-
-    createDirective(props) {
-      oneToManyCreate({
-        node,
-        key: 'directives',
-        elementName: getName(props),
-        parentName: getName(node),
-        nodeCreateFn: directiveNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    updateDirective(directiveName, props) {
-      oneToManyUpdate({
-        node,
-        key: 'directives',
-        elementName: directiveName,
-        parentName: getName(node),
-        nodeCreateFn: directiveNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    upsertDirective(props) {
-      oneToManyUpsert({
-        node,
-        key: 'directives',
-        elementName: getName(props),
-        parentName: getName(node),
-        nodeCreateFn: directiveNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    removeDirective(directiveName) {
-      oneToManyRemove({
-        node,
-        key: 'directives',
-        elementName: directiveName,
-        parentName: getName(node),
-      })
-
-      return this as any
-    },
-  }
+export function directivesApiMixin(node: DirectivesApiMixinNode) {
+  return new DirectivesApiMixin(node)
 }

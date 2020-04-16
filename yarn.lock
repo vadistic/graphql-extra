@@ -1284,6 +1284,11 @@
     eslint-plugin-jest "^23.8.2"
     eslint-plugin-prettier "^3.1.2"
 
+"@vadistic/pika-plugin-publish-config@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@vadistic/pika-plugin-publish-config/-/pika-plugin-publish-config-0.3.0.tgz#c934003f4967736b3450bba7bee6d4999a442266"
+  integrity sha512-sTm4Q8DgnBb2aGlVvK5cSW82GChDEYi9ryQvulXTRKxaMcXu+ZgR12XIqzv2HtW2HuGB1Ajg0WyrzEUGQSQVGA==
+
 "@vadistic/prettier-config@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@vadistic/prettier-config/-/prettier-config-0.2.2.tgz#68bb9cb437410f88618ba05ae3d92f6e9154a4e9"
@@ -4520,6 +4525,11 @@ minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
+
+mix-classes@^1.1.10:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/mix-classes/-/mix-classes-1.1.10.tgz#7ce2f82a3860a8839307d80fd1b372b2649cd19d"
+  integrity sha512-5Lvs/yy1QX0hlilhVcQF+nTx4gnvHVsjCn+QMcMXoJ67Lgw1GXAEOctyg40E9iiLAjTY+gDXngk1PhmQ65XRaA==
 
 mixin-deep@^1.2.0:
   version "1.3.2"

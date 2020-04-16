@@ -1,112 +1,90 @@
 import { DirectiveDefinitionNode, DirectiveLocationEnum, NameNode } from 'graphql'
-import {
-  NameApiMixin,
-  DescriptionApiMixin,
-  InputValuesAsArgumentsApiMixin,
-  nameApiMixin,
-  descriptionApiMixin,
-  inputValuesAsArgumentsApiMixin,
-} from '../mixins'
-import { DeepMutable, getName, applyPropsArr, applyProps } from '../../utils'
+import { Mix } from 'mix-classes'
+import { NameApiMixin, DescriptionApiMixin, InputValuesAsArgumentsApiMixin } from '../mixins'
+import { getName, applyPropsArr, applyProps, deepMutable, mutable } from '../../utils'
 import { nameNode } from '../../node'
 
 /**
  * @category API Public
  */
-export interface DirectiveDefinitionApi
-  extends NameApiMixin<DirectiveDefinitionApi>,
-    DescriptionApiMixin<DirectiveDefinitionApi>,
-    InputValuesAsArgumentsApiMixin<DirectiveDefinitionApi> {
-  node: DirectiveDefinitionNode
 
-  isRepeatable(): boolean
-  setRepeatable(value: boolean): DirectiveDefinitionApi
+export class DirectiveDefinitionApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  InputValuesAsArgumentsApiMixin,
+) {
+  constructor(readonly node: DirectiveDefinitionNode) {
+    super([node], [node], [node])
+  }
 
-  getLocations(): DirectiveLocationEnum[]
-  setLocations(values: NameNode[] | DirectiveLocationEnum[]): DirectiveDefinitionApi
+  isRepeatable(): boolean {
+    return this.node.repeatable
+  }
 
-  hasLocation(value: NameNode | DirectiveLocationEnum): boolean
+  setRepeatable(value = true): this {
+    mutable(this.node).repeatable = value
 
-  // makes liiitle sense but let's keep convention
-  createLocation(value: NameNode | DirectiveLocationEnum): DirectiveDefinitionApi
-  upsertLocation(value: NameNode | DirectiveLocationEnum): DirectiveDefinitionApi
-  removeLocation(value: NameNode | DirectiveLocationEnum): DirectiveDefinitionApi
+    return this
+  }
+
+  getLocations(): DirectiveLocationEnum[] {
+    return this.node.locations.map(getName) as DirectiveLocationEnum[]
+  }
+
+  setLocations(values: (NameNode | DirectiveLocationEnum)[]): this {
+    mutable(this.node).locations = applyPropsArr(nameNode, values) as NameNode[]
+
+    return this
+  }
+
+  hasLocation(value: NameNode | DirectiveLocationEnum): boolean {
+    const name = getName(value)
+    return this.node.locations.some((loc) => loc.value === name)
+  }
+
+  createLocation(value: NameNode | DirectiveLocationEnum): this {
+    const next = applyProps(nameNode, value)
+
+    if (this.node.locations.some((loc) => loc.value === next.value)) {
+      throw Error(`location '${next.value}' on ${this.node.name.value} already exists`)
+    }
+
+    deepMutable(this.node).locations.push(next)
+
+    return this
+  }
+
+  upsertLocation(value: NameNode | DirectiveLocationEnum): this {
+    const next = applyProps(nameNode, value)
+
+    const index = this.node.locations.findIndex((loc) => loc.value === next.value)
+
+    if (index !== -1) {
+      deepMutable(this.node).locations[index] = next
+    } else {
+      deepMutable(this.node).locations.push(next)
+    }
+
+    return this
+  }
+
+  removeLocation(value: NameNode | DirectiveLocationEnum): this {
+    const name = getName(value)
+    const index = this.node.locations.findIndex((loc) => loc.value === name)
+
+    if (index === -1) {
+      throw Error(`location '${name}' on ${this.node.name.value} does not exist`)
+    }
+
+    deepMutable(this.node).locations.splice(index, 1)
+
+    return this
+  }
 }
 
 /**
  * @category API Public
  */
 export function directiveDefinitionApi(node: DirectiveDefinitionNode): DirectiveDefinitionApi {
-  const _node = node as DeepMutable<DirectiveDefinitionNode>
-
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...inputValuesAsArgumentsApiMixin(node),
-
-    isRepeatable() {
-      return node.repeatable
-    },
-
-    setRepeatable(value) {
-      _node.repeatable = value
-
-      return this as any
-    },
-
-    getLocations() {
-      return node.locations.map(getName) as DirectiveLocationEnum[]
-    },
-
-    setLocations(values) {
-      _node.locations = applyPropsArr(nameNode, values) as NameNode[]
-
-      return this as any
-    },
-
-    hasLocation(value) {
-      const name = getName(value)
-      return node.locations.some((loc) => loc.value === name)
-    },
-
-    createLocation(value) {
-      const next = applyProps(nameNode, value)
-
-      if (node.locations.some((loc) => loc.value === next.value)) {
-        throw Error(`location '${next.value}' on ${node.name.value} already exists`)
-      }
-
-      _node.locations.push(next)
-
-      return this as any
-    },
-
-    upsertLocation(value) {
-      const next = applyProps(nameNode, value)
-
-      const index = node.locations.findIndex((loc) => loc.value === next.value)
-
-      if (index !== -1) {
-        _node.locations[index] = next
-      } else {
-        _node.locations.push(next)
-      }
-
-      return this as any
-    },
-
-    removeLocation(value) {
-      const name = getName(value)
-      const index = node.locations.findIndex((loc) => loc.value === name)
-
-      if (index === -1) {
-        throw Error(`location '${name}' on ${node.name.value} does not exist`)
-      }
-
-      _node.locations.splice(index, 1)
-
-      return this as any
-    },
-  }
+  return new DirectiveDefinitionApi(node)
 }

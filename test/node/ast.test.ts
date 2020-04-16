@@ -10,7 +10,7 @@ import {
   ArgumentNode,
   DirectiveNode,
 } from 'graphql'
-import { AST } from '../../node'
+import { AST } from '../../src'
 import { normaliseGql } from '../test-utils'
 
 describe(`node > ast`, () => {

@@ -1,10 +1,4 @@
-import { applyPropsCloned, cloneDeep } from '../utils'
-
-//
-// ────────────────────────────────────────────────  ──────────
-//   :::::: C R U D : :  :   :    :     :        :          :
-// ──────────────────────────────────────────────────────────
-//
+import { applyPropsCloned } from '../utils'
 
 export interface OneToManyGetProps {
   node: any
@@ -69,7 +63,7 @@ export interface OneToManyUpdateProps<Node, Props> {
   elementName: string
   parentName: string
   nodeCreateFn: (props: Props) => Node
-  props: Partial<Props | Node>
+  props: Props | Partial<Props | Node>
 }
 
 export function oneToManyUpdate<Node, Props>({
@@ -80,17 +74,22 @@ export function oneToManyUpdate<Node, Props>({
   props,
   nodeCreateFn,
 }: OneToManyUpdateProps<Node, Props>) {
-  const property = (node[key] || []) as any[]
+  if (!node[key]) {
+    node[key] = []
+  }
+
+  const property: any[] = node[key]
+
   const index = property.findIndex((el) => el.name.value === elementName)
 
   if (property.length === 0 || index === -1) {
     throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
   }
 
-  const { kind, ...prev } = property[index]
+  const { kind, ...prevProps } = property[index]
+  const nextProps = isScalar(props) ? props : { ...prevProps, ...props }
 
-  // clone only new part
-  property[index] = nodeCreateFn({ ...prev, ...cloneDeep(props) })
+  property[index] = applyPropsCloned(nodeCreateFn, nextProps)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -106,9 +105,12 @@ export function oneToManyUpsert<Node, Props>({
     node[key] = []
   }
 
-  const property = (node[key] || []) as any[]
+  const property: any[] = node[key]
   const index = property.findIndex((el) => el.name.value === elementName)
-  const next = applyPropsCloned(nodeCreateFn, props)
+  const { kind, ...prevProps } = property[index]
+  const nextProps = isScalar(props) ? props : { ...prevProps, ...props }
+
+  const next = applyPropsCloned(nodeCreateFn, nextProps)
 
   if (index === -1) {
     property[index] = next
@@ -120,7 +122,11 @@ export function oneToManyUpsert<Node, Props>({
 // ────────────────────────────────────────────────────────────────────────────────
 
 export function oneToManyRemove({ node, key, elementName, parentName }: OneToManyGetProps) {
-  const property = (node[key] || []) as any[]
+  if (!node[key]) {
+    node[key] = []
+  }
+
+  const property: any[] = node[key]
   const index = property.findIndex((el) => el.name.value === elementName)
 
   if (index === -1) {
@@ -134,4 +140,13 @@ export function oneToManyRemove({ node, key, elementName, parentName }: OneToMan
 
 function singular(key: string) {
   return key.replace(/s$/, '')
+}
+
+function isScalar<T>(value: T) {
+  return (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  )
 }

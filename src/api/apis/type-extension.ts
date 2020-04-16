@@ -1,4 +1,4 @@
-import {
+import type {
   ObjectTypeExtensionNode,
   InterfaceTypeExtensionNode,
   UnionTypeExtensionNode,
@@ -6,17 +6,13 @@ import {
   EnumTypeExtensionNode,
   InputObjectTypeExtensionNode,
 } from 'graphql'
+import { Mix } from 'mix-classes'
 import {
   NameApiMixin,
   DirectivesApiMixin,
   FieldDefinitionsApiMixin,
-  TypeExtensionAssertionMixinApi,
-  nameApiMixin,
-  directivesApiMixin,
-  fieldDefinitionsApiMixin,
-  typeExtensionAssertionApiMixin,
   InputValuesAsFieldsApiMixin,
-  inputValuesAsFieldsApiMixin,
+  TypeExtensionAssertionApiMixin,
 } from '../mixins'
 
 /**
@@ -32,164 +28,161 @@ export type TypeExtensionApi =
   | ScalarExtApi
   | UnionExtApi
 
+// ────────────────────────────────────────────────────────────────────────────────
+
 /**
  * API for GraphQL `ObjectTypeExtensionNode`
  *
  * @category API Public
  */
-export interface ObjectExtApi
-  extends NameApiMixin<ObjectExtApi>,
-    DirectivesApiMixin<ObjectExtApi>,
-    FieldDefinitionsApiMixin<ObjectExtApi>,
-    TypeExtensionAssertionMixinApi {
-  node: ObjectTypeExtensionNode
+export class ObjectExtApi extends Mix(
+  NameApiMixin,
+  DirectivesApiMixin,
+  FieldDefinitionsApiMixin,
+  TypeExtensionAssertionApiMixin,
+) {
+  constructor(readonly node: ObjectTypeExtensionNode) {
+    super([node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `ObjectTypeExtensionNode`
+ * `ObjectExtApi` constructor fn
  *
  * @category API Public
  */
 export function objectExtApi(node: ObjectTypeExtensionNode): ObjectExtApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...directivesApiMixin(node),
-    ...fieldDefinitionsApiMixin(node),
-    ...typeExtensionAssertionApiMixin(node),
-  }
+  return new ObjectExtApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `InterfaceTypeExtensionNode`
  *
  * @category API Public
  */
-export interface InterfaceExtApi
-  extends NameApiMixin<ObjectExtApi>,
-    DirectivesApiMixin<ObjectExtApi>,
-    FieldDefinitionsApiMixin<ObjectExtApi>,
-    TypeExtensionAssertionMixinApi {
-  node: InterfaceTypeExtensionNode
+export class InterfaceExtApi extends Mix(
+  NameApiMixin,
+  DirectivesApiMixin,
+  FieldDefinitionsApiMixin,
+  TypeExtensionAssertionApiMixin,
+) {
+  constructor(readonly node: InterfaceTypeExtensionNode) {
+    super([node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `InterfaceTypeExtensionNode`
+ * `InterfaceExtApi` constructor fn
  *
  * @category API Public
  */
 export function interfaceExtApi(node: InterfaceTypeExtensionNode): InterfaceExtApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...directivesApiMixin(node),
-    ...fieldDefinitionsApiMixin(node),
-    ...typeExtensionAssertionApiMixin(node),
-  }
+  return new InterfaceExtApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `UnionTypeExtensionNode`
  *
  * @category API Public
  */
-export interface UnionExtApi
-  extends NameApiMixin<ObjectExtApi>,
-    DirectivesApiMixin<ObjectExtApi>,
-    TypeExtensionAssertionMixinApi {
-  node: UnionTypeExtensionNode
+export class UnionExtApi extends Mix(
+  NameApiMixin,
+  DirectivesApiMixin,
+  TypeExtensionAssertionApiMixin,
+) {
+  constructor(readonly node: UnionTypeExtensionNode) {
+    super([node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `UnionTypeExtensionNode`
+ * `UnionExtApi` constructor fn
  *
  * @category API Public
  */
 export function unionExtApi(node: UnionTypeExtensionNode): UnionExtApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeExtensionAssertionApiMixin(node),
-  }
+  return new UnionExtApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `ScalarTypeExtensionNode`
  *
  * @category API Public
  */
-export interface ScalarExtApi
-  extends NameApiMixin<ObjectExtApi>,
-    DirectivesApiMixin<ObjectExtApi>,
-    TypeExtensionAssertionMixinApi {
-  node: ScalarTypeExtensionNode
+export class ScalarExtApi extends Mix(
+  NameApiMixin,
+  DirectivesApiMixin,
+  TypeExtensionAssertionApiMixin,
+) {
+  constructor(readonly node: ScalarTypeExtensionNode) {
+    super([node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `ScalarTypeExtensionNode`
+ * `ScalarExtApi` constructor fn
  *
  * @category API Public
  */
 export function scalarExtApi(node: ScalarTypeExtensionNode): ScalarExtApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeExtensionAssertionApiMixin(node),
-  }
+  return new ScalarExtApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `EnumTypeExtensionNode`
  *
  * @category API Public
  */
-export interface EnumExtApi
-  extends NameApiMixin<ObjectExtApi>,
-    DirectivesApiMixin<ObjectExtApi>,
-    TypeExtensionAssertionMixinApi {
-  node: EnumTypeExtensionNode
+export class EnumExtApi extends Mix(
+  NameApiMixin,
+  DirectivesApiMixin,
+  TypeExtensionAssertionApiMixin,
+) {
+  constructor(readonly node: EnumTypeExtensionNode) {
+    super([node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `EnumTypeExtensionNode`
+ * `EnumExtApi` constructor fn
  *
  * @category API Public
  */
 export function enumExtApi(node: EnumTypeExtensionNode): EnumExtApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeExtensionAssertionApiMixin(node),
-  }
+  return new EnumExtApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `InputObjectTypeExtensionNode`
  *
  * @category API Public
  */
-export interface InputExtApi
-  extends NameApiMixin<InputExtApi>,
-    DirectivesApiMixin<InputExtApi>,
-    InputValuesAsFieldsApiMixin<InputExtApi>,
-    TypeExtensionAssertionMixinApi {
-  node: InputObjectTypeExtensionNode
+export class InputExtApi extends Mix(
+  NameApiMixin,
+  DirectivesApiMixin,
+  InputValuesAsFieldsApiMixin,
+  TypeExtensionAssertionApiMixin,
+) {
+  constructor(readonly node: InputObjectTypeExtensionNode) {
+    super([node], [node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `InputObjectTypeExtensionNode`
+ * `InputExtApi` constructor fn
  *
  * @category API Public
  */
 export function inputExtApi(node: InputObjectTypeExtensionNode): InputExtApi {
-  return {
-    node,
-    ...nameApiMixin(node),
-    ...directivesApiMixin(node),
-    ...inputValuesAsFieldsApiMixin(node),
-    ...typeExtensionAssertionApiMixin(node),
-  }
+  return new InputExtApi(node)
 }

@@ -2,8 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "incremental": false,
+    "rootDir": "src",
     "outDir": "dist"
   },
   "include": ["src"],
-  "exclude": ["**/test/**", "**/**.test.ts"]
+  "exclude": ["pkg", "node_modules", "**/test/**", "**/**.test.ts"]
 }

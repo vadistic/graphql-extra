@@ -1,4 +1,4 @@
-import { DirectiveNode, FieldNode, ArgumentNode } from 'graphql'
+import type { DirectiveNode, FieldNode, ArgumentNode } from 'graphql'
 import { ArgumentNodeProps, argumentNode } from '../../node'
 import {
   oneToManyGet,
@@ -8,111 +8,98 @@ import {
   oneToManyRemove,
 } from '../crud'
 import { getName } from '../../utils'
-import { ArgumentApi, argumentApi } from '../apis'
-
-//
-// ─── ARGUMENTS API MIXIN ────────────────────────────────────────────────────────
-//
+import { argumentApi, ArgumentApi } from '../apis'
+import { Argname } from '../types'
 
 /**
  * @category API Mixins
  */
-export type ArgumentsMixinCompatibleNode = DirectiveNode | FieldNode
+export type ArgumentsApiMixinNode = DirectiveNode | FieldNode
 
 /**
  * @category API Mixins
  */
-export interface ArgumentsApiMixin<This> {
-  getargnames(): string[]
-  getArguments(): ArgumentApi[]
+export class ArgumentsApiMixin {
+  constructor(protected node: ArgumentsApiMixinNode) {}
 
-  hasArgument(argname: string): boolean
-  getArgument(argname: string): ArgumentApi
+  getArgumentNames(): Argname[] {
+    return this.node.arguments?.map((argument) => argument.name.value) ?? []
+  }
 
-  createArgument(props: ArgumentNode | ArgumentNodeProps): This
-  updateArgument(argname: string, props: ArgumentNode | ArgumentNodeProps): This
-  upsertArgument(props: ArgumentNode | ArgumentNodeProps): This
-  removeArgument(argname: string): This
+  hasArgument(argname: Argname): boolean {
+    if (!this.node.arguments) return false
+    return this.node.arguments.some((argument) => argument.name.value === argname)
+  }
+
+  getArguments(): ArgumentApi[] {
+    return this.node.arguments?.map(argumentApi) ?? []
+  }
+
+  getArgument(argname: Argname): ArgumentApi {
+    const arg = oneToManyGet<ArgumentNode>({
+      node: this.node,
+      key: 'arguments',
+      elementName: argname,
+      parentName: this.node.name.value,
+    })
+
+    return argumentApi(arg)
+  }
+
+  createArgument(props: ArgumentNode | ArgumentNodeProps): this {
+    oneToManyCreate({
+      node: this.node,
+      key: 'arguments',
+      elementName: getName(props.name),
+      parentName: this.node.name.value,
+      nodeCreateFn: argumentNode,
+      props,
+    })
+
+    return this
+  }
+
+  updateArgument(argname: Argname, props: Partial<ArgumentNodeProps | ArgumentNode>): this {
+    oneToManyUpdate({
+      node: this.node,
+      key: 'arguments',
+      elementName: argname,
+      parentName: this.node.name.value,
+      nodeCreateFn: argumentNode,
+      props,
+    })
+
+    return this
+  }
+
+  upsertArgument(props: ArgumentNodeProps | ArgumentNode): this {
+    oneToManyUpsert({
+      node: this.node,
+      key: 'arguments',
+      elementName: getName(props.name),
+      parentName: this.node.name.value,
+      nodeCreateFn: argumentNode,
+      props,
+    })
+
+    return this
+  }
+
+  removeArgument(argname: Argname): this {
+    oneToManyRemove({
+      node: this.node,
+      key: 'arguments',
+      elementName: argname,
+      parentName: this.node.name.value,
+    })
+
+    return this
+  }
 }
 
 /**
  * @category API Mixins
  */
-export function argumentsApiMixin<This>(
-  node: ArgumentsMixinCompatibleNode,
-): ArgumentsApiMixin<This> {
-  return {
-    getargnames() {
-      return (node.arguments ?? []).map((arg) => arg.name.value)
-    },
-
-    hasArgument(argName) {
-      return !!node.arguments && node.arguments.some((arg) => arg.name.value === argName)
-    },
-
-    getArguments() {
-      return (node.arguments ?? []).map(argumentApi)
-    },
-
-    getArgument(argName) {
-      const arg = oneToManyGet<ArgumentNode>({
-        node,
-        key: 'arguments',
-        elementName: argName,
-        parentName: node.name.value,
-      })
-
-      return argumentApi(arg)
-    },
-
-    createArgument(props) {
-      oneToManyCreate({
-        node,
-        key: 'arguments',
-        elementName: getName(props.name),
-        parentName: node.name.value,
-        nodeCreateFn: argumentNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    updateArgument(argname, props) {
-      oneToManyUpdate({
-        node,
-        key: 'arguments',
-        elementName: argname,
-        parentName: node.name.value,
-        nodeCreateFn: argumentNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    upsertArgument(props) {
-      oneToManyUpsert({
-        node,
-        key: 'arguments',
-        elementName: getName(props.name),
-        parentName: node.name.value,
-        nodeCreateFn: argumentNode,
-        props,
-      })
-
-      return this as any
-    },
-
-    removeArgument(argname) {
-      oneToManyRemove({
-        node,
-        key: 'arguments',
-        elementName: argname,
-        parentName: node.name.value,
-      })
-
-      return this as any
-    },
-  }
+export function argumentsApiMixin(node: ArgumentsApiMixinNode) {
+  return new ArgumentsApiMixin(node)
 }

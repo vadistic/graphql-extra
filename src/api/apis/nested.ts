@@ -9,7 +9,8 @@ import {
   TypeNode,
   ValueNode,
 } from 'graphql'
-import { DeepMutable, Mutable, applyPropsCloned } from '../../utils'
+import { Mix } from 'mix-classes'
+import { applyPropsCloned, mutable } from '../../utils'
 import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../../node'
 import {
   NameApiMixin,
@@ -17,308 +18,254 @@ import {
   DirectivesApiMixin,
   InputValuesAsArgumentsApiMixin,
   TypeApiMixin,
-  nameApiMixin,
-  descriptionApiMixin,
-  directivesApiMixin,
-  inputValuesAsArgumentsApiMixin,
-  typeApiMixin,
   ArgumentsApiMixin,
-  argumentsApiMixin,
 } from '../mixins'
+import { Typename } from '../types'
 
 /**
  * API for GraphQL `FieldDefinitionNode`
  *
  * @category API Public
  */
-export interface FieldDefinitionApi
-  extends NameApiMixin<FieldDefinitionApi>,
-    DescriptionApiMixin<FieldDefinitionApi>,
-    DirectivesApiMixin<FieldDefinitionApi>,
-    InputValuesAsArgumentsApiMixin<FieldDefinitionApi>,
-    TypeApiMixin<FieldDefinitionApi> {
-  node: FieldDefinitionNode
+export class FieldDefinitionApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  InputValuesAsArgumentsApiMixin,
+  TypeApiMixin,
+) {
+  constructor(readonly node: FieldDefinitionNode) {
+    super([node], [node], [node], [node], [node])
+  }
 
-  toInputValue(): InputValueApi
+  toInputValue(): InputValueApi {
+    const { kind, arguments: args, loc, ...rest } = this.node
+
+    return inputValueApi({ kind: Kind.INPUT_VALUE_DEFINITION, ...rest })
+  }
 }
 
 /**
- * create API for GraphQL `FieldDefinitionNode`
+ * `FieldDefinitionApi` constructor fn
  *
  * @category API Public
  */
-export function fieldDefinitionApi(node: FieldDefinitionNode): FieldDefinitionApi {
-  return {
-    node,
-
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...inputValuesAsArgumentsApiMixin(node),
-    ...typeApiMixin(node),
-
-    toInputValue() {
-      const { kind, arguments: args, loc, ...rest } = node
-
-      return inputValueApi({ kind: Kind.INPUT_VALUE_DEFINITION, ...rest })
-    },
-  }
+export function fieldDefinitionApi(node: FieldDefinitionNode) {
+  return new FieldDefinitionApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `InputValueDefinitionNode`
  *
  * @category API Public
  */
-export interface InputValueApi
-  extends NameApiMixin<InputValueApi>,
-    DescriptionApiMixin<InputValueApi>,
-    DirectivesApiMixin<FieldDefinitionApi>,
-    TypeApiMixin<FieldDefinitionApi> {
-  node: InputValueDefinitionNode
+export class InputValueApi extends Mix(
+  NameApiMixin,
+  DescriptionApiMixin,
+  DirectivesApiMixin,
+  TypeApiMixin,
+) {
+  constructor(readonly node: InputValueDefinitionNode) {
+    super([node], [node], [node], [node])
+  }
 
-  toField(): FieldDefinitionApi
+  toField(): FieldDefinitionApi {
+    const { kind, defaultValue, loc, ...rest } = this.node
 
-  getDefaultValue(): ValueNode | undefined
-  setDefaultValue(value: ValueNode): InputValueApi
+    return fieldDefinitionApi({ kind: Kind.FIELD_DEFINITION, ...rest })
+  }
+
+  getDefaultValue(): ValueNode | undefined {
+    return this.node.defaultValue
+  }
+
+  setDefaultValue(value: ValueNode): InputValueApi {
+    mutable(this.node).defaultValue = value
+
+    return this
+  }
 }
 
 /**
- * create API for GraphQL `InputValueDefinitionNode`
+ * `InputValueApi` constructor fn
  *
  * @category API Public
  */
+
 export function inputValueApi(node: InputValueDefinitionNode): InputValueApi {
-  const _node = node as Mutable<InputValueDefinitionNode>
-
-  return {
-    node,
-
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-    ...typeApiMixin(node),
-
-    toField() {
-      const { kind, defaultValue, loc, ...rest } = node
-
-      return fieldDefinitionApi({ kind: Kind.FIELD_DEFINITION, ...rest })
-    },
-
-    getDefaultValue() {
-      return node.defaultValue
-    },
-
-    setDefaultValue(value) {
-      _node.defaultValue = value
-
-      return this as any
-    },
-  }
+  return new InputValueApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `TypeNode`
  *
  * @category API Public
  */
-export interface TypeApi {
-  node: TypeNode
+export class TypeApi {
+  constructor(readonly node: TypeNode) {}
 
-  getNamedType(): NamedTypeNode
-  getTypename(): string
+  private readonly _getNamedType = (type: TypeNode): NamedTypeNode =>
+    type.kind === Kind.NAMED_TYPE ? type : this._getNamedType(type.type)
 
-  setTypename(value: string): TypeApi
-  setType(props: TypeNode | TypeNodeProps): TypeApi
-
-  isNonNull(deep?: boolean): boolean
-  isList(deep?: boolean): boolean
-
-  setNonNull(value?: boolean): TypeApi
-  setList(value?: boolean): TypeApi
-}
-
-/**
- * create API for GraphQL `TypeNode`
- *
- * @category API Public
- */
-export function typeApi(node: TypeNode): TypeApi {
-  const _node = node as DeepMutable<TypeNode>
-
-  const _getNamedType = (type: TypeNode): NamedTypeNode =>
-    type.kind === Kind.NAMED_TYPE ? type : _getNamedType(type.type)
-
-  const _isNonNullDeep = (type: TypeNode): boolean =>
+  private readonly _isNonNullDeep = (type: TypeNode): boolean =>
     type.kind === Kind.NON_NULL_TYPE
       ? true
       : type.kind === Kind.NAMED_TYPE
       ? false
-      : _isNonNullDeep(type.type)
+      : this._isNonNullDeep(type.type)
 
-  const _isListDeep = (type: TypeNode): boolean =>
+  private readonly _isListDeep = (type: TypeNode): boolean =>
     type.kind === Kind.LIST_TYPE
       ? true
       : type.kind === Kind.NAMED_TYPE
       ? false
-      : _isListDeep(type.type)
+      : this._isListDeep(type.type)
 
-  return {
-    node,
+  getNamedType(): NamedTypeNode {
+    return this._getNamedType(this.node)
+  }
 
-    // getters
+  getTypename(): Typename {
+    return this._getNamedType(this.node).name.value
+  }
 
-    getNamedType() {
-      return _getNamedType(node)
-    },
+  setTypename(value: Typename): this {
+    mutable(this._getNamedType(this.node)).name = nameNode(value)
 
-    getTypename() {
-      return _getNamedType(node).name.value
-    },
+    return this
+  }
 
-    // setters
+  setType(props: TypeNode | TypeNodeProps): this {
+    Object.assign(this.node, applyPropsCloned(typeNode, props))
 
-    setTypename(value) {
-      const namedType: Mutable<NamedTypeNode> = _getNamedType(_node)
+    return this
+  }
 
-      namedType.name = nameNode(value)
+  isNonNull(deep = true): boolean {
+    if (!deep) {
+      return this.node.kind === Kind.NON_NULL_TYPE
+    }
 
-      return this as any
-    },
+    return this._isNonNullDeep(this.node)
+  }
 
-    setType(props) {
-      Object.assign(node, applyPropsCloned(typeNode, props))
+  isList(deep = true): boolean {
+    if (!deep) {
+      return this.node.kind === Kind.LIST_TYPE
+    }
 
-      return this as any
-    },
+    return this._isListDeep(this.node)
+  }
 
-    // list-null guards
+  setNonNull(value = true): this {
+    if (value && this.node.kind !== Kind.NON_NULL_TYPE) {
+      Object.assign(this.node, nonNullTypeNode(this.node))
+    }
 
-    isNonNull(deep = true) {
-      if (!deep) {
-        return node.kind === Kind.NON_NULL_TYPE
-      }
+    if (!value && this.node.kind === Kind.NON_NULL_TYPE) {
+      Object.assign(this.node, this.node.type)
+    }
 
-      return _isNonNullDeep(node)
-    },
+    return this
+  }
 
-    isList(deep = true) {
-      if (!deep) {
-        return node.kind === Kind.LIST_TYPE
-      }
+  setList(value = true): this {
+    if (value && this.node.kind !== Kind.LIST_TYPE) {
+      Object.assign(this.node, listTypeNode(this.node))
+    }
 
-      return _isListDeep(node)
-    },
+    if (!value && this.node.kind === Kind.LIST_TYPE) {
+      Object.assign(this.node, this.node.type)
+    }
 
-    // list-null setters
-
-    setNonNull(value = true) {
-      if (value && node.kind !== Kind.NON_NULL_TYPE) {
-        Object.assign(node, nonNullTypeNode(node))
-      }
-
-      if (!value && node.kind === Kind.NON_NULL_TYPE) {
-        Object.assign(node, node.type)
-      }
-
-      return this as any
-    },
-
-    setList(value = true) {
-      if (value && node.kind !== Kind.LIST_TYPE) {
-        Object.assign(node, listTypeNode(node))
-      }
-
-      if (!value && node.kind === Kind.LIST_TYPE) {
-        Object.assign(node, node.type)
-      }
-
-      return this as any
-    },
+    return this
   }
 }
+
+/**
+ * `TypeApi` constructor fn
+ *
+ * @category API Public
+ */
+export function typeApi(node: TypeNode) {
+  return new TypeApi(node)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `EnumValueDefinitionNode`
  *
  * @category API Public
  */
-export interface EnumValueApi
-  extends NameApiMixin<EnumValueApi>,
-    DescriptionApiMixin<EnumValueApi>,
-    DirectivesApiMixin<EnumValueApi> {
-  node: EnumValueDefinitionNode
+export class EnumValueApi extends Mix(NameApiMixin, DescriptionApiMixin, DirectivesApiMixin) {
+  constructor(readonly node: EnumValueDefinitionNode) {
+    super([node], [node], [node])
+  }
 }
 
 /**
- * create API for GraphQL `EnumValueDefinitionNode`
+ * `EnumValueApi` contructor fn
  *
  * @category API Public
  */
-export function enumValueApi(node: EnumValueDefinitionNode): EnumValueApi {
-  return {
-    node,
-
-    ...nameApiMixin(node),
-    ...descriptionApiMixin(node),
-    ...directivesApiMixin(node),
-  }
+export function enumValueApi(node: EnumValueDefinitionNode) {
+  return new EnumValueApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * API for GraphQL `DirectiveNode`
  *
  * @category API Public
  */
-export interface DirectiveApi extends NameApiMixin<DirectiveApi>, ArgumentsApiMixin<DirectiveApi> {
-  node: DirectiveNode
-}
-
-/**
- * create API for GraphQL `DirectiveNode`
- *
- * @category API Public
- */
-export function directiveApi(node: DirectiveNode): DirectiveApi {
-  return {
-    node,
-
-    ...nameApiMixin(node),
-    ...argumentsApiMixin(node),
+export class DirectiveApi extends Mix(NameApiMixin, ArgumentsApiMixin) {
+  constructor(readonly node: DirectiveNode) {
+    super([node], [node])
   }
 }
 
 /**
- * API for GraphQL `ArgumentNode`
+ * `DirectiveApi` constructor fn
  *
  * @category API Public
  */
-export interface ArgumentApi extends NameApiMixin<ArgumentApi> {
-  node: ArgumentNode
-
-  getValue(): ValueNode
-  setValue(value: ValueNode): ArgumentApi
+export function directiveApi(node: DirectiveNode) {
+  return new DirectiveApi(node)
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
+
 /**
- *  create API for GraphQL `ArgumentNode`
+ *  API for GraphQL `ArgumentNode`
+ *
+ * @category API Public
+ */
+export class ArgumentApi extends Mix(NameApiMixin) {
+  constructor(readonly node: ArgumentNode) {
+    super([node])
+  }
+
+  getValue(): ValueNode {
+    return this.node.value
+  }
+
+  setValue(value: ValueNode): this {
+    Object.assign(this.node, value)
+
+    return this
+  }
+}
+/**
+ * `ArgumentApi` constructor fn
  *
  * @category API Public
  */
 export function argumentApi(node: ArgumentNode): ArgumentApi {
-  return {
-    node,
-
-    ...nameApiMixin(node),
-
-    getValue() {
-      return node.value
-    },
-
-    setValue(value) {
-      Object.assign(node, value)
-
-      return this as any
-    },
-  }
+  return new ArgumentApi(node)
 }

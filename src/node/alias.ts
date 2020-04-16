@@ -1,4 +1,4 @@
-import { ObjectTypeDefinitionNode, NameNode } from 'graphql'
+import type { ObjectTypeDefinitionNode, NameNode } from 'graphql'
 import * as AST from './ast'
 
 /**

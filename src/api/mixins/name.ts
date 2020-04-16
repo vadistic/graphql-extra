@@ -8,13 +8,13 @@ import {
   DirectiveNode,
   ArgumentNode,
 } from 'graphql'
-import { DeepMutable } from '../../utils'
+import { mutable } from '../../utils'
 import { nameNode } from '../../node'
 
 /**
  * @category API Mixins
  */
-export type NameApiMixinCompatibleNode =
+export type NameApiMixinNode =
   | TypeDefinitionNode
   | DirectiveDefinitionNode
   | TypeExtensionNode
@@ -27,26 +27,23 @@ export type NameApiMixinCompatibleNode =
 /**
  * @category API Mixins
  */
-export interface NameApiMixin<This> {
-  getName(): string
-  setName(value: string): This
+export class NameApiMixin {
+  constructor(readonly node: NameApiMixinNode) {}
+
+  getName() {
+    return this.node.name.value
+  }
+
+  setName(value: string) {
+    mutable(this.node).name = nameNode(value)
+
+    return this
+  }
 }
 
 /**
  * @category API Mixins
  */
-export function nameApiMixin<This>(node: NameApiMixinCompatibleNode): NameApiMixin<This> {
-  const _node = node as DeepMutable<NameApiMixinCompatibleNode>
-
-  return {
-    getName() {
-      return node.name.value
-    },
-
-    setName(value) {
-      _node.name = nameNode(value)
-
-      return this as any
-    },
-  }
+export function nameApiMixin(node: NameApiMixinNode) {
+  return new NameApiMixin(node)
 }

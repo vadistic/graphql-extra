@@ -353,7 +353,7 @@ export function documentApi(): DocumentApi {
         throw Error(`directive '${directiveName}' does not exist`)
       }
 
-      return this as any
+      return this
     },
 
     createDirective(props) {

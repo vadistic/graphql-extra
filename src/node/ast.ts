@@ -1,4 +1,4 @@
-import {
+import type {
   ArgumentNode,
   BooleanValueNode,
   DefinitionNode,
@@ -22,7 +22,6 @@ import {
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
   IntValueNode,
-  Kind,
   ListTypeNode,
   ListValueNode,
   NamedTypeNode,
@@ -35,7 +34,6 @@ import {
   ObjectValueNode,
   OperationDefinitionNode,
   OperationTypeDefinitionNode,
-  parseType,
   ScalarTypeDefinitionNode,
   ScalarTypeExtensionNode,
   SchemaDefinitionNode,
@@ -51,6 +49,7 @@ import {
   VariableNode,
   OperationTypeNode,
 } from 'graphql'
+import { Kind, parseType } from 'graphql'
 import {
   isAstNode,
   applyPropsNullableArr,

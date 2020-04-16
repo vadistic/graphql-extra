@@ -11,7 +11,7 @@
     "url": "https://github.com/vadistic/graphql-extra"
   },
   "scripts": {
-    "clean": "rm -rf pkg coverage tmp docs",
+    "clean": "rm -rf pkg coverage tmp docs dist",
     "lint": "eslint --ext .ts src/**",
     "format": "prettier --write src/**",
     "typecheck": "tsc -p tsconfig.json --noEmit --incremental false",
@@ -34,6 +34,7 @@
     "@pika/plugin-standard-pkg": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-standard-pkg/pkg",
     "@types/jest": "^25.2.1",
     "@vadistic/eslint-config-base": "^0.2.2",
+    "@vadistic/pika-plugin-publish-config": "^0.3.0",
     "@vadistic/prettier-config": "^0.2.2",
     "eslint": "^6.8.0",
     "graphql": "^15.0.0",
@@ -68,7 +69,7 @@
         }
       ],
       [
-        "./pika-plugin-private-field"
+        "@vadistic/pika-plugin-publish-config"
       ],
       [
         "@pika/plugin-build-node"
@@ -77,5 +78,8 @@
         "@pika/plugin-build-web"
       ]
     ]
+  },
+  "dependencies": {
+    "mix-classes": "^1.1.10"
   }
 }
