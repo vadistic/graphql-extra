@@ -1,23 +1,15 @@
 import { KindEnum, Kind, ASTKindToNode, parse, ASTNode } from 'graphql'
 
-export function normaliseGql(input: any) {
-  if (typeof input === 'string') {
-    return normaliseString(input)
-  } else {
-    stripEmptyKeysAndLoc(input)
-  }
-}
-
 export function normaliseString(input: string) {
   return input.replace(/\s/, '')
 }
 
 function stripEmptyKeysAndLoc(input: any): any {
-  if (input === null) {
-    return
+  if (input === null || input === undefined) {
+    return input
   }
 
-  if (input instanceof Array) {
+  if (Array.isArray(input)) {
     return input.map(stripEmptyKeysAndLoc)
   }
 
@@ -25,7 +17,7 @@ function stripEmptyKeysAndLoc(input: any): any {
     const res: any = {}
 
     for (const [key, val] of Object.entries(input)) {
-      if (typeof val !== undefined && key !== 'loc') {
+      if (val !== undefined && key !== 'loc') {
         res[key] = stripEmptyKeysAndLoc(val)
       }
     }
@@ -34,6 +26,14 @@ function stripEmptyKeysAndLoc(input: any): any {
   }
 
   return input
+}
+
+export function normaliseGql(input: any) {
+  if (typeof input === 'string') {
+    return normaliseString(input)
+  }
+
+  return stripEmptyKeysAndLoc(input)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -55,7 +55,7 @@ const getFirstNodeOfKind = <K extends KindEnum>(kind: K) => (
     }
   }
 
-  return
+  return undefined
 }
 
 const defined = <A, R>(fn: (arg: A) => R | undefined) => (arg: A) => {

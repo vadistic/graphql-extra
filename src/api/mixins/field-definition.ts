@@ -1,4 +1,4 @@
-import {
+import type {
   ObjectTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
   ObjectTypeExtensionNode,
@@ -6,14 +6,13 @@ import {
   FieldDefinitionNode,
   TypeNode,
 } from 'graphql'
-import {
-  FieldDefinitionApi,
-  TypeApi,
-  InputValueApi,
-  DirectiveApi,
-  fieldDefinitionApi,
-} from '../apis'
+
 import { FieldDefinitionNodeProps, fieldDefinitionNode, TypeNodeProps } from '../../node'
+import { getName } from '../../utils'
+import type { DirectiveApi } from '../apis/directive'
+import { FieldDefinitionApi, fieldDefinitionApi } from '../apis/input-value-and-field-definition'
+import type { InputValueApi } from '../apis/input-value-and-field-definition'
+import { TypeApi } from '../apis/type'
 import {
   oneToManyGet,
   oneToManyCreate,
@@ -21,8 +20,7 @@ import {
   oneToManyUpsert,
   oneToManyRemove,
 } from '../crud'
-import { getName } from '../../utils'
-import { Fieldname, Typename } from '../types'
+import type { Fieldname, Typename } from '../types'
 
 /**
  * @category API Mixins
@@ -44,7 +42,7 @@ export class FieldDefinitionsApiMixin {
   }
 
   getFields(): FieldDefinitionApi[] {
-    return (this.node.fields ?? []).map(fieldDefinitionApi)
+    return this.node.fields?.map(fieldDefinitionApi) ?? []
   }
 
   getFieldsByTypename(typename: Typename): FieldDefinitionApi[] {

@@ -1,8 +1,11 @@
 import { DirectiveDefinitionNode, DirectiveLocationEnum, NameNode } from 'graphql'
 import { Mix } from 'mix-classes'
-import { NameApiMixin, DescriptionApiMixin, InputValuesAsArgumentsApiMixin } from '../mixins'
-import { getName, applyPropsArr, applyProps, deepMutable, mutable } from '../../utils'
+
 import { nameNode } from '../../node'
+import { getName, applyPropsArr, applyProps, deepMutable, mutable } from '../../utils'
+import { DescriptionApiMixin } from '../mixins/description'
+import { NameApiMixin } from '../mixins/name'
+import { InputValuesAsArgumentsApiMixin } from './input-value-and-field-definition'
 
 /**
  * @category API Public

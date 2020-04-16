@@ -1,4 +1,4 @@
-import {
+import type {
   SchemaDefinitionNode,
   TypeDefinitionNode,
   TypeSystemExtensionNode,
@@ -7,8 +7,10 @@ import {
   EnumValueDefinitionNode,
   DirectiveNode,
 } from 'graphql'
-import { DirectiveApi, directiveApi } from '../apis'
+
 import { DirectiveNodeProps, directiveNode } from '../../node'
+import { getName } from '../../utils'
+import { DirectiveApi, directiveApi } from '../apis/directive'
 import {
   oneToManyGet,
   oneToManyCreate,
@@ -16,12 +18,7 @@ import {
   oneToManyUpsert,
   oneToManyRemove,
 } from '../crud'
-import { getName } from '../../utils'
-import { Directivename } from '../types'
-
-//
-// ─── DIRECTIVES API MIXIN ───────────────────────────────────────────────────────
-//
+import type { Directivename } from '../types'
 
 /**
  * @category API Mixins

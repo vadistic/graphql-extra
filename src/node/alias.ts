@@ -1,4 +1,5 @@
 import type { ObjectTypeDefinitionNode, NameNode } from 'graphql'
+
 import * as AST from './ast'
 
 /**
@@ -145,7 +146,7 @@ export const schemaDef = AST.schemaDefinitionNode
  */
 export const operationType = AST.operationTypeDefinitionNode
 
-/// TYPE DEFINITIONS
+// / TYPE DEFINITIONS
 
 /**
  * @category AST Alias

@@ -50,6 +50,7 @@ import type {
   OperationTypeNode,
 } from 'graphql'
 import { Kind, parseType } from 'graphql'
+
 import {
   isAstNode,
   applyPropsNullableArr,
@@ -384,7 +385,7 @@ export type IntValueNodeProps = string | number
 export function intValueNode(value: IntValueNodeProps): IntValueNode {
   return {
     kind: Kind.INT,
-    value: '' + value,
+    value: String(value),
   }
 }
 
@@ -403,7 +404,7 @@ export type FloatValueNodeProps = string | number
 export function floatValueNode(value: string | number): FloatValueNode {
   return {
     kind: Kind.FLOAT,
-    value: '' + value,
+    value: String(value),
   }
 }
 
@@ -490,7 +491,7 @@ export type ListValueNodeProps = ReadonlyArray<ValueNode>
 export function listValueNode(values: ListValueNodeProps): ListValueNode {
   return {
     kind: Kind.LIST,
-    values: values,
+    values,
   }
 }
 
@@ -509,7 +510,7 @@ export type ObjectValueNodeProps = ReadonlyArray<ObjectFieldNode>
 export function objectValueNode(fields: ObjectValueNodeProps): ObjectValueNode {
   return {
     kind: Kind.OBJECT,
-    fields: fields,
+    fields,
   }
 }
 

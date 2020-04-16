@@ -1,4 +1,5 @@
 export * from './apis'
 export * from './document'
-export * from './kind'
+export * from './kind-to-api'
+export * from './mixins'
 export * from './types'

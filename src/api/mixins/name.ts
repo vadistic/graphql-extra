@@ -1,4 +1,4 @@
-import {
+import type {
   TypeDefinitionNode,
   DirectiveDefinitionNode,
   TypeExtensionNode,
@@ -8,8 +8,9 @@ import {
   DirectiveNode,
   ArgumentNode,
 } from 'graphql'
-import { mutable } from '../../utils'
+
 import { nameNode } from '../../node'
+import { mutable } from '../../utils'
 
 /**
  * @category API Mixins

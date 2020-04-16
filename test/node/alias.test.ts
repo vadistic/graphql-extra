@@ -1,4 +1,5 @@
 import { print } from 'graphql'
+
 import { t } from '../../src'
 
 describe(`node > alias`, () => {

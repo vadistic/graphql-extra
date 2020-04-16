@@ -1,11 +1,8 @@
 import {
-  DefinitionNode,
   DirectiveDefinitionNode,
   DocumentNode,
   isTypeDefinitionNode,
   Kind,
-  parse,
-  ParseOptions,
   TypeDefinitionNode,
   EnumTypeDefinitionNode,
   ASTKindToNode,
@@ -18,6 +15,7 @@ import {
   isTypeExtensionNode,
   print,
 } from 'graphql'
+
 import {
   documentNode,
   EnumTypeDefinitionNodeProps,
@@ -32,7 +30,6 @@ import {
   directiveDefinitionNode,
 } from '../../node'
 import { getName, applyPropsCloned, cloneDeep } from '../../utils'
-
 import {
   enumTypeApi,
   EnumTypeApi,
@@ -51,32 +48,8 @@ import {
   DirectiveDefinitionApi,
   directiveDefinitionApi,
 } from '../apis'
-import { astKindToApi } from '../kind'
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-export type SDLInput = string | DocumentNode | (string | DocumentNode)[]
-
-const PARSE_OPTIONS: ParseOptions = {
-  experimentalFragmentVariables: true,
-  noLocation: true,
-}
-
-function normaliseSDLInput(sdl: SDLInput): DefinitionNode[] {
-  if (typeof sdl === 'string') {
-    return [...parse(sdl, PARSE_OPTIONS).definitions]
-  }
-
-  if (Array.isArray(sdl)) {
-    return sdl.flatMap(normaliseSDLInput)
-  }
-
-  if (sdl.kind === Kind.DOCUMENT) {
-    return [...sdl.definitions]
-  }
-
-  throw Error(`invalid sdl \n ${JSON.stringify(sdl, null, 2)}`)
-}
+import { astKindToApi } from '../kind-to-api'
+import { SDLInput, normaliseSDLInput } from './helper'
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -240,9 +213,9 @@ export function documentApi(): DocumentApi {
 
     if (typeMap.has(typename)) {
       return getNodeOfKind(kind, typename)
-    } else {
-      return createNodeOfKind(kind, props)
     }
+
+    return createNodeOfKind(kind, props)
   }
 
   //
@@ -378,9 +351,8 @@ export function documentApi(): DocumentApi {
 
       if (directiveMap.has(directiveName)) {
         return this.getDirective(directiveName)
-      } else {
-        return this.createDirective(props)
       }
+      return this.createDirective(props)
     },
 
     // ─────────────────────────────────────────────────────────────────

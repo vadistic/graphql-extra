@@ -1,18 +1,22 @@
-import { TypeDefinitionNode, KindEnum, Kind, TypeExtensionNode } from 'graphql'
-import {
+import type { TypeDefinitionNode, KindEnum, TypeExtensionNode } from 'graphql'
+import { Kind } from 'graphql'
+
+import type {
   EnumTypeApi,
   InputTypeApi,
   InterfaceTypeApi,
   ObjectTypeApi,
   ScalarTypeApi,
   UnionTypeApi,
+} from '../apis/type-definition'
+import type {
   EnumExtApi,
   InputExtApi,
   InterfaceExtApi,
   ObjectExtApi,
   ScalarExtApi,
   UnionExtApi,
-} from '../apis'
+} from '../apis/type-extension'
 
 /**
  * @category API Mixins

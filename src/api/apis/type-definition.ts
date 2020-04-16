@@ -8,14 +8,12 @@ import type {
 } from 'graphql'
 import { Mix } from 'mix-classes'
 
-import {
-  DescriptionApiMixin,
-  DirectivesApiMixin,
-  FieldDefinitionsApiMixin,
-  InputValuesAsFieldsApiMixin,
-  NameApiMixin,
-  TypeDefinitionAssertionApiMixin,
-} from '../mixins'
+import { TypeDefinitionAssertionApiMixin } from '../mixins/assertion'
+import { DescriptionApiMixin } from '../mixins/description'
+import { DirectivesApiMixin } from '../mixins/directive'
+import { FieldDefinitionsApiMixin } from '../mixins/field-definition'
+import { InputValuesAsFieldsApiMixin } from '../mixins/input-values-as-fields'
+import { NameApiMixin } from '../mixins/name'
 
 /**
  * API for GraphQL `TypeDefinitionNode`

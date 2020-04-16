@@ -1,4 +1,5 @@
-import { KindEnum } from 'graphql'
+import type { KindEnum } from 'graphql'
+
 import {
   argumentNode,
   booleanValueNode,

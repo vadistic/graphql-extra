@@ -1,5 +1,8 @@
 import type { DirectiveNode, FieldNode, ArgumentNode } from 'graphql'
+
 import { ArgumentNodeProps, argumentNode } from '../../node'
+import { getName } from '../../utils'
+import { ArgumentApi, argumentApi } from '../apis/argument'
 import {
   oneToManyGet,
   oneToManyCreate,
@@ -7,9 +10,7 @@ import {
   oneToManyUpsert,
   oneToManyRemove,
 } from '../crud'
-import { getName } from '../../utils'
-import { argumentApi, ArgumentApi } from '../apis'
-import { Argname } from '../types'
+import type { Argname } from '../types'
 
 /**
  * @category API Mixins

@@ -1,12 +1,13 @@
-import {
+import type {
   TypeDefinitionNode,
   DirectiveDefinitionNode,
   FieldDefinitionNode,
   InputValueDefinitionNode,
   EnumValueDefinitionNode,
 } from 'graphql'
-import { mutable } from '../../utils'
+
 import { stringValueNode } from '../../node'
+import { mutable } from '../../utils'
 
 //
 // ─── DESCRIPTION API MIXIN ──────────────────────────────────────────────────────

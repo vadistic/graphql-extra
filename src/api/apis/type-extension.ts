@@ -7,13 +7,12 @@ import type {
   InputObjectTypeExtensionNode,
 } from 'graphql'
 import { Mix } from 'mix-classes'
-import {
-  NameApiMixin,
-  DirectivesApiMixin,
-  FieldDefinitionsApiMixin,
-  InputValuesAsFieldsApiMixin,
-  TypeExtensionAssertionApiMixin,
-} from '../mixins'
+
+import { TypeExtensionAssertionApiMixin } from '../mixins/assertion'
+import { DirectivesApiMixin } from '../mixins/directive'
+import { FieldDefinitionsApiMixin } from '../mixins/field-definition'
+import { InputValuesAsFieldsApiMixin } from '../mixins/input-values-as-fields'
+import { NameApiMixin } from '../mixins/name'
 
 /**
  * API for GraphQL `TypeExtensionNode`

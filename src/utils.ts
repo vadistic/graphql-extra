@@ -29,14 +29,16 @@ export function getName(input: any): string {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-//  no input => no return
 export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
   if (arg) {
     return fn(arg)
   }
+
+  //  no input => no return
+  return undefined
 }
 
-// apply fn to array of inputs
+/** apply fn to array of inputs */
 export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
   arr.map(fn)
 

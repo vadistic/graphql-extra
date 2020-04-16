@@ -1,7 +1,13 @@
 {
-  "extends": "@vadistic/eslint-config-base",
+  "extends": [
+    "@vadistic/eslint-config",
+    "@vadistic/eslint-config/preset/typecheck",
+    "@vadistic/eslint-config/preset/prettier"
+  ],
 
   "parserOptions": {
     "project": "./tsconfig.json"
-  }
+  },
+
+  "rules": {}
 }

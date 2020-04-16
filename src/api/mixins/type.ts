@@ -1,12 +1,13 @@
-import {
+import type {
   FieldDefinitionNode,
   InputValueDefinitionNode,
   VariableDefinitionNode,
   NamedTypeNode,
   TypeNode,
 } from 'graphql'
-import { TypeNodeProps } from '../../node'
-import { TypeApi, typeApi } from '../apis'
+
+import type { TypeNodeProps } from '../../node'
+import { TypeApi, typeApi } from '../apis/type'
 
 /**
  * @category API Mixins

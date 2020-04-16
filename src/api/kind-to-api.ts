@@ -1,22 +1,4 @@
-import { documentApi } from './document'
-import {
-  directiveDefinitionApi,
-  enumExtApi,
-  enumTypeApi,
-  enumValueApi,
-  fieldDefinitionApi,
-  inputExtApi,
-  inputTypeApi,
-  inputValueApi,
-  interfaceExtApi,
-  interfaceTypeApi,
-  objectExtApi,
-  objectTypeApi,
-  scalarExtApi,
-  scalarTypeApi,
-  unionExtApi,
-  unionTypeApi,
-} from './apis'
+import * as API from './apis'
 
 /**
  * @category Helper
@@ -26,7 +8,7 @@ export const astKindToApiMap = {
   // Name
 
   // DOCUMENT
-  Document: documentApi,
+  // Document:
   // OperationDefinition:
   // VariableDefinition:
   // SelectionSet:
@@ -63,31 +45,31 @@ export const astKindToApiMap = {
   // OperationTypeDefinition:
 
   // TYPE DEFINITIONS
-  ScalarTypeDefinition: scalarTypeApi,
-  ObjectTypeDefinition: objectTypeApi,
-  InterfaceTypeDefinition: interfaceTypeApi,
-  UnionTypeDefinition: unionTypeApi,
-  EnumTypeDefinition: enumTypeApi,
-  InputObjectTypeDefinition: inputTypeApi,
+  ScalarTypeDefinition: API.scalarTypeApi,
+  ObjectTypeDefinition: API.objectTypeApi,
+  InterfaceTypeDefinition: API.interfaceTypeApi,
+  UnionTypeDefinition: API.unionTypeApi,
+  EnumTypeDefinition: API.enumTypeApi,
+  InputObjectTypeDefinition: API.inputTypeApi,
 
   // TYPE FIELD DEFINITIONS
-  FieldDefinition: fieldDefinitionApi,
-  InputValueDefinition: inputValueApi,
-  EnumValueDefinition: enumValueApi,
+  FieldDefinition: API.fieldDefinitionApi,
+  InputValueDefinition: API.inputValueApi,
+  EnumValueDefinition: API.enumValueApi,
 
   // DIRECTIVE DEFINITIONS
-  DirectiveDefinition: directiveDefinitionApi,
+  DirectiveDefinition: API.directiveDefinitionApi,
 
   // TYPE SYSTEM EXTENSIONS
   // SchemaExtension:
 
   // TYPE EXTENSIONS
-  ScalarTypeExtension: scalarExtApi,
-  ObjectTypeExtension: objectExtApi,
-  InterfaceTypeExtension: interfaceExtApi,
-  UnionTypeExtension: unionExtApi,
-  EnumTypeExtension: enumExtApi,
-  InputObjectTypeExtension: inputExtApi,
+  ScalarTypeExtension: API.scalarExtApi,
+  ObjectTypeExtension: API.objectExtApi,
+  InterfaceTypeExtension: API.interfaceExtApi,
+  UnionTypeExtension: API.unionExtApi,
+  EnumTypeExtension: API.enumExtApi,
+  InputObjectTypeExtension: API.inputExtApi,
 }
 
 /**
