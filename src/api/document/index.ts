@@ -1,2 +1,2 @@
-export * from './schema-document'
-export * from './schema-document-base'
+export * from './document-schema'
+export * from './document-schema-base'

@@ -24,7 +24,7 @@ export function isScalar<T>(value: T): boolean {
 // ────────────────────────────────────────────────────────────────────────────────
 
 /** transform fn to nullable version: no input => no return */
-export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
+export const nullableFn = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
   if (arg) {
     return fn(arg)
   }
@@ -33,7 +33,7 @@ export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined =>
 }
 
 /** transform fn to map over array of inputs */
-export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
+export const arrayableFn = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
   arr.map(fn)
 
 export const propsOrNode = <P, N>(fn: (props: P) => N) => (props: P | N): N =>
@@ -45,16 +45,16 @@ export const applyProps = <P, N>(fn: (props: P) => N, props: P | N): N => propsO
 /** accept array of nodes/props */
 export const applyPropsArr = <P, N>(
   fn: (props: P) => N, props: ReadonlyArray<P | N>,
-): readonly N[] => arrayable(propsOrNode(fn))(props)
+): readonly N[] => arrayableFn(propsOrNode(fn))(props)
 
 /** accept undef or node/props */
 export const applyPropsNullable = <P, N>(fn: (props: P) => N, props?: P | N): N | undefined =>
-  nullable(propsOrNode(fn))(props)
+  nullableFn(propsOrNode(fn))(props)
 
 /** accept undef or array of nodes/props */
 export const applyPropsNullableArr = <P, N>(
   fn: (props: P) => N, props?: ReadonlyArray<P | N>,
-): readonly N[] | undefined => nullable(arrayable(propsOrNode(fn)))(props)
+): readonly N[] | undefined => nullableFn(arrayableFn(propsOrNode(fn)))(props)
 
 /* same as nodeFn but clones props to avoid mutablity magic */
 export const applyPropsCloned = <P, N>(fn: (props: P) => N, props: N | P): N => {
@@ -97,9 +97,7 @@ export function cloneDeep<T>(target: T): T {
   }
 
   if (Array.isArray(target)) {
-    const copy = [...target] as any[]
-
-    return copy.map((n) => cloneDeep(n)) as any
+    return target.map((n) => cloneDeep(n)) as any
   }
 
   if (typeof target === 'object' && target !== {}) {

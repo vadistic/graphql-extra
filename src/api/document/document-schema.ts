@@ -7,7 +7,7 @@ import type * as API from '../apis'
 import type { SDLInput } from '../helper'
 import { astNodeToApi, AstKindToApiClass } from '../kind-to-api'
 import type { Typename, Directivename } from '../types'
-import { DocumentSchemaApiBase, DocumentSchemaRoots } from './schema-document-base'
+import { DocumentSchemaApiBase, DocumentSchemaRoots } from './document-schema-base'
 
 /**
  * API for GraphQL `DocumentNode` with schema
@@ -27,29 +27,110 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
     return this._getRoots()
   }
 
-  getRootType(operation: GQL.OperationTypeNode): GQL.ObjectTypeDefinitionNode | undefined {
-    return this._getRootType(operation)
+  getRootType(operation: GQL.OperationTypeNode): API.ObjectTypeApi | undefined {
+    const node = this._getRootType(operation)
+
+    return node ? astNodeToApi(node) : undefined
   }
 
   getSchemaType(): GQL.SchemaDefinitionNode | undefined {
     return this.roots.schema
   }
 
-  getQueryType(): GQL.ObjectTypeDefinitionNode | undefined {
-    return this._getRootType('query')
+  getQueryType(): API.ObjectTypeApi | undefined {
+    return this.getRootType('query')
   }
 
-  getMutationType(): GQL.ObjectTypeDefinitionNode | undefined {
-    return this._getRootType('mutation')
+  getMutationType(): API.ObjectTypeApi | undefined {
+    return this.getRootType('mutation')
   }
 
-  getSubscriptionType(): GQL.ObjectTypeDefinitionNode | undefined {
-    return this._getRootType('subscription')
+  getSubscriptionType(): API.ObjectTypeApi | undefined {
+    return this.getRootType('subscription')
   }
 
 
   // ────────────────────────────────────────────────────────────────────────────────
-  // type api
+  // type get all api
+
+  // TODO: this could really use some mapping/caching to avoid loops
+  // TODO: decide if all those aliases for types are needed
+
+  getAllTypes(): API.TypeDefinitonApi[] {
+    return Array.from(this.maps.type.values()).map(astNodeToApi)
+  }
+
+  getAllTypesOfKind<K extends GQL.TypeDefinitionNode['kind']>(kind: K): AstKindToApiClass<K>[] {
+    return Array.from(this.maps.type.values())
+      .filter((node) => node.kind === kind)
+      .map(astNodeToApi) as AstKindToApiClass<K>[]
+  }
+
+  getAllScalarTypes(): API.ScalarTypeApi[] {
+    return this.getAllTypesOfKind(Kind.SCALAR_TYPE_DEFINITION)
+  }
+
+  getAllObjectTypes(): API.ObjectTypeApi[] {
+    return this.getAllTypesOfKind(Kind.OBJECT_TYPE_DEFINITION)
+  }
+
+  getAllInterfaceTypes(): API.InterfaceTypeApi[] {
+    return this.getAllTypesOfKind(Kind.INTERFACE_TYPE_DEFINITION)
+  }
+
+  getAllUnionTypes(): API.UnionTypeApi[] {
+    return this.getAllTypesOfKind(Kind.UNION_TYPE_DEFINITION)
+  }
+
+  getAllEnumTypes(): API.EnumTypeApi[] {
+    return this.getAllTypesOfKind(Kind.ENUM_TYPE_DEFINITION)
+  }
+
+  getAllInputTypes(): API.InputTypeApi[] {
+    return this.getAllTypesOfKind(Kind.INPUT_OBJECT_TYPE_DEFINITION)
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+  // ext get all api
+
+  // TODO: optimise as well
+
+  getAllExts(): API.TypeExtensionApi[] {
+    return Array.from(this.maps.extension.values()).map(astNodeToApi)
+  }
+
+  getAllExtsOfKind<K extends GQL.TypeExtensionNode['kind']>(kind: K): AstKindToApiClass<K>[] {
+    return Array.from(this.maps.extension.values())
+      .filter((node) => node.kind === kind)
+      .map(astNodeToApi) as AstKindToApiClass<K>[]
+  }
+
+  getAllScalarExts(): API.ScalarExtApi[] {
+    return this.getAllExtsOfKind(Kind.SCALAR_TYPE_EXTENSION)
+  }
+
+  getAllObjectExts(): API.ObjectExtApi[] {
+    return this.getAllExtsOfKind(Kind.OBJECT_TYPE_EXTENSION)
+  }
+
+  getAllInterfaceExts(): API.InterfaceExtApi[] {
+    return this.getAllExtsOfKind(Kind.INTERFACE_TYPE_EXTENSION)
+  }
+
+  getAllUnionExts(): API.UnionExtApi[] {
+    return this.getAllExtsOfKind(Kind.UNION_TYPE_EXTENSION)
+  }
+
+  getAllEnumExts(): API.EnumExtApi[] {
+    return this.getAllExtsOfKind(Kind.ENUM_TYPE_EXTENSION)
+  }
+
+  getAllInputExts(): API.InputExtApi[] {
+    return this.getAllExtsOfKind(Kind.INPUT_OBJECT_TYPE_EXTENSION)
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+  // basic type api
 
 
   hasType(typename: Typename): boolean {
@@ -67,7 +148,7 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
   }
 
   // ─────────────────────────────────────────────────────────────────
-  // ext api
+  // basic ext api
 
   hasExt(typename: Typename): boolean {
     return this._hasNode(typename, 'extension')
@@ -176,6 +257,10 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
     const node = this._getOrCreateNodeOfKind(props, 'directive', Kind.DIRECTIVE_DEFINITION)
 
     return astNodeToApi(node)
+  }
+
+  getAllDirectives(): API.DirectiveDefinitionApi[] {
+    return Array.from(this.maps.directive.values()).map(astNodeToApi)
   }
 
   // ─────────────────────────────────────────────────────────────────
