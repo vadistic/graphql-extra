@@ -1,4 +1,4 @@
-import type { ObjectTypeDefinitionNode, NameNode } from 'graphql'
+import type { ObjectTypeDefinitionNode, NameNode, NamedTypeNode } from 'graphql'
 
 import * as AST from './ast'
 
@@ -12,23 +12,17 @@ export type RootTypeDefinitionProps = Omit<AST.ObjectTypeDefinitionNodeProps, 'n
 /**
  * @category AST Alias
  */
-export const queryType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => {
-  return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
-}
+export const queryType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 
 /**
  * @category AST Alias
  */
-export const mutationType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => {
-  return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
-}
+export const mutationType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 
 /**
  * @category AST Alias
  */
-export const subscriptionType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => {
-  return AST.objectTypeDefinitionNode({ name: 'Query', ...props })
-}
+export const subscriptionType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 
 // NAME
 
@@ -122,16 +116,16 @@ export const type = {
   nonNull: AST.nonNullTypeNode,
 
   // build-ins
-  id: () => AST.namedTypeNode('ID'),
-  int: () => AST.namedTypeNode('Int'),
-  float: () => AST.namedTypeNode('Float'),
-  bool: () => AST.namedTypeNode('Boolean'),
-  string: () => AST.namedTypeNode('String'),
+  id: (): NamedTypeNode => AST.namedTypeNode('ID'),
+  int: (): NamedTypeNode => AST.namedTypeNode('Int'),
+  float: (): NamedTypeNode => AST.namedTypeNode('Float'),
+  bool: (): NamedTypeNode => AST.namedTypeNode('Boolean'),
+  string: (): NamedTypeNode => AST.namedTypeNode('String'),
 
   // common extras
-  json: () => AST.namedTypeNode('JSON'),
-  date: () => AST.namedTypeNode('Date'),
-  dateTime: () => AST.namedTypeNode('DateTime'),
+  json: (): NamedTypeNode => AST.namedTypeNode('JSON'),
+  date: (): NamedTypeNode => AST.namedTypeNode('Date'),
+  dateTime: (): NamedTypeNode => AST.namedTypeNode('DateTime'),
 }
 
 // TYPE SYSTEM DEFINITIONS

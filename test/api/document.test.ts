@@ -1,6 +1,6 @@
 import { documentSchemaApi } from '../../src'
 
-describe(`api > documentApi`, () => {
+describe('api > documentSchemaApi', () => {
   const typeDefs = /* GraphQL */ `
     type Person {
       id: ID!
@@ -15,23 +15,38 @@ describe(`api > documentApi`, () => {
       author: Person!
     }
   `
-  const doc = documentSchemaApi()
+  const doc = documentSchemaApi(typeDefs).addSDL(moreTypeDefs)
 
-  doc.addSDL(typeDefs)
-  doc.addSDL(moreTypeDefs)
-
-  test(`parse SDL`, () => {
+  test('base', () => {
     expect(doc.getObjectType('Person').getName()).toBe('Person')
     expect(doc.getObjectType('Post').getFieldnames()).toEqual(['id', 'body', 'author'])
   })
 
-  test(`type guards and assertions`, () => {
+  test('TypeDefinitionAssertionApiMixin', () => {
     const obj = doc.getType('Post')
 
     expect(obj.isObjectType()).toBeTruthy()
     expect(obj.isEnumType()).toBeFalsy()
 
-    expect(() => obj.assertEnumType().setDescription('abc')).toThrowError(`ObjectTypeDefinition`)
-    expect(() => doc.getEnumType('Post').setDescription('asd')).toThrowError(`ObjectTypeDefinition`)
+    expect(() => obj.assertEnumType().setDescription('abc')).toThrowError('ObjectTypeDefinition')
+  })
+
+  test('.toJson()', () => {
+    const copy = doc.clone()
+
+    expect(() => copy.toJson()).toThrowError('root')
+
+    const someRoot = /* GraphQL */`
+      type Query {
+        test: String
+      }
+    `
+
+    copy.addSDL(someRoot)
+
+    const schema = copy.toJson()
+
+    expect(schema.data).toBeDefined()
+    expect(schema.errors).toBeUndefined()
   })
 })

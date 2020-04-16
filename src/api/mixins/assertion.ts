@@ -24,7 +24,7 @@ import type {
 export class TypeDefinitionAssertionApiMixin {
   constructor(readonly node: TypeDefinitionNode) {}
 
-  private readonly assertionErr = (kind: KindEnum) =>
+  private readonly assertionErr = (kind: KindEnum): Error =>
     Error(`asserted type '${kind}', but node ${this.node.name.value} is '${this.node.kind}'`)
 
   isEnumType(): this is EnumTypeApi {
@@ -117,7 +117,7 @@ export function typeDefinitionAssertionApiMixin(
 export class TypeExtensionAssertionApiMixin {
   constructor(readonly node: TypeExtensionNode) {}
 
-  private readonly assertionErr = (kind: KindEnum) =>
+  private readonly assertionErr = (kind: KindEnum): Error =>
     Error(`asserted type '${kind}', but node ${this.node.name.value} is '${this.node.kind}'`)
 
   isEnumExt(): this is EnumExtApi {

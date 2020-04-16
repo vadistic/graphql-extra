@@ -2,8 +2,8 @@ import { print } from 'graphql'
 
 import { t } from '../../src'
 
-describe(`node > alias`, () => {
-  test(`objectType`, () => {
+describe('node > alias', () => {
+  test('objectType', () => {
     // props input
     const res = t.objectType({
       name: 'MyObject',
@@ -57,7 +57,7 @@ describe(`node > alias`, () => {
     `)
   })
 
-  test(`interfaceType`, () => {
+  test('interfaceType', () => {
     // it's the same as object...
     const res = t.interfaceType({
       name: 'MyInterface',
@@ -84,7 +84,7 @@ describe(`node > alias`, () => {
     `)
   })
 
-  test(`unionType`, () => {
+  test('unionType', () => {
     const res = t.unionType({
       name: 'MyUnion',
       description: 'My union',
@@ -97,7 +97,7 @@ describe(`node > alias`, () => {
     `)
   })
 
-  test(`scalarType`, () => {
+  test('scalarType', () => {
     // props input
     const res = t.scalarType({
       name: 'MyScalar',
@@ -118,7 +118,7 @@ describe(`node > alias`, () => {
     `)
   })
 
-  test(`enumType`, () => {
+  test('enumType', () => {
     // props input
     const res = t.enumType({
       name: 'MyEnum',
@@ -144,7 +144,7 @@ describe(`node > alias`, () => {
     `)
   })
 
-  test(`inputType`, () => {
+  test('inputType', () => {
     // props input
     const res = t.inputType({
       name: 'MyInput',

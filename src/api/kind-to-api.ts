@@ -90,7 +90,7 @@ export function astKindToApiFn<K extends KindEnum>(
 ): (node: ASTKindToNode[K]) => AstKindToApiClass<K> {
   const Clazz = (astKindToApiClassMap as any)[kind]
 
-  return (node: ASTKindToNode[K]) => new Clazz(node)
+  return (node: ASTKindToNode[K]): AstKindToApiClass<K> => new Clazz(node)
 }
 
 /**

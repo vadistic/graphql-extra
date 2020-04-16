@@ -1,8 +1,8 @@
 {
   "extends": [
     "@vadistic/eslint-config",
-    "@vadistic/eslint-config/preset/typecheck",
-    "@vadistic/eslint-config/preset/prettier"
+    "@vadistic/eslint-config/preset/typecheck"
+    // "@vadistic/eslint-config/preset/prettier"
   ],
 
   "parserOptions": {
@@ -15,6 +15,10 @@
     "padding-line-between-statements": [
       "error",
       { "blankLine": "always", "prev": "*", "next": "return" }
-    ]
+    ],
+
+    "@typescript-eslint/brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+
+    "@typescript-eslint/explicit-function-return-type": ["error"]
   }
 }

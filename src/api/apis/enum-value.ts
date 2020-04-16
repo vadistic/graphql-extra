@@ -21,6 +21,6 @@ export class EnumValueApi extends Mix(NameApiMixin, DescriptionApiMixin, Directi
  *
  * @category API Public
  */
-export function enumValueApi(node: EnumValueDefinitionNode) {
+export function enumValueApi(node: EnumValueDefinitionNode): EnumValueApi {
   return new EnumValueApi(node)
 }

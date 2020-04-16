@@ -71,6 +71,6 @@ export class TypeApiMixin {
 /**
  * @category API Mixins
  */
-export function typeApiMixin(node: TypeApiMixinNode) {
+export function typeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
   return new TypeApiMixin(node)
 }

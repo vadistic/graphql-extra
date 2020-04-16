@@ -1,8 +1,8 @@
 import { objectTypeApi, t } from '../../src'
 import { getFirstObjectType } from '../test-utils'
 
-describe(`api > type-definition`, () => {
-  test(`objectTypeApi > mutate node & correct this reference`, () => {
+describe('api > type-definition', () => {
+  test('objectTypeApi > mutate node & correct this reference', () => {
     const fix = /* GraphQL */ `
       type MyObject {
         myField: ID!
@@ -17,7 +17,7 @@ describe(`api > type-definition`, () => {
     expect(node.description && node.description.value).toEqual('My description')
   })
 
-  test(`objectTypeApi > fieldDefinitionsApi`, () => {
+  test('objectTypeApi > fieldDefinitionsApi', () => {
     const fix = /* GraphQL */ `
       type MyObject {
         myField: ID!
@@ -34,7 +34,7 @@ describe(`api > type-definition`, () => {
     expect(obj.getFieldnames()).toEqual(['renamedField'])
   })
 
-  test(`typeApi > set/update correct this and node reference`, () => {
+  test('typeApi > set/update correct this and node reference', () => {
     const fix = /* GraphQL */ `
       type MyObject {
         myField: ID!

@@ -1,309 +1,163 @@
 import type * as GQL from 'graphql'
-import { isTypeDefinitionNode, isTypeExtensionNode, print, Kind } from 'graphql'
+import { Kind } from 'graphql'
 
 import type * as AST from '../../node'
-import {
-  astKindToNodeFn,
-  documentNode,
-  isDirectiveDefinitionNode,
-  AstKindToNodeFnParm,
-} from '../../node'
-import { getName, applyPropsCloned, cloneDeep } from '../../utils'
+import { cloneDeep } from '../../utils'
 import type * as API from '../apis'
+import type { SDLInput } from '../helper'
 import { astNodeToApi, AstKindToApiClass } from '../kind-to-api'
 import type { Typename, Directivename } from '../types'
-import { SDLInput, normaliseSDLInput } from './helper'
-
-/**
- * @category API Public
- */
-export type DocumentTypeMap = Map<string, GQL.TypeDefinitionNode>
-
-/**
- * @category API Public
- */
-export type DocumentExtMap = Map<string, GQL.TypeExtensionNode>
-
-/**
- * @category API Public
- */
-export type DocumentDirectiveMap = Map<string, GQL.DirectiveDefinitionNode>
-
-/**
- * @category API Public
- */
-
-interface SchemaDocumentMaps {
-  typeMap: GQL.TypeDefinitionNode
-  extensionMap: GQL.TypeExtensionNode
-  directiveMap: GQL.DirectiveDefinitionNode
-}
+import { DocumentSchemaApiBase, DocumentSchemaRoots } from './schema-document-base'
 
 /**
  * API for GraphQL `DocumentNode` with schema
  *
  * @category API Public
  */
-export class DocumentSchemaApi {
-  typeMap: DocumentTypeMap = new Map()
-
-  extensionMap: DocumentExtMap = new Map()
-
-  directiveMap: DocumentDirectiveMap = new Map()
-
-  constructor(sdl?: SDLInput) {
-    if (sdl) {
-      this.addSDL(sdl)
-    }
-  }
-
-  // ────────────────────────────────────────────────────────────────────────────────
-
-  private _getNode<F extends keyof SchemaDocumentMaps>(
-    typename: Typename,
-    from: F,
-  ): SchemaDocumentMaps[F] {
-    const node = this[from].get(typename)
-
-    if (!node) {
-      throw Error(`cannot get '${typename}' because is does not exist in ${from}`)
-    }
-
-    return node as SchemaDocumentMaps[F]
-  }
-
-  private _hasNode(typename: Typename, from: keyof SchemaDocumentMaps): boolean {
-    return this[from].has(typename)
-  }
-
-  private readonly _removeNode = (typename: Typename, from: keyof SchemaDocumentMaps): void => {
-    const isFound = this[from].delete(typename)
-
-    if (!isFound) {
-      throw Error(`cannot remove '${typename}' because does not exist in ${from}`)
-    }
-  }
-
-  private readonly _getNodeOfKind = <K extends GQL.KindEnum>(
-    typename: string,
-    from: keyof SchemaDocumentMaps,
-    kind: K,
-  ): GQL.ASTKindToNode[K] => {
-    const node = this._getNode(typename, from)
-
-    if (node.kind !== kind) {
-      throw Error(`cannot get '${typename}' because it's ${node.kind} instead of ${kind}`)
-    }
-
-    return node as GQL.ASTKindToNode[K]
-  }
-
-  private readonly _createNodeOfKind = <P, K extends GQL.KindEnum>(
-    props: P,
-    from: keyof SchemaDocumentMaps,
-    kind: K,
-  ): GQL.ASTKindToNode[K] => {
-    const typename = getName(props)
-    const nodeFn = astKindToNodeFn(kind)
-    const node = applyPropsCloned(nodeFn, props as any)
-
-    if (node.kind !== kind) {
-      throw Error(`cannot create '${typename}' because provided ${node.kind} instead of ${kind}`)
-    }
-
-    if (this._hasNode(typename, from)) {
-      throw Error(`cannot create '${typename}' because it already exists`)
-    }
-
-    // persist
-    this[from].set(typename, node as any)
-
-    return node as GQL.ASTKindToNode[K]
-  }
-
-  private readonly _getOrCreateNodeOfKind = <P, K extends GQL.KindEnum>(
-    props: P,
-    from: keyof SchemaDocumentMaps,
-    kind: K,
-  ): GQL.ASTKindToNode[K] => {
-    const typename = getName(props)
-
-    if (this._hasNode(typename, from)) {
-      return this._getNodeOfKind(typename, from, kind)
-    }
-
-    return this._createNodeOfKind(props, from, kind)
-  }
-
-  private _removeNodeOfKind<K extends GQL.KindEnum>(
-    typename: string,
-    from: keyof SchemaDocumentMaps,
-    kind: K,
-  ) {
-    const node = this[from].get(typename)
-
-    if (!node) {
-      throw Error(`cannot remove '${typename}' because does not exist in ${from}`)
-    }
-
-    if (node.kind !== kind) {
-      throw Error(
-        `cannot remove '${typename}'\n` +
-          `found node of type '${node.kind}' in ${from} that does not match condition '${kind}'`,
-      )
-    }
-
-    this[from].delete(typename)
-  }
-
-  // ────────────────────────────────────────────────────────────────────────────────
-
-  addSDL(sdl: SDLInput): this {
-    const definitions = normaliseSDLInput(sdl)
-
-    for (const node of definitions) {
-      if (isDirectiveDefinitionNode(node)) {
-        this.directiveMap.set(node.name.value, node)
-        continue
-      }
-
-      if (isTypeDefinitionNode(node)) {
-        this.typeMap.set(node.name.value, node)
-        continue
-      }
-
-      if (isTypeExtensionNode(node)) {
-        this.extensionMap.set(node.name.value, node)
-        continue
-      }
-
-      throw Error(`invalid definition \n ${JSON.stringify(node, null, 2)}`)
-    }
-
-    return this
-  }
-
-  toDocument(): GQL.DocumentNode {
-    return documentNode([
-      ...this.directiveMap.values(),
-      ...this.typeMap.values(),
-      ...this.extensionMap.values(),
-    ])
-  }
-
-  toSDLString() {
-    return print(this.toDocument())
-  }
-
-  // TODO: optimise a bit??
-  cloneInstance() {
-    return documentSchemaApi().addSDL(cloneDeep(this.toDocument()))
+export class DocumentSchemaApi extends DocumentSchemaApiBase {
+  // TODO: optimise
+  clone(): DocumentSchemaApi {
+    return new DocumentSchemaApi(cloneDeep(this.toDocument()))
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // roots api
+
+  getRoots(): DocumentSchemaRoots {
+    return this._getRoots()
+  }
+
+  getRootType(operation: GQL.OperationTypeNode): GQL.ObjectTypeDefinitionNode | undefined {
+    return this._getRootType(operation)
+  }
+
+  getSchemaType(): GQL.SchemaDefinitionNode | undefined {
+    return this.roots.schema
+  }
+
+  getQueryType(): GQL.ObjectTypeDefinitionNode | undefined {
+    return this._getRootType('query')
+  }
+
+  getMutationType(): GQL.ObjectTypeDefinitionNode | undefined {
+    return this._getRootType('mutation')
+  }
+
+  getSubscriptionType(): GQL.ObjectTypeDefinitionNode | undefined {
+    return this._getRootType('subscription')
+  }
+
+
+  // ────────────────────────────────────────────────────────────────────────────────
+  // type api
+
 
   hasType(typename: Typename): boolean {
-    return this._hasNode(typename, 'typeMap')
+    return this._hasNode(typename, 'type')
   }
 
   getType(typename: Typename): API.TypeDefinitonApi {
-    return astNodeToApi(this._getNode(typename, 'typeMap'))
+    return astNodeToApi(this._getNode(typename, 'type'))
   }
 
   removeType(typename: Typename): this {
-    this._removeNode(typename, 'typeMap')
+    this._removeNode(typename, 'type')
 
     return this
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // ext api
 
   hasExt(typename: Typename): boolean {
-    return this._hasNode(typename, 'extensionMap')
+    return this._hasNode(typename, 'extension')
   }
 
   getExt(typename: Typename): API.TypeExtensionApi {
-    return astNodeToApi(this._getNode(typename, 'extensionMap'))
+    return astNodeToApi(this._getNode(typename, 'extension'))
   }
 
   removeExt(typename: Typename): this {
-    this._removeNode(typename, 'extensionMap')
+    this._removeNode(typename, 'extension')
 
     return this
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
+  // type of kind api
 
   getTypeOfKind<K extends GQL.TypeDefinitionNode['kind']>(
     typename: Typename,
     kind: K,
   ): AstKindToApiClass<K> {
-    const node = this._getNodeOfKind(typename, 'typeMap', kind)
+    const node = this._getNodeOfKind(typename, 'type', kind)
 
     return astNodeToApi(node) as AstKindToApiClass<K>
   }
 
   createTypeOfKind<K extends GQL.TypeDefinitionNode['kind']>(
-    props: GQL.ASTKindToNode[K] | AstKindToNodeFnParm<K>,
+    props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
   ): AstKindToApiClass<K> {
-    const node = this._createNodeOfKind(props, 'typeMap', kind)
+    const node = this._createNodeOfKind(props, 'type', kind)
 
     return astNodeToApi(node) as AstKindToApiClass<K>
   }
 
   getOrCreateTypeOfKind<K extends GQL.TypeDefinitionNode['kind']>(
-    props: GQL.ASTKindToNode[K] | AstKindToNodeFnParm<K>,
+    props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
   ): AstKindToApiClass<K> {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', kind)
+    const node = this._getOrCreateNodeOfKind(props, 'type', kind)
 
     return astNodeToApi(node) as AstKindToApiClass<K>
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
+  // ext of kind api
 
   getExtOfKind<K extends GQL.TypeExtensionNode['kind']>(
     typename: Typename,
     kind: K,
   ): AstKindToApiClass<K> {
-    const node = this._getNodeOfKind(typename, 'extensionMap', kind)
+    const node = this._getNodeOfKind(typename, 'extension', kind)
 
     return astNodeToApi(node) as AstKindToApiClass<K>
   }
 
   createExtOfKind<K extends GQL.TypeExtensionNode['kind']>(
-    props: GQL.ASTKindToNode[K] | AstKindToNodeFnParm<K>,
+    props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
   ): AstKindToApiClass<K> {
-    const node = this._createNodeOfKind(props, 'extensionMap', kind)
+    const node = this._createNodeOfKind(props, 'extension', kind)
 
     return astNodeToApi(node) as AstKindToApiClass<K>
   }
 
   getOrExtTypeOfKind<K extends GQL.TypeExtensionNode['kind']>(
-    props: GQL.ASTKindToNode[K] | AstKindToNodeFnParm<K>,
+    props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
   ): AstKindToApiClass<K> {
-    const node = this._getOrCreateNodeOfKind(props, 'extensionMap', kind)
+    const node = this._getOrCreateNodeOfKind(props, 'extension', kind)
 
     return astNodeToApi(node) as AstKindToApiClass<K>
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // directive api
 
   hasDirective(directivename: Directivename): boolean {
-    return this._hasNode(directivename, 'directiveMap')
+    return this._hasNode(directivename, 'directive')
   }
 
   getDirective(directivename: Directivename): API.DirectiveDefinitionApi {
-    const node = this._getNode(directivename, 'directiveMap')
+    const node = this._getNode(directivename, 'directive')
 
     return astNodeToApi(node)
   }
 
   removeDirective(directivename: Directivename): this {
-    this._removeNode(directivename, 'directiveMap')
+    this._removeNode(directivename, 'directive')
 
     return this
   }
@@ -311,7 +165,7 @@ export class DocumentSchemaApi {
   createDirective(
     props: GQL.DirectiveDefinitionNode | AST.DirectiveDefinitionNodeProps,
   ): API.DirectiveDefinitionApi {
-    const node = this._createNodeOfKind(props, 'directiveMap', Kind.DIRECTIVE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'directive', Kind.DIRECTIVE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -319,55 +173,57 @@ export class DocumentSchemaApi {
   getOrCreateDirective(
     props: GQL.DirectiveDefinitionNode | AST.DirectiveDefinitionNodeProps,
   ): API.DirectiveDefinitionApi {
-    const node = this._getOrCreateNodeOfKind(props, 'directiveMap', Kind.DIRECTIVE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'directive', Kind.DIRECTIVE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // get type apis
 
   getScalarType(typename: Typename): API.ScalarTypeApi {
-    const node = this._getNodeOfKind(typename, 'typeMap', Kind.SCALAR_TYPE_DEFINITION)
+    const node = this._getNodeOfKind(typename, 'type', Kind.SCALAR_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   getObjectType(typename: Typename): API.ObjectTypeApi {
-    const node = this._getNodeOfKind(typename, 'typeMap', Kind.OBJECT_TYPE_DEFINITION)
+    const node = this._getNodeOfKind(typename, 'type', Kind.OBJECT_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   getInterfaceType(typename: Typename): API.InterfaceTypeApi {
-    const node = this._getNodeOfKind(typename, 'typeMap', Kind.INTERFACE_TYPE_DEFINITION)
+    const node = this._getNodeOfKind(typename, 'type', Kind.INTERFACE_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   getUnionType(typename: Typename): API.UnionTypeApi {
-    const node = this._getNodeOfKind(typename, 'typeMap', Kind.UNION_TYPE_DEFINITION)
+    const node = this._getNodeOfKind(typename, 'type', Kind.UNION_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   getEnumType(typename: Typename): API.EnumTypeApi {
-    const node = this._getNodeOfKind(typename, 'typeMap', Kind.ENUM_TYPE_DEFINITION)
+    const node = this._getNodeOfKind(typename, 'type', Kind.ENUM_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   getInputType(typename: Typename): API.InputTypeApi {
-    const node = this._getNodeOfKind(typename, 'typeMap', Kind.INPUT_OBJECT_TYPE_DEFINITION)
+    const node = this._getNodeOfKind(typename, 'type', Kind.INPUT_OBJECT_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // get or create type apis
 
   getOrCreateScalarType(
     props: GQL.ScalarTypeDefinitionNode | AST.ScalarTypeDefinitionNodeProps,
   ): API.ScalarTypeApi {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', Kind.SCALAR_TYPE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'type', Kind.SCALAR_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -375,7 +231,7 @@ export class DocumentSchemaApi {
   getOrCreateObjectType(
     props: GQL.ObjectTypeDefinitionNode | AST.ObjectTypeDefinitionNodeProps,
   ): API.ObjectTypeApi {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', Kind.OBJECT_TYPE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'type', Kind.OBJECT_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -383,7 +239,7 @@ export class DocumentSchemaApi {
   getOrCreateInterfaceType(
     props: GQL.InterfaceTypeDefinitionNode | AST.InterfaceTypeDefinitionNodeProps,
   ): API.InterfaceTypeApi {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', Kind.INTERFACE_TYPE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'type', Kind.INTERFACE_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -391,7 +247,7 @@ export class DocumentSchemaApi {
   getOrCreateUnionType(
     props: GQL.UnionTypeDefinitionNode | AST.UnionTypeDefinitionNodeProps,
   ): API.UnionTypeApi {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', Kind.UNION_TYPE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'type', Kind.UNION_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -399,7 +255,7 @@ export class DocumentSchemaApi {
   getOrCreateEnumType(
     props: GQL.EnumTypeDefinitionNode | AST.EnumTypeDefinitionNodeProps,
   ): API.EnumTypeApi {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', Kind.ENUM_TYPE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'type', Kind.ENUM_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -407,17 +263,18 @@ export class DocumentSchemaApi {
   getOrCreateInputType(
     props: GQL.InputObjectTypeDefinitionNode | AST.InputObjectTypeDefinitionNodeProps,
   ): API.InputTypeApi {
-    const node = this._getOrCreateNodeOfKind(props, 'typeMap', Kind.INPUT_OBJECT_TYPE_DEFINITION)
+    const node = this._getOrCreateNodeOfKind(props, 'type', Kind.INPUT_OBJECT_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // create type apis
 
   createScalarType(
     props: GQL.ScalarTypeDefinitionNode | AST.ScalarTypeDefinitionNodeProps,
   ): API.ScalarTypeApi {
-    const node = this._createNodeOfKind(props, 'typeMap', Kind.SCALAR_TYPE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'type', Kind.SCALAR_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -425,7 +282,7 @@ export class DocumentSchemaApi {
   createObjectType(
     props: GQL.ObjectTypeDefinitionNode | AST.ObjectTypeDefinitionNodeProps,
   ): API.ObjectTypeApi {
-    const node = this._createNodeOfKind(props, 'typeMap', Kind.OBJECT_TYPE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'type', Kind.OBJECT_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -433,7 +290,7 @@ export class DocumentSchemaApi {
   createInterfaceType(
     props: GQL.InterfaceTypeDefinitionNode | AST.InterfaceTypeDefinitionNodeProps,
   ): API.InterfaceTypeApi {
-    const node = this._createNodeOfKind(props, 'typeMap', Kind.INTERFACE_TYPE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'type', Kind.INTERFACE_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -441,7 +298,7 @@ export class DocumentSchemaApi {
   createUnionType(
     props: GQL.UnionTypeDefinitionNode | AST.UnionTypeDefinitionNodeProps,
   ): API.UnionTypeApi {
-    const node = this._createNodeOfKind(props, 'typeMap', Kind.UNION_TYPE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'type', Kind.UNION_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -449,7 +306,7 @@ export class DocumentSchemaApi {
   createEnumType(
     props: GQL.EnumTypeDefinitionNode | AST.EnumTypeDefinitionNodeProps,
   ): API.EnumTypeApi {
-    const node = this._createNodeOfKind(props, 'typeMap', Kind.ENUM_TYPE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'type', Kind.ENUM_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
@@ -457,93 +314,96 @@ export class DocumentSchemaApi {
   createInputType(
     props: GQL.InputObjectTypeDefinitionNode | AST.InputObjectTypeDefinitionNodeProps,
   ): API.InputTypeApi {
-    const node = this._createNodeOfKind(props, 'typeMap', Kind.INPUT_OBJECT_TYPE_DEFINITION)
+    const node = this._createNodeOfKind(props, 'type', Kind.INPUT_OBJECT_TYPE_DEFINITION)
 
     return astNodeToApi(node)
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
+  // remove type apis
 
   removeScalarType(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'typeMap', Kind.SCALAR_TYPE_DEFINITION)
+    this._removeNodeOfKind(typename, 'type', Kind.SCALAR_TYPE_DEFINITION)
 
     return this
   }
 
   removeObjectType(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'typeMap', Kind.OBJECT_TYPE_DEFINITION)
+    this._removeNodeOfKind(typename, 'type', Kind.OBJECT_TYPE_DEFINITION)
 
     return this
   }
 
   removeInterfaceType(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'typeMap', Kind.INTERFACE_TYPE_DEFINITION)
+    this._removeNodeOfKind(typename, 'type', Kind.INTERFACE_TYPE_DEFINITION)
 
     return this
   }
 
   removeUnionType(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'typeMap', Kind.UNION_TYPE_DEFINITION)
+    this._removeNodeOfKind(typename, 'type', Kind.UNION_TYPE_DEFINITION)
 
     return this
   }
 
   removeEnumType(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'typeMap', Kind.ENUM_TYPE_DEFINITION)
+    this._removeNodeOfKind(typename, 'type', Kind.ENUM_TYPE_DEFINITION)
 
     return this
   }
 
   removeInputType(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'typeMap', Kind.INPUT_OBJECT_TYPE_DEFINITION)
+    this._removeNodeOfKind(typename, 'type', Kind.INPUT_OBJECT_TYPE_DEFINITION)
 
     return this
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // get ext apis
 
   getScalarExt(typename: Typename): API.ScalarExtApi {
-    const node = this._getNodeOfKind(typename, 'extensionMap', Kind.SCALAR_TYPE_EXTENSION)
+    const node = this._getNodeOfKind(typename, 'extension', Kind.SCALAR_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   getObjectExt(typename: Typename): API.ObjectExtApi {
-    const node = this._getNodeOfKind(typename, 'extensionMap', Kind.OBJECT_TYPE_EXTENSION)
+    const node = this._getNodeOfKind(typename, 'extension', Kind.OBJECT_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   getInterfaceExt(typename: Typename): API.InterfaceExtApi {
-    const node = this._getNodeOfKind(typename, 'extensionMap', Kind.INTERFACE_TYPE_EXTENSION)
+    const node = this._getNodeOfKind(typename, 'extension', Kind.INTERFACE_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   getUnionExt(typename: Typename): API.UnionExtApi {
-    const node = this._getNodeOfKind(typename, 'extensionMap', Kind.UNION_TYPE_EXTENSION)
+    const node = this._getNodeOfKind(typename, 'extension', Kind.UNION_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   getEnumExt(typename: Typename): API.EnumExtApi {
-    const node = this._getNodeOfKind(typename, 'extensionMap', Kind.ENUM_TYPE_EXTENSION)
+    const node = this._getNodeOfKind(typename, 'extension', Kind.ENUM_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   getInputExt(typename: Typename): API.InputExtApi {
-    const node = this._getNodeOfKind(typename, 'extensionMap', Kind.INPUT_OBJECT_TYPE_EXTENSION)
+    const node = this._getNodeOfKind(typename, 'extension', Kind.INPUT_OBJECT_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // get or create ext apis
 
   getOrCreateScalarExt(
     props: GQL.ScalarTypeExtensionNode | AST.ScalarTypeExtensionNodeProps,
   ): API.ScalarExtApi {
-    const node = this._getOrCreateNodeOfKind(props, 'extensionMap', Kind.SCALAR_TYPE_EXTENSION)
+    const node = this._getOrCreateNodeOfKind(props, 'extension', Kind.SCALAR_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -551,7 +411,7 @@ export class DocumentSchemaApi {
   getOrCreateObjectExt(
     props: GQL.ObjectTypeExtensionNode | AST.ObjectTypeExtensionNodeProps,
   ): API.ObjectExtApi {
-    const node = this._getOrCreateNodeOfKind(props, 'extensionMap', Kind.OBJECT_TYPE_EXTENSION)
+    const node = this._getOrCreateNodeOfKind(props, 'extension', Kind.OBJECT_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -559,7 +419,7 @@ export class DocumentSchemaApi {
   getOrCreateInterfaceExt(
     props: GQL.InterfaceTypeExtensionNode | AST.InterfaceTypeExtensionNodeProps,
   ): API.InterfaceExtApi {
-    const node = this._getOrCreateNodeOfKind(props, 'extensionMap', Kind.INTERFACE_TYPE_EXTENSION)
+    const node = this._getOrCreateNodeOfKind(props, 'extension', Kind.INTERFACE_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -567,7 +427,7 @@ export class DocumentSchemaApi {
   getOrCreateUnionExt(
     props: GQL.UnionTypeExtensionNode | AST.UnionTypeExtensionNodeProps,
   ): API.UnionExtApi {
-    const node = this._getOrCreateNodeOfKind(props, 'extensionMap', Kind.UNION_TYPE_EXTENSION)
+    const node = this._getOrCreateNodeOfKind(props, 'extension', Kind.UNION_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -575,7 +435,7 @@ export class DocumentSchemaApi {
   getOrCreateEnumExt(
     props: GQL.EnumTypeExtensionNode | AST.EnumTypeExtensionNodeProps,
   ): API.EnumExtApi {
-    const node = this._getOrCreateNodeOfKind(props, 'extensionMap', Kind.ENUM_TYPE_EXTENSION)
+    const node = this._getOrCreateNodeOfKind(props, 'extension', Kind.ENUM_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -583,21 +443,18 @@ export class DocumentSchemaApi {
   getOrCreateInputExt(
     props: GQL.InputObjectTypeExtensionNode | AST.InputObjectTypeExtensionNodeProps,
   ): API.InputExtApi {
-    const node = this._getOrCreateNodeOfKind(
-      props,
-      'extensionMap',
-      Kind.INPUT_OBJECT_TYPE_EXTENSION,
-    )
+    const node = this._getOrCreateNodeOfKind(props, 'extension', Kind.INPUT_OBJECT_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // create ext apis
 
   createScalarExt(
     props: GQL.ScalarTypeExtensionNode | AST.ScalarTypeExtensionNodeProps,
   ): API.ScalarExtApi {
-    const node = this._createNodeOfKind(props, 'extensionMap', Kind.SCALAR_TYPE_EXTENSION)
+    const node = this._createNodeOfKind(props, 'extension', Kind.SCALAR_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -605,7 +462,7 @@ export class DocumentSchemaApi {
   createObjectExt(
     props: GQL.ObjectTypeExtensionNode | AST.ObjectTypeExtensionNodeProps,
   ): API.ObjectExtApi {
-    const node = this._createNodeOfKind(props, 'extensionMap', Kind.OBJECT_TYPE_EXTENSION)
+    const node = this._createNodeOfKind(props, 'extension', Kind.OBJECT_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -613,7 +470,7 @@ export class DocumentSchemaApi {
   createInterfaceExt(
     props: GQL.InterfaceTypeExtensionNode | AST.InterfaceTypeExtensionNodeProps,
   ): API.InterfaceExtApi {
-    const node = this._createNodeOfKind(props, 'extensionMap', Kind.INTERFACE_TYPE_EXTENSION)
+    const node = this._createNodeOfKind(props, 'extension', Kind.INTERFACE_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -621,13 +478,13 @@ export class DocumentSchemaApi {
   createUnionExt(
     props: GQL.UnionTypeExtensionNode | AST.UnionTypeExtensionNodeProps,
   ): API.UnionExtApi {
-    const node = this._createNodeOfKind(props, 'extensionMap', Kind.UNION_TYPE_EXTENSION)
+    const node = this._createNodeOfKind(props, 'extension', Kind.UNION_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   createEnumExt(props: GQL.EnumTypeExtensionNode | AST.EnumTypeExtensionNodeProps): API.EnumExtApi {
-    const node = this._createNodeOfKind(props, 'extensionMap', Kind.ENUM_TYPE_EXTENSION)
+    const node = this._createNodeOfKind(props, 'extension', Kind.ENUM_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
@@ -635,55 +492,56 @@ export class DocumentSchemaApi {
   createInputExt(
     props: GQL.InputObjectTypeExtensionNode | AST.InputObjectTypeExtensionNodeProps,
   ): API.InputExtApi {
-    const node = this._createNodeOfKind(props, 'extensionMap', Kind.INPUT_OBJECT_TYPE_EXTENSION)
+    const node = this._createNodeOfKind(props, 'extension', Kind.INPUT_OBJECT_TYPE_EXTENSION)
 
     return astNodeToApi(node)
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
+  // remove ext apis
 
   removeScalarExt(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'extensionMap', Kind.SCALAR_TYPE_EXTENSION)
+    this._removeNodeOfKind(typename, 'extension', Kind.SCALAR_TYPE_EXTENSION)
 
     return this
   }
 
   removeObjectExt(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'extensionMap', Kind.OBJECT_TYPE_EXTENSION)
+    this._removeNodeOfKind(typename, 'extension', Kind.OBJECT_TYPE_EXTENSION)
 
     return this
   }
 
   removeInterfaceExt(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'extensionMap', Kind.INTERFACE_TYPE_EXTENSION)
+    this._removeNodeOfKind(typename, 'extension', Kind.INTERFACE_TYPE_EXTENSION)
 
     return this
   }
 
   removeUnionExt(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'extensionMap', Kind.UNION_TYPE_EXTENSION)
+    this._removeNodeOfKind(typename, 'extension', Kind.UNION_TYPE_EXTENSION)
 
     return this
   }
 
   removeEnumExt(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'extensionMap', Kind.ENUM_TYPE_EXTENSION)
+    this._removeNodeOfKind(typename, 'extension', Kind.ENUM_TYPE_EXTENSION)
 
     return this
   }
 
   removeInputExt(typename: Typename): this {
-    this._removeNodeOfKind(typename, 'extensionMap', Kind.INPUT_OBJECT_TYPE_EXTENSION)
+    this._removeNodeOfKind(typename, 'extension', Kind.INPUT_OBJECT_TYPE_EXTENSION)
 
     return this
   }
 }
 
 /**
- * `DocumentApi` constructor fn
+ * `DocumentSchemaApi` constructor fn
  *
  * @category API Public
  */
-export function documentSchemaApi(): DocumentSchemaApi {
-  return new DocumentSchemaApi()
+export function documentSchemaApi(sdl?: SDLInput): DocumentSchemaApi {
+  return new DocumentSchemaApi(sdl)
 }

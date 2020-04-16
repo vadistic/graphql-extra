@@ -41,7 +41,8 @@ export class DescriptionApiMixin {
   setDescription(value: string): this {
     if (typeof value === 'undefined') {
       mutable(this.node).description = undefined
-    } else {
+    }
+    else {
       mutable(this.node).description = stringValueNode(value)
     }
 
@@ -52,6 +53,6 @@ export class DescriptionApiMixin {
 /**
  * @category API Mixins
  */
-export function descriptionApiMixin(node: DescriptionApiMixinNode) {
+export function descriptionApiMixin(node: DescriptionApiMixinNode): DescriptionApiMixin {
   return new DescriptionApiMixin(node)
 }

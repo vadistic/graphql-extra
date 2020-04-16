@@ -1,7 +1,6 @@
 import type { DirectiveNode, FieldNode, ArgumentNode } from 'graphql'
 
 import { ArgumentNodeProps, argumentNode } from '../../node'
-import { getName } from '../../utils'
 import { ArgumentApi, argumentApi } from '../apis/argument'
 import {
   oneToManyGet,
@@ -10,6 +9,7 @@ import {
   oneToManyUpsert,
   oneToManyRemove,
 } from '../crud'
+import { getName } from '../helper'
 import type { Argname } from '../types'
 
 /**
@@ -102,6 +102,6 @@ export class ArgumentsApiMixin {
 /**
  * @category API Mixins
  */
-export function argumentsApiMixin(node: ArgumentsApiMixinNode) {
+export function argumentsApiMixin(node: ArgumentsApiMixinNode): ArgumentsApiMixin {
   return new ArgumentsApiMixin(node)
 }

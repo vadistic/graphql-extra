@@ -9,7 +9,7 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 import { InputValueDefinitionNodeProps, inputValueDefinitionNode, TypeNodeProps } from '../../node'
-import { mutable, getName } from '../../utils'
+import { mutable } from '../../utils'
 import {
   oneToManyGet,
   oneToManyCreate,
@@ -17,6 +17,7 @@ import {
   oneToManyUpdate,
   oneToManyRemove,
 } from '../crud'
+import { getName } from '../helper'
 import { DescriptionApiMixin } from '../mixins/description'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { NameApiMixin } from '../mixins/name'
@@ -49,13 +50,13 @@ export class InputValuesAsArgumentsApiMixin {
     return this.getArguments().filter((arg) => arg.getTypename() === typename)
   }
 
-  hasArgument(argname: Argname) {
+  hasArgument(argname: Argname): boolean {
     if (!this.node.arguments) return false
 
     return this.node.arguments.some((arg) => arg.name.value === argname)
   }
 
-  getArgument(argname: Argname) {
+  getArgument(argname: Argname): InputValueApi {
     const arg = oneToManyGet<InputValueDefinitionNode>({
       node: this.node,
       key: 'arguments',
@@ -108,7 +109,7 @@ export class InputValuesAsArgumentsApiMixin {
     return this
   }
 
-  removeArgument(argname: Argname) {
+  removeArgument(argname: Argname): this {
     oneToManyRemove({
       node: this.node,
       key: 'arguments',
@@ -123,7 +124,7 @@ export class InputValuesAsArgumentsApiMixin {
     return this.getArgument(argname).getType()
   }
 
-  setArgumentType(argname: Argname, props: TypeNode | TypeNodeProps) {
+  setArgumentType(argname: Argname, props: TypeNode | TypeNodeProps): this {
     this.getArgument(argname).setType(props)
 
     return this
@@ -133,7 +134,7 @@ export class InputValuesAsArgumentsApiMixin {
     return this.getArgument(argname).getDefaultValue()
   }
 
-  setArgumentDefualtValue(argname: Argname, props: ValueNode) {
+  setArgumentDefualtValue(argname: Argname, props: ValueNode): this {
     this.getArgument(argname).setDefaultValue(props)
 
     return this
@@ -143,7 +144,9 @@ export class InputValuesAsArgumentsApiMixin {
 /**
  * @category API Mixins
  */
-export function inputValuesAsArgumentsApiMixin(node: InputValuesAsArgumentsApiMixinNode) {
+export function inputValuesAsArgumentsApiMixin(
+  node: InputValuesAsArgumentsApiMixinNode,
+): InputValuesAsArgumentsApiMixin {
   return new InputValuesAsArgumentsApiMixin(node)
 }
 
@@ -165,7 +168,9 @@ export class InputValueApi extends Mix(
   }
 
   toField(): FieldDefinitionApi {
-    const { kind, defaultValue, loc, ...rest } = this.node
+    const {
+      kind, defaultValue, loc, ...rest
+    } = this.node
 
     return fieldDefinitionApi({ kind: Kind.FIELD_DEFINITION, ...rest })
   }
@@ -210,7 +215,9 @@ export class FieldDefinitionApi extends Mix(
   }
 
   toInputValue(): InputValueApi {
-    const { kind, arguments: args, loc, ...rest } = this.node
+    const {
+      kind, arguments: args, loc, ...rest
+    } = this.node
 
     return inputValueApi({ kind: Kind.INPUT_VALUE_DEFINITION, ...rest })
   }
@@ -221,6 +228,6 @@ export class FieldDefinitionApi extends Mix(
  *
  * @category API Public
  */
-export function fieldDefinitionApi(node: FieldDefinitionNode) {
+export function fieldDefinitionApi(node: FieldDefinitionNode): FieldDefinitionApi {
   return new FieldDefinitionApi(node)
 }

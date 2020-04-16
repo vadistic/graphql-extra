@@ -19,7 +19,7 @@
     "docs": "typedoc src",
     "test": "jest",
     "cov": "jest --coverage",
-    "all": "yarn format && yarn lint && yarn typecheck && yarn test && yarn docs && yarn clean && yarn build "
+    "all": "yarn lint && yarn typecheck && yarn test && yarn docs && yarn clean && yarn build "
   },
   "peerDependencies": {
     "graphql": ">=15.0.0"

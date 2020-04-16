@@ -2,7 +2,10 @@ import { DirectiveDefinitionNode, DirectiveLocationEnum, NameNode } from 'graphq
 import { Mix } from 'mix-classes'
 
 import { nameNode } from '../../node'
-import { getName, applyPropsArr, applyProps, deepMutable, mutable } from '../../utils'
+import {
+  applyPropsArr, applyProps, deepMutable, mutable,
+} from '../../utils'
+import { getName } from '../helper'
 import { DescriptionApiMixin } from '../mixins/description'
 import { NameApiMixin } from '../mixins/name'
 import { InputValuesAsArgumentsApiMixin } from './input-value-and-field-definition'
@@ -65,7 +68,8 @@ export class DirectiveDefinitionApi extends Mix(
 
     if (index !== -1) {
       deepMutable(this.node).locations[index] = next
-    } else {
+    }
+    else {
       deepMutable(this.node).locations.push(next)
     }
 

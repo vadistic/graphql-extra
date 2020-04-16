@@ -1,6 +1,8 @@
-import { KindEnum, Kind, ASTKindToNode, parse, ASTNode } from 'graphql'
+import {
+  KindEnum, Kind, ASTKindToNode, parse, ASTNode,
+} from 'graphql'
 
-export function normaliseString(input: string) {
+export function normaliseString(input: string): string {
   return input.replace(/\s/, '')
 }
 
@@ -27,8 +29,9 @@ function stripEmptyKeysAndLoc(input: any): any {
 
   return input
 }
-
-export function normaliseGql(input: any) {
+export function normaliseGql(input: string): string
+export function normaliseGql(input: ASTNode): ASTNode
+export function normaliseGql(input: string | ASTNode): string | ASTNode {
   if (typeof input === 'string') {
     return normaliseString(input)
   }
@@ -58,7 +61,7 @@ const getFirstNodeOfKind = <K extends KindEnum>(kind: K) => (
   return undefined
 }
 
-const defined = <A, R>(fn: (arg: A) => R | undefined) => (arg: A) => {
+const defined = <A, R>(fn: (arg: A) => R | undefined) => (arg: A): R => {
   const res = fn(arg)
 
   if (!res) {
@@ -68,7 +71,7 @@ const defined = <A, R>(fn: (arg: A) => R | undefined) => (arg: A) => {
   return res
 }
 
-const parsed = <A, R>(fn: (arg: A) => R | undefined) => (arg: A | string) => {
+const parsed = <A, R>(fn: (arg: A) => R | undefined) => (arg: A | string): R | undefined => {
   if (typeof arg === 'string') {
     return fn((parse(arg, { noLocation: true }) as unknown) as A)
   }
@@ -76,7 +79,8 @@ const parsed = <A, R>(fn: (arg: A) => R | undefined) => (arg: A | string) => {
   return fn(arg)
 }
 
-const getDefinedParsedFirstNode = <K extends KindEnum>(kind: K) =>
+// eslint-disable-next-line max-len
+const getDefinedParsedFirstNode = <K extends KindEnum>(kind: K): (node: ASTNode | string) => ASTKindToNode[K] =>
   defined(parsed(getFirstNodeOfKind(kind)))
 
 export const getFirstObjectType = getDefinedParsedFirstNode(Kind.OBJECT_TYPE_DEFINITION)

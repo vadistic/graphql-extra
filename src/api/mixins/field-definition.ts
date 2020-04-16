@@ -8,7 +8,6 @@ import type {
 } from 'graphql'
 
 import { FieldDefinitionNodeProps, fieldDefinitionNode, TypeNodeProps } from '../../node'
-import { getName } from '../../utils'
 import type { DirectiveApi } from '../apis/directive'
 import { FieldDefinitionApi, fieldDefinitionApi } from '../apis/input-value-and-field-definition'
 import type { InputValueApi } from '../apis/input-value-and-field-definition'
@@ -20,6 +19,7 @@ import {
   oneToManyUpsert,
   oneToManyRemove,
 } from '../crud'
+import { getName } from '../helper'
 import type { Fieldname, Typename } from '../types'
 
 /**
@@ -153,6 +153,8 @@ export class FieldDefinitionsApiMixin {
 /**
  * @category API Mixins
  */
-export function fieldDefinitionsApiMixin(node: FieldDefinitionsApiMixinNode) {
+export function fieldDefinitionsApiMixin(
+  node: FieldDefinitionsApiMixinNode,
+): FieldDefinitionsApiMixin {
   return new FieldDefinitionsApiMixin(node)
 }

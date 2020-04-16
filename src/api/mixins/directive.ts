@@ -9,7 +9,6 @@ import type {
 } from 'graphql'
 
 import { DirectiveNodeProps, directiveNode } from '../../node'
-import { getName } from '../../utils'
 import { DirectiveApi, directiveApi } from '../apis/directive'
 import {
   oneToManyGet,
@@ -18,6 +17,7 @@ import {
   oneToManyUpsert,
   oneToManyRemove,
 } from '../crud'
+import { getName } from '../helper'
 import type { Directivename } from '../types'
 
 /**
@@ -119,6 +119,6 @@ export class DirectivesApiMixin {
 /**
  * @category API Mixins
  */
-export function directivesApiMixin(node: DirectivesApiMixinNode) {
+export function directivesApiMixin(node: DirectivesApiMixinNode): DirectivesApiMixin {
   return new DirectivesApiMixin(node)
 }

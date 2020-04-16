@@ -1,8 +1,9 @@
-import { ASTNode, Kind } from 'graphql'
+import type { ASTNode } from 'graphql'
 
 export type GuardType<T> = T extends (o: any) => o is infer U ? U : never
 
 export type ContstructorType<T> = T extends new (...args: any) => infer U ? U : never
+
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -10,63 +11,52 @@ export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }
 
-/**
- * gets name from stuff
- */
-export function getName(input: any): string {
-  if (typeof input === 'string') {
-    return input
-  }
 
-  if ('kind' in input && input.kind === Kind.NAME) {
-    return input.value
-  }
-
-  if ('name' in input && !!input.name) {
-    return getName(input.name)
-  }
-
-  if ('kind' in input && !!input.kind) {
-    return input.kind
-  }
-
-  return 'unknown'
+export function isScalar<T>(value: T): boolean {
+  return (
+    value === null
+    || typeof value === 'string'
+    || typeof value === 'number'
+    || typeof value === 'boolean'
+  )
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
+/** transform fn to nullable version: no input => no return */
 export const nullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
   if (arg) {
     return fn(arg)
   }
 
-  //  no input => no return
   return undefined
 }
 
-/** apply fn to array of inputs */
+/** transform fn to map over array of inputs */
 export const arrayable = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
   arr.map(fn)
 
-export const propsOrNode = <P, N>(fn: (props: P) => N) => (props: P | N) =>
-  isAstNode<N>(props) ? props : fn(props)
+export const propsOrNode = <P, N>(fn: (props: P) => N) => (props: P | N): N =>
+  (isAstNode<N>(props) ? props : fn(props))
 
 /** accept node or props */
-export const applyProps = <P, N>(fn: (props: P) => N, props: P | N) => propsOrNode(fn)(props)
+export const applyProps = <P, N>(fn: (props: P) => N, props: P | N): N => propsOrNode(fn)(props)
 
 /** accept array of nodes/props */
-export const applyPropsArr = <P, N>(fn: (props: P) => N, props: ReadonlyArray<P | N>) =>
-  arrayable(propsOrNode(fn))(props)
+export const applyPropsArr = <P, N>(
+  fn: (props: P) => N, props: ReadonlyArray<P | N>,
+): readonly N[] => arrayable(propsOrNode(fn))(props)
 
 /** accept undef or node/props */
-export const applyPropsNullable = <P, N>(fn: (props: P) => N, props?: P | N) =>
+export const applyPropsNullable = <P, N>(fn: (props: P) => N, props?: P | N): N | undefined =>
   nullable(propsOrNode(fn))(props)
 
 /** accept undef or array of nodes/props */
-export const applyPropsNullableArr = <P, N>(fn: (props: P) => N, props?: ReadonlyArray<P | N>) =>
-  nullable(arrayable(propsOrNode(fn)))(props)
+export const applyPropsNullableArr = <P, N>(
+  fn: (props: P) => N, props?: ReadonlyArray<P | N>,
+): readonly N[] | undefined => nullable(arrayable(propsOrNode(fn)))(props)
 
-/* same as nodeFn but clones props to avoid mutable magic */
+/* same as nodeFn but clones props to avoid mutablity magic */
 export const applyPropsCloned = <P, N>(fn: (props: P) => N, props: N | P): N => {
   const cloned = cloneDeep(props)
 
@@ -75,21 +65,22 @@ export const applyPropsCloned = <P, N>(fn: (props: P) => N, props: N | P): N => 
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/*
- * types to make readonly AST types mutable
- */
-
+/** mark each object property as mutable */
 export type Mutable<T> = {
   -readonly [P in keyof T]: T[P]
 }
 
+/** recursively mark each object property as mutable */
 export type DeepMutable<T> = {
   -readonly [P in keyof T]: DeepMutable<T[P]>
 }
 
-export const deepMutable = <T>(node: T) => node as DeepMutable<T>
+/** assert input as `Mutable<T>` */
+export const mutable = <T>(node: T): Mutable<T> => node
 
-export const mutable = <T>(node: T) => node as Mutable<T>
+/** assert input as `DeepMutable<T>` */
+export const deepMutable = <T>(node: T): DeepMutable<T> => node
+
 
 // ────────────────────────────────────────────────────────────────────────────────
 

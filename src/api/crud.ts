@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { applyPropsCloned } from '../utils'
+import { applyPropsCloned, isScalar } from '../utils'
 
 export interface OneToManyGetProps {
   node: any
@@ -17,7 +17,7 @@ export function oneToManyGet<Node>({
   const res = (node[key] || []).find((el: any) => el.name.value === elementName)
 
   if (!res) {
-    throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
+    throw Error(`${key} element '${elementName}' on ${node.kind} '${parentName}' does not exist`)
   }
 
   return res
@@ -41,7 +41,7 @@ export function oneToManyCreate<Node, Props>({
   parentName,
   props,
   nodeCreateFn,
-}: OneToManyCreateProps<Node, Props>) {
+}: OneToManyCreateProps<Node, Props>): void {
   if (!node[key]) {
     node[key] = [] as any
   }
@@ -50,7 +50,7 @@ export function oneToManyCreate<Node, Props>({
   const index = property.findIndex((el) => el.name.value === elementName)
 
   if (index !== -1) {
-    throw Error(`${singular(key)} '${elementName}' on '${parentName}' already exist`)
+    throw Error(`${key} element '${elementName}' on ${node.kind} '${parentName}' already exist`)
   }
 
   property.push(applyPropsCloned(nodeCreateFn, props))
@@ -74,7 +74,7 @@ export function oneToManyUpdate<Node, Props>({
   parentName,
   props,
   nodeCreateFn,
-}: OneToManyUpdateProps<Node, Props>) {
+}: OneToManyUpdateProps<Node, Props>): void {
   if (!node[key]) {
     node[key] = []
   }
@@ -84,7 +84,7 @@ export function oneToManyUpdate<Node, Props>({
   const index = property.findIndex((el) => el.name.value === elementName)
 
   if (property.length === 0 || index === -1) {
-    throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
+    throw Error(`${key} element '${elementName}' on ${node.kind} '${parentName}' does not exist`)
   }
 
   const { kind, ...prevProps } = property[index]
@@ -101,7 +101,7 @@ export function oneToManyUpsert<Node, Props>({
   elementName,
   props,
   nodeCreateFn,
-}: OneToManyCreateProps<Node, Props>) {
+}: OneToManyCreateProps<Node, Props>): void {
   if (!node[key]) {
     node[key] = []
   }
@@ -115,14 +115,17 @@ export function oneToManyUpsert<Node, Props>({
 
   if (index === -1) {
     property[index] = next
-  } else {
+  }
+  else {
     property.push(next)
   }
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export function oneToManyRemove({ node, key, elementName, parentName }: OneToManyGetProps) {
+export function oneToManyRemove({
+  node, key, elementName, parentName,
+}: OneToManyGetProps): void {
   if (!node[key]) {
     node[key] = []
   }
@@ -131,23 +134,8 @@ export function oneToManyRemove({ node, key, elementName, parentName }: OneToMan
   const index = property.findIndex((el) => el.name.value === elementName)
 
   if (index === -1) {
-    throw Error(`${singular(key)} '${elementName}' on '${parentName}' does not exist`)
+    throw Error(`${key} element '${elementName}' on ${node.kind} '${parentName}' does not exist`)
   }
 
   property.splice(index, 1)
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-function singular(key: string) {
-  return key.replace(/s$/, '')
-}
-
-function isScalar<T>(value: T) {
-  return (
-    value === null ||
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean'
-  )
 }

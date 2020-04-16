@@ -14,8 +14,8 @@ import {
 import { AST } from '../../src'
 import { normaliseGql } from '../test-utils'
 
-describe(`node > ast`, () => {
-  test(`nameNode`, () => {
+describe('node > ast', () => {
+  test('nameNode', () => {
     const res = AST.nameNode('hello')
 
     const fix: NameNode = {
@@ -26,7 +26,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(res)).toEqual(normaliseGql(fix))
   })
 
-  test(`documentNode`, () => {
+  test('documentNode', () => {
     const res = AST.documentNode([])
 
     const fix: DocumentNode = {
@@ -37,7 +37,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(res)).toEqual(normaliseGql(fix))
   })
 
-  test(`operationDefinitionNode`, () => {
+  test('operationDefinitionNode', () => {
     const short = AST.operationDefinitionNode({
       name: 'MyQuery',
       operation: 'query',
@@ -70,7 +70,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
-  test(`variableDefinitionNode`, () => {
+  test('variableDefinitionNode', () => {
     const short = AST.variableDefinitionNode({
       variable: 'parent',
       type: { name: 'ID', nonNull: true },
@@ -112,7 +112,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
-  test(`variableNode`, () => {
+  test('variableNode', () => {
     const res = AST.variableNode('abc')
 
     const fix: VariableNode = {
@@ -126,7 +126,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(res)).toEqual(normaliseGql(fix))
   })
 
-  test(`selectionSetNode`, () => {
+  test('selectionSetNode', () => {
     const short = AST.selectionSetNode([
       'field',
       { name: 'otherField', selections: ['nestedField'] },
@@ -167,7 +167,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
-  test(`fieldNode`, () => {
+  test('fieldNode', () => {
     const short = AST.fieldNode('field')
     const long = AST.fieldNode({ name: AST.nameNode('field') })
 
@@ -180,7 +180,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
-  test(`argumentNode`, () => {
+  test('argumentNode', () => {
     const short = AST.argumentNode({ name: 'skip', value: AST.variableNode('id') })
     const long = AST.argumentNode({ name: AST.nameNode('skip'), value: AST.variableNode('id') })
 
@@ -194,7 +194,7 @@ describe(`node > ast`, () => {
     expect(normaliseGql(long)).toEqual(normaliseGql(fix))
   })
 
-  test(`directiveNode`, () => {
+  test('directiveNode', () => {
     const short = AST.directiveNode({
       name: 'cache',
       arguments: [

@@ -31,11 +31,11 @@ export type NameApiMixinNode =
 export class NameApiMixin {
   constructor(readonly node: NameApiMixinNode) {}
 
-  getName() {
+  getName(): string {
     return this.node.name.value
   }
 
-  setName(value: string) {
+  setName(value: string): this {
     mutable(this.node).name = nameNode(value)
 
     return this
@@ -45,6 +45,6 @@ export class NameApiMixin {
 /**
  * @category API Mixins
  */
-export function nameApiMixin(node: NameApiMixinNode) {
+export function nameApiMixin(node: NameApiMixinNode): NameApiMixin {
   return new NameApiMixin(node)
 }

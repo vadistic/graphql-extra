@@ -1,7 +1,9 @@
 import type { NamedTypeNode, TypeNode } from 'graphql'
 import { Kind } from 'graphql'
 
-import { TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode } from '../../node'
+import {
+  TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode,
+} from '../../node'
 import { applyPropsCloned, mutable } from '../../utils'
 import type { Typename } from '../types'
 
@@ -99,6 +101,6 @@ export class TypeApi {
  *
  * @category API Public
  */
-export function typeApi(node: TypeNode) {
+export function typeApi(node: TypeNode): TypeApi {
   return new TypeApi(node)
 }

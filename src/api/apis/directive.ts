@@ -20,6 +20,6 @@ export class DirectiveApi extends Mix(NameApiMixin, ArgumentsApiMixin) {
  *
  * @category API Public
  */
-export function directiveApi(node: DirectiveNode) {
+export function directiveApi(node: DirectiveNode): DirectiveApi {
   return new DirectiveApi(node)
 }
