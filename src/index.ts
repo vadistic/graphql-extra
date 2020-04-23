@@ -1,3 +1,3 @@
 export * from './node'
-export * from './api'
+export * from './core'
 export * from './utils'

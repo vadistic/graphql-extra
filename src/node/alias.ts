@@ -1,4 +1,4 @@
-import type { ObjectTypeDefinitionNode, NameNode, NamedTypeNode } from 'graphql'
+import type * as GQL from 'graphql'
 
 import * as AST from './ast'
 
@@ -6,23 +6,26 @@ import * as AST from './ast'
  * @category AST Alias
  */
 export type RootTypeDefinitionProps = Omit<AST.ObjectTypeDefinitionNodeProps, 'name'> & {
-  name?: NameNode | AST.NameNodeProps
+  name?: GQL.NameNode | AST.NameNodeProps
 }
 
 /**
  * @category AST Alias
  */
-export const queryType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => AST.objectTypeDefinitionNode({ name: 'Query', ...props })
+export const queryType = (props: RootTypeDefinitionProps): GQL.ObjectTypeDefinitionNode =>
+  AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 
 /**
  * @category AST Alias
  */
-export const mutationType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => AST.objectTypeDefinitionNode({ name: 'Query', ...props })
+export const mutationType = (props: RootTypeDefinitionProps): GQL.ObjectTypeDefinitionNode =>
+  AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 
 /**
  * @category AST Alias
  */
-export const subscriptionType = (props: RootTypeDefinitionProps): ObjectTypeDefinitionNode => AST.objectTypeDefinitionNode({ name: 'Query', ...props })
+export const subscriptionType = (props: RootTypeDefinitionProps): GQL.ObjectTypeDefinitionNode =>
+  AST.objectTypeDefinitionNode({ name: 'Query', ...props })
 
 // NAME
 
@@ -116,16 +119,16 @@ export const type = {
   nonNull: AST.nonNullTypeNode,
 
   // build-ins
-  id: (): NamedTypeNode => AST.namedTypeNode('ID'),
-  int: (): NamedTypeNode => AST.namedTypeNode('Int'),
-  float: (): NamedTypeNode => AST.namedTypeNode('Float'),
-  bool: (): NamedTypeNode => AST.namedTypeNode('Boolean'),
-  string: (): NamedTypeNode => AST.namedTypeNode('String'),
+  id: (): GQL.NamedTypeNode => AST.namedTypeNode('ID'),
+  int: (): GQL.NamedTypeNode => AST.namedTypeNode('Int'),
+  float: (): GQL.NamedTypeNode => AST.namedTypeNode('Float'),
+  bool: (): GQL.NamedTypeNode => AST.namedTypeNode('Boolean'),
+  string: (): GQL.NamedTypeNode => AST.namedTypeNode('String'),
 
   // common extras
-  json: (): NamedTypeNode => AST.namedTypeNode('JSON'),
-  date: (): NamedTypeNode => AST.namedTypeNode('Date'),
-  dateTime: (): NamedTypeNode => AST.namedTypeNode('DateTime'),
+  json: (): GQL.NamedTypeNode => AST.namedTypeNode('JSON'),
+  date: (): GQL.NamedTypeNode => AST.namedTypeNode('Date'),
+  dateTime: (): GQL.NamedTypeNode => AST.namedTypeNode('DateTime'),
 }
 
 // TYPE SYSTEM DEFINITIONS

@@ -1,54 +1,4 @@
-import type {
-  ArgumentNode,
-  BooleanValueNode,
-  DefinitionNode,
-  DirectiveDefinitionNode,
-  DirectiveLocationEnum,
-  DirectiveNode,
-  DocumentNode,
-  EnumTypeDefinitionNode,
-  EnumTypeExtensionNode,
-  EnumValueDefinitionNode,
-  EnumValueNode,
-  FieldDefinitionNode,
-  FieldNode,
-  FloatValueNode,
-  FragmentDefinitionNode,
-  FragmentSpreadNode,
-  InlineFragmentNode,
-  InputObjectTypeDefinitionNode,
-  InputObjectTypeExtensionNode,
-  InputValueDefinitionNode,
-  InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
-  IntValueNode,
-  ListTypeNode,
-  ListValueNode,
-  NamedTypeNode,
-  NameNode,
-  NonNullTypeNode,
-  NullValueNode,
-  ObjectFieldNode,
-  ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
-  ObjectValueNode,
-  OperationDefinitionNode,
-  OperationTypeDefinitionNode,
-  ScalarTypeDefinitionNode,
-  ScalarTypeExtensionNode,
-  SchemaDefinitionNode,
-  SchemaExtensionNode,
-  SelectionNode,
-  SelectionSetNode,
-  StringValueNode,
-  TypeNode,
-  UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
-  ValueNode,
-  VariableDefinitionNode,
-  VariableNode,
-  OperationTypeNode,
-} from 'graphql'
+import type * as GQL from 'graphql'
 import { Kind, parseType } from 'graphql'
 
 import {
@@ -75,7 +25,7 @@ export type NameNodeProps = string
  *
  * @category AST Node
  */
-export function nameNode(value: NameNodeProps): NameNode {
+export function nameNode(value: NameNodeProps): GQL.NameNode {
   return {
     kind: Kind.NAME,
     value,
@@ -91,14 +41,14 @@ export function nameNode(value: NameNodeProps): NameNode {
  *
  * @category AST Node
  */
-export type DocumentNodeProps = ReadonlyArray<DefinitionNode>
+export type DocumentNodeProps = ReadonlyArray<GQL.DefinitionNode>
 
 /**
  * create `DocumentNode`
  *
  * @category AST Node
  */
-export function documentNode(definitions: DocumentNodeProps): DocumentNode {
+export function documentNode(definitions: DocumentNodeProps): GQL.DocumentNode {
   return {
     kind: Kind.DOCUMENT,
     definitions,
@@ -113,11 +63,11 @@ export function documentNode(definitions: DocumentNodeProps): DocumentNode {
  * @category AST Node
  */
 export interface OperationDefinitionNodeProps {
-  name?: NameNode | NameNodeProps
-  operation: OperationTypeNode
-  variableDefinitions?: ReadonlyArray<VariableDefinitionNode | VariableDefinitionNodeProps>
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  selections: SelectionSetNode | SelectionSetNodeProps
+  name?: GQL.NameNode | NameNodeProps
+  operation: GQL.OperationTypeNode
+  variableDefinitions?: ReadonlyArray<GQL.VariableDefinitionNode | VariableDefinitionNodeProps>
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  selections: GQL.SelectionSetNode | SelectionSetNodeProps
 }
 
 /**
@@ -125,9 +75,7 @@ export interface OperationDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function operationDefinitionNode(
-  props: OperationDefinitionNodeProps,
-): OperationDefinitionNode {
+export function operationDefinitionNode(props: OperationDefinitionNodeProps): GQL.OperationDefinitionNode {
   return {
     kind: Kind.OPERATION_DEFINITION,
     operation: props.operation,
@@ -146,10 +94,10 @@ export function operationDefinitionNode(
  * @category AST Node
  */
 export interface VariableDefinitionNodeProps {
-  variable: VariableNode | VariableNodeProps
-  type: TypeNode | TypeNodeProps
-  defaultValue?: ValueNode
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  variable: GQL.VariableNode | VariableNodeProps
+  type: GQL.TypeNode | TypeNodeProps
+  defaultValue?: GQL.ValueNode
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -157,7 +105,7 @@ export interface VariableDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function variableDefinitionNode(props: VariableDefinitionNodeProps): VariableDefinitionNode {
+export function variableDefinitionNode(props: VariableDefinitionNodeProps): GQL.VariableDefinitionNode {
   return {
     kind: Kind.VARIABLE_DEFINITION,
     variable: applyProps(variableNode, props.variable),
@@ -181,7 +129,7 @@ export type VariableNodeProps = string
  *
  * @category AST Node
  */
-export function variableNode(name: VariableNodeProps): VariableNode {
+export function variableNode(name: VariableNodeProps): GQL.VariableNode {
   return {
     kind: Kind.VARIABLE,
     name: nameNode(name),
@@ -195,14 +143,14 @@ export function variableNode(name: VariableNodeProps): VariableNode {
  *
  * @category AST Node
  */
-export type SelectionSetNodeProps = ReadonlyArray<SelectionNode | FieldNodeProps>
+export type SelectionSetNodeProps = ReadonlyArray<GQL.SelectionNode | FieldNodeProps>
 
 /**
  * create `SelectionSetNode`
  *
  * @category AST Node
  */
-export function selectionSetNode(selections: SelectionSetNodeProps): SelectionSetNode {
+export function selectionSetNode(selections: SelectionSetNodeProps): GQL.SelectionSetNode {
   return {
     kind: Kind.SELECTION_SET,
     // bit unconventional because selection node is union, and fn is applied only for field props
@@ -218,11 +166,11 @@ export function selectionSetNode(selections: SelectionSetNodeProps): SelectionSe
  * @category AST Node
  */
 export interface FieldNodeObjProps {
-  name: NameNode | NameNodeProps
-  alias?: NameNode | NameNodeProps
-  arguments?: ReadonlyArray<ArgumentNode | ArgumentNodeProps>
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  selections?: SelectionSetNode | SelectionSetNodeProps
+  name: GQL.NameNode | NameNodeProps
+  alias?: GQL.NameNode | NameNodeProps
+  arguments?: ReadonlyArray<GQL.ArgumentNode | ArgumentNodeProps>
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  selections?: GQL.SelectionSetNode | SelectionSetNodeProps
 }
 
 /**
@@ -237,7 +185,7 @@ export type FieldNodeProps = FieldNodeObjProps | string
  *
  * @category AST Node
  */
-export function fieldNode(field: FieldNodeProps): FieldNode {
+export function fieldNode(field: FieldNodeProps): GQL.FieldNode {
   if (typeof field === 'string') {
     return {
       kind: Kind.FIELD,
@@ -263,8 +211,8 @@ export function fieldNode(field: FieldNodeProps): FieldNode {
  * @category AST Node
  */
 export interface ArgumentNodeProps {
-  name: NameNode | NameNodeProps
-  value: ValueNode
+  name: GQL.NameNode | NameNodeProps
+  value: GQL.ValueNode
 }
 
 /**
@@ -272,7 +220,7 @@ export interface ArgumentNodeProps {
  *
  * @category AST Node
  */
-export function argumentNode(props: ArgumentNodeProps): ArgumentNode {
+export function argumentNode(props: ArgumentNodeProps): GQL.ArgumentNode {
   return {
     kind: Kind.ARGUMENT,
     name: applyProps(nameNode, props.name),
@@ -290,8 +238,8 @@ export function argumentNode(props: ArgumentNodeProps): ArgumentNode {
  * @category AST Node
  */
 export interface FragmentSpreadNodeProps {
-  name: NameNode | NameNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -299,7 +247,7 @@ export interface FragmentSpreadNodeProps {
  *
  * @category AST Node
  */
-export function fragmentSpreadNode(props: FragmentSpreadNodeProps): FragmentSpreadNode {
+export function fragmentSpreadNode(props: FragmentSpreadNodeProps): GQL.FragmentSpreadNode {
   return {
     kind: Kind.FRAGMENT_SPREAD,
     name: applyProps(nameNode, props.name),
@@ -315,10 +263,10 @@ export function fragmentSpreadNode(props: FragmentSpreadNodeProps): FragmentSpre
  * @category AST Node
  */
 export interface InlineFragmentNodeProps {
-  name: NameNode | NameNodeProps
-  typeCondition?: NamedTypeNode | NamedTypeNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  selections: SelectionSetNode | SelectionSetNodeProps
+  name: GQL.NameNode | NameNodeProps
+  typeCondition?: GQL.NamedTypeNode | NamedTypeNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  selections: GQL.SelectionSetNode | SelectionSetNodeProps
 }
 
 /**
@@ -326,7 +274,7 @@ export interface InlineFragmentNodeProps {
  *
  * @category AST Node
  */
-export function inlineFragmentNode(props: InlineFragmentNodeProps): InlineFragmentNode {
+export function inlineFragmentNode(props: InlineFragmentNodeProps): GQL.InlineFragmentNode {
   return {
     kind: Kind.INLINE_FRAGMENT,
     typeCondition: applyPropsNullable(namedTypeNode, props.typeCondition),
@@ -343,11 +291,11 @@ export function inlineFragmentNode(props: InlineFragmentNodeProps): InlineFragme
  * @category AST Node
  */
 export interface FragmentDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  variableDefinitions?: ReadonlyArray<VariableDefinitionNode | VariableDefinitionNodeProps>
-  typeCondition: NamedTypeNode | NamedTypeNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  selections: SelectionSetNode | SelectionSetNodeProps
+  name: GQL.NameNode | NameNodeProps
+  variableDefinitions?: ReadonlyArray<GQL.VariableDefinitionNode | VariableDefinitionNodeProps>
+  typeCondition: GQL.NamedTypeNode | NamedTypeNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  selections: GQL.SelectionSetNode | SelectionSetNodeProps
 }
 
 /**
@@ -355,7 +303,7 @@ export interface FragmentDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): FragmentDefinitionNode {
+export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): GQL.FragmentDefinitionNode {
   return {
     kind: Kind.FRAGMENT_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -382,7 +330,7 @@ export type IntValueNodeProps = string | number
  *
  * @category AST Node
  */
-export function intValueNode(value: IntValueNodeProps): IntValueNode {
+export function intValueNode(value: IntValueNodeProps): GQL.IntValueNode {
   return {
     kind: Kind.INT,
     value: String(value),
@@ -401,7 +349,7 @@ export type FloatValueNodeProps = string | number
  *
  * @category AST Node
  */
-export function floatValueNode(value: string | number): FloatValueNode {
+export function floatValueNode(value: string | number): GQL.FloatValueNode {
   return {
     kind: Kind.FLOAT,
     value: String(value),
@@ -420,7 +368,7 @@ export type StringValueNodeProps = string
  *
  * @category AST Node
  */
-export function stringValueNode(value: StringValueNodeProps): StringValueNode {
+export function stringValueNode(value: StringValueNodeProps): GQL.StringValueNode {
   return {
     kind: Kind.STRING,
     value,
@@ -439,7 +387,7 @@ export type BooleanValueNodeProps = boolean
  *
  * @category AST Node
  */
-export function booleanValueNode(value: BooleanValueNodeProps): BooleanValueNode {
+export function booleanValueNode(value: BooleanValueNodeProps): GQL.BooleanValueNode {
   return {
     kind: Kind.BOOLEAN,
     value,
@@ -451,7 +399,7 @@ export function booleanValueNode(value: BooleanValueNodeProps): BooleanValueNode
  *
  * @category AST Node
  */
-export function nullValueNode(): NullValueNode {
+export function nullValueNode(): GQL.NullValueNode {
   return {
     kind: Kind.NULL,
   }
@@ -469,7 +417,7 @@ export type EnumValueNodeProps = string
  *
  * @category AST Node
  */
-export function enumValueNode(value: EnumValueNodeProps): EnumValueNode {
+export function enumValueNode(value: EnumValueNodeProps): GQL.EnumValueNode {
   return {
     kind: Kind.ENUM,
     value,
@@ -481,14 +429,14 @@ export function enumValueNode(value: EnumValueNodeProps): EnumValueNode {
  *
  * @category AST Node
  */
-export type ListValueNodeProps = ReadonlyArray<ValueNode>
+export type ListValueNodeProps = ReadonlyArray<GQL.ValueNode>
 
 /**
  * `ListValueNode`
  *
  * @category AST Node
  */
-export function listValueNode(values: ListValueNodeProps): ListValueNode {
+export function listValueNode(values: ListValueNodeProps): GQL.ListValueNode {
   return {
     kind: Kind.LIST,
     values,
@@ -500,14 +448,14 @@ export function listValueNode(values: ListValueNodeProps): ListValueNode {
  *
  * @category AST Node
  */
-export type ObjectValueNodeProps = ReadonlyArray<ObjectFieldNode>
+export type ObjectValueNodeProps = ReadonlyArray<GQL.ObjectFieldNode>
 
 /**
  * create `ObjectValueNode`
  *
  * @category AST Node
  */
-export function objectValueNode(fields: ObjectValueNodeProps): ObjectValueNode {
+export function objectValueNode(fields: ObjectValueNodeProps): GQL.ObjectValueNode {
   return {
     kind: Kind.OBJECT,
     fields,
@@ -520,8 +468,8 @@ export function objectValueNode(fields: ObjectValueNodeProps): ObjectValueNode {
  * @category AST Node
  */
 export interface ObjectFieldNodeProps {
-  name: NameNode | NameNodeProps
-  value: ValueNode
+  name: GQL.NameNode | NameNodeProps
+  value: GQL.ValueNode
 }
 
 /**
@@ -529,7 +477,7 @@ export interface ObjectFieldNodeProps {
  *
  * @category AST Node
  */
-export function objectFieldNode(props: ObjectFieldNodeProps): ObjectFieldNode {
+export function objectFieldNode(props: ObjectFieldNodeProps): GQL.ObjectFieldNode {
   return {
     kind: Kind.OBJECT_FIELD,
     name: applyProps(nameNode, props.name),
@@ -547,8 +495,8 @@ export function objectFieldNode(props: ObjectFieldNodeProps): ObjectFieldNode {
  * @category AST Node
  */
 export interface DirectiveNodeObjProps {
-  name: NameNode | NameNodeProps
-  arguments?: ReadonlyArray<ArgumentNode | ArgumentNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  arguments?: ReadonlyArray<GQL.ArgumentNode | ArgumentNodeProps>
 }
 
 /**
@@ -563,7 +511,7 @@ export type DirectiveNodeProps = DirectiveNodeObjProps | string
  *
  * @category AST Node
  */
-export function directiveNode(directive: DirectiveNodeProps): DirectiveNode {
+export function directiveNode(directive: DirectiveNodeProps): GQL.DirectiveNode {
   // shorthand
   if (typeof directive === 'string') {
     return {
@@ -588,14 +536,14 @@ export function directiveNode(directive: DirectiveNodeProps): DirectiveNode {
  *
  * @category AST Node
  */
-export type NamedTypeNodeProps = NameNode | string
+export type NamedTypeNodeProps = GQL.NameNode | string
 
 /**
  * create `NamedTypeNode`
  *
  * @category AST Node
  */
-export function namedTypeNode(value: NamedTypeNodeProps): NamedTypeNode {
+export function namedTypeNode(value: NamedTypeNodeProps): GQL.NamedTypeNode {
   return {
     kind: Kind.NAMED_TYPE,
     name: applyProps(nameNode, value),
@@ -609,14 +557,14 @@ export function namedTypeNode(value: NamedTypeNodeProps): NamedTypeNode {
  *
  * @category AST Node
  */
-export type ListTypeNodeProps = TypeNode | string
+export type ListTypeNodeProps = GQL.TypeNode | string
 
 /**
  * create `ListTypeNode`
  *
  * @category AST Node
  */
-export function listTypeNode(type: ListTypeNodeProps): ListTypeNode {
+export function listTypeNode(type: ListTypeNodeProps): GQL.ListTypeNode {
   const namedType = typeof type === 'string' ? namedTypeNode(type) : type
 
   return {
@@ -632,14 +580,14 @@ export function listTypeNode(type: ListTypeNodeProps): ListTypeNode {
  *
  * @category AST Node
  */
-export type NonNullTypeNodeProps = TypeNode | string
+export type NonNullTypeNodeProps = GQL.TypeNode | string
 
 /**
  * create `NonNullTypeNode`
  *
  * @category AST Node
  */
-export function nonNullTypeNode(type: NonNullTypeNodeProps): NonNullTypeNode {
+export function nonNullTypeNode(type: NonNullTypeNodeProps): GQL.NonNullTypeNode {
   const namedType = typeof type === 'string' ? namedTypeNode(type) : type
 
   if (namedType.kind === Kind.NON_NULL_TYPE) {
@@ -661,7 +609,7 @@ export function nonNullTypeNode(type: NonNullTypeNodeProps): NonNullTypeNode {
  */
 export interface TypeNodeObjProps {
   // FIXME: should it be named `type` ??
-  name: NamedTypeNode | string
+  name: GQL.NamedTypeNode | string
   list?: boolean
   nonNull?: boolean
 }
@@ -678,7 +626,7 @@ export type TypeNodeProps = TypeNodeObjProps | string
  *
  * @category AST Node
  */
-export function typeNode(type: TypeNodeProps): TypeNode {
+export function typeNode(type: TypeNodeProps): GQL.TypeNode {
   if (typeof type === 'string') {
     return parseType(type)
   }
@@ -711,8 +659,8 @@ export function typeNode(type: TypeNodeProps): TypeNode {
  * @category AST Node
  */
 export interface SchemaDefinitionNodeProps {
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  operationTypes: ReadonlyArray<OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  operationTypes: ReadonlyArray<GQL.OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
 }
 
 /**
@@ -720,7 +668,7 @@ export interface SchemaDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): SchemaDefinitionNode {
+export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): GQL.SchemaDefinitionNode {
   return {
     kind: Kind.SCHEMA_DEFINITION,
     directives: applyPropsNullableArr(directiveNode, props.directives),
@@ -736,8 +684,8 @@ export function schemaDefinitionNode(props: SchemaDefinitionNodeProps): SchemaDe
  * @category AST Node
  */
 export interface OperationTypeDefinitionNodeProps {
-  operation: OperationTypeNode
-  type: NamedTypeNode | NamedTypeNodeProps
+  operation: GQL.OperationTypeNode
+  type: GQL.NamedTypeNode | NamedTypeNodeProps
 }
 
 /**
@@ -745,9 +693,7 @@ export interface OperationTypeDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function operationTypeDefinitionNode(
-  props: OperationTypeDefinitionNodeProps,
-): OperationTypeDefinitionNode {
+export function operationTypeDefinitionNode(props: OperationTypeDefinitionNodeProps): GQL.OperationTypeDefinitionNode {
   return {
     kind: Kind.OPERATION_TYPE_DEFINITION,
     operation: props.operation,
@@ -765,9 +711,9 @@ export function operationTypeDefinitionNode(
  * @category AST Node
  */
 export interface ScalarTypeDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -775,9 +721,7 @@ export interface ScalarTypeDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function scalarTypeDefinitionNode(
-  props: ScalarTypeDefinitionNodeProps,
-): ScalarTypeDefinitionNode {
+export function scalarTypeDefinitionNode(props: ScalarTypeDefinitionNodeProps): GQL.ScalarTypeDefinitionNode {
   return {
     kind: Kind.SCALAR_TYPE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -794,11 +738,11 @@ export function scalarTypeDefinitionNode(
  * @category AST Node
  */
 export interface ObjectTypeDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  interfaces?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  interfaces?: ReadonlyArray<GQL.NamedTypeNode | NamedTypeNodeProps>
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<GQL.FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
 /**
@@ -806,9 +750,7 @@ export interface ObjectTypeDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function objectTypeDefinitionNode(
-  props: ObjectTypeDefinitionNodeProps,
-): ObjectTypeDefinitionNode {
+export function objectTypeDefinitionNode(props: ObjectTypeDefinitionNodeProps): GQL.ObjectTypeDefinitionNode {
   return {
     kind: Kind.OBJECT_TYPE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -827,11 +769,11 @@ export function objectTypeDefinitionNode(
  * @category AST Node
  */
 export interface FieldDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  arguments?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
-  type: TypeNode | TypeNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  arguments?: ReadonlyArray<GQL.InputValueDefinitionNode | InputValueDefinitionNodeProps>
+  type: GQL.TypeNode | TypeNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 
   // shorthand
   nonNull?: boolean
@@ -843,7 +785,7 @@ export interface FieldDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function fieldDefinitionNode(props: FieldDefinitionNodeProps): FieldDefinitionNode {
+export function fieldDefinitionNode(props: FieldDefinitionNodeProps): GQL.FieldDefinitionNode {
   return {
     kind: Kind.FIELD_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -862,12 +804,12 @@ export function fieldDefinitionNode(props: FieldDefinitionNodeProps): FieldDefin
  * @category AST Node
  */
 export interface InputValueDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  type: TypeNode | TypeNodeProps
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  type: GQL.TypeNode | TypeNodeProps
   // TODO: allow coercing js value value by type?
-  defaultValue?: ValueNode
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  defaultValue?: GQL.ValueNode
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -875,9 +817,7 @@ export interface InputValueDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function inputValueDefinitionNode(
-  props: InputValueDefinitionNodeProps,
-): InputValueDefinitionNode {
+export function inputValueDefinitionNode(props: InputValueDefinitionNodeProps): GQL.InputValueDefinitionNode {
   return {
     kind: Kind.INPUT_VALUE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -896,10 +836,10 @@ export function inputValueDefinitionNode(
  * @category AST Node
  */
 export interface InterfaceTypeDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<GQL.FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
 /**
@@ -907,9 +847,7 @@ export interface InterfaceTypeDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function interfaceTypeDefinitionNode(
-  props: InterfaceTypeDefinitionNodeProps,
-): InterfaceTypeDefinitionNode {
+export function interfaceTypeDefinitionNode(props: InterfaceTypeDefinitionNodeProps): GQL.InterfaceTypeDefinitionNode {
   return {
     kind: Kind.INTERFACE_TYPE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -927,10 +865,10 @@ export function interfaceTypeDefinitionNode(
  * @category AST Node
  */
 export interface UnionTypeDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  types?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  types?: ReadonlyArray<GQL.NamedTypeNode | NamedTypeNodeProps>
 }
 
 /**
@@ -938,9 +876,7 @@ export interface UnionTypeDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function unionTypeDefinitionNode(
-  props: UnionTypeDefinitionNodeProps,
-): UnionTypeDefinitionNode {
+export function unionTypeDefinitionNode(props: UnionTypeDefinitionNodeProps): GQL.UnionTypeDefinitionNode {
   return {
     kind: Kind.UNION_TYPE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -958,10 +894,10 @@ export function unionTypeDefinitionNode(
  * @category AST Node
  */
 export interface EnumTypeDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  values?: ReadonlyArray<EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  values?: ReadonlyArray<GQL.EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
 }
 
 /**
@@ -969,7 +905,7 @@ export interface EnumTypeDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): EnumTypeDefinitionNode {
+export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): GQL.EnumTypeDefinitionNode {
   return {
     kind: Kind.ENUM_TYPE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -987,9 +923,9 @@ export function enumTypeDefinitionNode(props: EnumTypeDefinitionNodeProps): Enum
  * @category AST Node
  */
 export interface EnumValueDefinitionNodeObjProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -1004,9 +940,7 @@ export type EnumValueDefinitionNodeProps = EnumValueDefinitionNodeObjProps | str
  *
  * @category AST Node
  */
-export function enumValueDefinitionNode(
-  props: EnumValueDefinitionNodeProps,
-): EnumValueDefinitionNode {
+export function enumValueDefinitionNode(props: EnumValueDefinitionNodeProps): GQL.EnumValueDefinitionNode {
   if (typeof props === 'string') {
     return {
       kind: Kind.ENUM_VALUE_DEFINITION,
@@ -1030,10 +964,10 @@ export function enumValueDefinitionNode(
  * @category AST Node
  */
 export interface InputObjectTypeDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  fields?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<GQL.InputValueDefinitionNode | InputValueDefinitionNodeProps>
 }
 
 /**
@@ -1043,7 +977,7 @@ export interface InputObjectTypeDefinitionNodeProps {
  */
 export function inputObjectTypeDefinitionNode(
   props: InputObjectTypeDefinitionNodeProps,
-): InputObjectTypeDefinitionNode {
+): GQL.InputObjectTypeDefinitionNode {
   return {
     kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -1063,11 +997,11 @@ export function inputObjectTypeDefinitionNode(
  * @category AST Node
  */
 export interface DirectiveDefinitionNodeProps {
-  name: NameNode | NameNodeProps
-  description?: StringValueNode | StringValueNodeProps
-  arguments?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  description?: GQL.StringValueNode | StringValueNodeProps
+  arguments?: ReadonlyArray<GQL.InputValueDefinitionNode | InputValueDefinitionNodeProps>
   repeatable?: boolean
-  locations: ReadonlyArray<NameNode | DirectiveLocationEnum>
+  locations: ReadonlyArray<GQL.NameNode | GQL.DirectiveLocationEnum>
 }
 
 /**
@@ -1075,9 +1009,7 @@ export interface DirectiveDefinitionNodeProps {
  *
  * @category AST Node
  */
-export function directiveDefinitionNode(
-  props: DirectiveDefinitionNodeProps,
-): DirectiveDefinitionNode {
+export function directiveDefinitionNode(props: DirectiveDefinitionNodeProps): GQL.DirectiveDefinitionNode {
   return {
     kind: Kind.DIRECTIVE_DEFINITION,
     name: applyProps(nameNode, props.name),
@@ -1098,8 +1030,8 @@ export function directiveDefinitionNode(
  * @category AST Node
  */
 export interface SchemaExtensionNodeProps {
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  operationTypes: ReadonlyArray<OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  operationTypes: ReadonlyArray<GQL.OperationTypeDefinitionNode | OperationTypeDefinitionNodeProps>
 }
 
 /**
@@ -1107,7 +1039,7 @@ export interface SchemaExtensionNodeProps {
  *
  * @category AST Node
  */
-export function schemaExtensionNode(props: SchemaExtensionNodeProps): SchemaExtensionNode {
+export function schemaExtensionNode(props: SchemaExtensionNodeProps): GQL.SchemaExtensionNode {
   return {
     kind: Kind.SCHEMA_EXTENSION,
     directives: applyPropsNullableArr(directiveNode, props.directives),
@@ -1125,8 +1057,8 @@ export function schemaExtensionNode(props: SchemaExtensionNodeProps): SchemaExte
  * @category AST Node
  */
 export interface ScalarTypeExtensionNodeProps {
-  name: NameNode | NameNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 }
 
 /**
@@ -1134,9 +1066,7 @@ export interface ScalarTypeExtensionNodeProps {
  *
  * @category AST Node
  */
-export function scalarTypeExtensionNode(
-  props: ScalarTypeExtensionNodeProps,
-): ScalarTypeExtensionNode {
+export function scalarTypeExtensionNode(props: ScalarTypeExtensionNodeProps): GQL.ScalarTypeExtensionNode {
   return {
     kind: Kind.SCALAR_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1152,10 +1082,10 @@ export function scalarTypeExtensionNode(
  * @category AST Node
  */
 export interface ObjectTypeExtensionNodeProps {
-  name: NameNode | NameNodeProps
-  interfaces?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  interfaces?: ReadonlyArray<GQL.NamedTypeNode | NamedTypeNodeProps>
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<GQL.FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
 /**
@@ -1165,7 +1095,7 @@ export interface ObjectTypeExtensionNodeProps {
  */
 export function objectTypeExtensionNode(
   props: ObjectTypeExtensionNodeProps,
-): ObjectTypeExtensionNode {
+): GQL.ObjectTypeExtensionNode {
   return {
     kind: Kind.OBJECT_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1183,9 +1113,9 @@ export function objectTypeExtensionNode(
  * @category AST Node
  */
 export interface InterfaceTypeExtensionNodeProps {
-  name: NameNode | NameNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  fields?: ReadonlyArray<FieldDefinitionNode | FieldDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<GQL.FieldDefinitionNode | FieldDefinitionNodeProps>
 }
 
 /**
@@ -1193,9 +1123,7 @@ export interface InterfaceTypeExtensionNodeProps {
  *
  * @category AST Node
  */
-export function interfaceTypeExtensionNode(
-  props: InterfaceTypeExtensionNodeProps,
-): InterfaceTypeExtensionNode {
+export function interfaceTypeExtensionNode(props: InterfaceTypeExtensionNodeProps): GQL.InterfaceTypeExtensionNode {
   return {
     kind: Kind.INTERFACE_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1212,9 +1140,9 @@ export function interfaceTypeExtensionNode(
  * @category AST Node
  */
 export interface UnionTypeExtensionNodeProps {
-  name: NameNode | NameNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  types?: ReadonlyArray<NamedTypeNode | NamedTypeNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  types?: ReadonlyArray<GQL.NamedTypeNode | NamedTypeNodeProps>
 }
 
 /**
@@ -1222,9 +1150,7 @@ export interface UnionTypeExtensionNodeProps {
  *
  * @category AST Node
  */
-export function unionTypeExtensionNode(
-  props: UnionTypeDefinitionNodeProps,
-): UnionTypeExtensionNode {
+export function unionTypeExtensionNode(props: UnionTypeDefinitionNodeProps): GQL.UnionTypeExtensionNode {
   return {
     kind: Kind.UNION_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1241,9 +1167,9 @@ export function unionTypeExtensionNode(
  * @category AST Node
  */
 export interface EnumTypeExtensionNodeProps {
-  name: NameNode | NameNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  values?: ReadonlyArray<EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  values?: ReadonlyArray<GQL.EnumValueDefinitionNode | EnumValueDefinitionNodeProps>
 }
 
 /**
@@ -1251,7 +1177,7 @@ export interface EnumTypeExtensionNodeProps {
  *
  * @category AST Node
  */
-export function enumTypeExtensionNode(props: EnumTypeDefinitionNodeProps): EnumTypeExtensionNode {
+export function enumTypeExtensionNode(props: EnumTypeDefinitionNodeProps): GQL.EnumTypeExtensionNode {
   return {
     kind: Kind.ENUM_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1268,9 +1194,9 @@ export function enumTypeExtensionNode(props: EnumTypeDefinitionNodeProps): EnumT
  * @category AST Node
  */
 export interface InputObjectTypeExtensionNodeProps {
-  name: NameNode | NameNodeProps
-  directives?: ReadonlyArray<DirectiveNode | DirectiveNodeProps>
-  fields?: ReadonlyArray<InputValueDefinitionNode | InputValueDefinitionNodeProps>
+  name: GQL.NameNode | NameNodeProps
+  directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
+  fields?: ReadonlyArray<GQL.InputValueDefinitionNode | InputValueDefinitionNodeProps>
 }
 
 /**
@@ -1280,7 +1206,7 @@ export interface InputObjectTypeExtensionNodeProps {
  */
 export function inputObjectTypeExtensionNode(
   props: InputObjectTypeDefinitionNodeProps,
-): InputObjectTypeExtensionNode {
+): GQL.InputObjectTypeExtensionNode {
   return {
     kind: Kind.INPUT_OBJECT_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),

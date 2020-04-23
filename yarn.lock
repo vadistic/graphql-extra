@@ -1384,11 +1384,6 @@
   resolved "https://registry.yarnpkg.com/@vadistic/pika-plugin-publish-config/-/pika-plugin-publish-config-0.3.0.tgz#c934003f4967736b3450bba7bee6d4999a442266"
   integrity sha512-sTm4Q8DgnBb2aGlVvK5cSW82GChDEYi9ryQvulXTRKxaMcXu+ZgR12XIqzv2HtW2HuGB1Ajg0WyrzEUGQSQVGA==
 
-"@vadistic/prettier-config@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@vadistic/prettier-config/-/prettier-config-0.3.0.tgz#ad35ad881c32de6182cfa2b2a487a26903895f2b"
-  integrity sha512-0ctWpPJYE91sPwzJDqQJXe0/DX8vU+jFKGHPOqMjamsQGgeXF2qp7eP5BwnRHPj3W0h+pf75ZIwvnhiv+yvGQQ==
-
 "@vadistic/tsask@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@vadistic/tsask/-/tsask-0.2.2.tgz#8a53bb2a0b63d63b489b89cfc7d47f2b67ef0f8a"
@@ -5514,7 +5509,7 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier@*, prettier@^2.0.4:
+prettier@*:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.4.tgz#2d1bae173e355996ee355ec9830a7a1ee05457ef"
   integrity sha512-SVJIQ51spzFDvh4fIbCLvciiDMCrRhlN3mbZvv/+ycjvmF5E73bKdGfU8QDLNmjYJf+lsGnDBC4UUnvTe5OO0w==

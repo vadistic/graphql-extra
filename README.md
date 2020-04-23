@@ -4,19 +4,20 @@
 
 Inspired by code-first schema generation tools like [`graphql-compose`](https://github.com/graphql-compose/graphql-compose) or [`graphql-nexus`](https://github.com/graphql-nexus/schema), but focused on AST/SDL, instead of executable schema.
 
-The aim is to provide lightweight and flexible utils for GraphQL generation & testing. It's not that hard to edit graphql schema, but I've created this lib to make it yet easier, cleaner & faster.
+The aim is to provide lightweight, flexible and very interoperable tooling for GraphQL generation & testing.
 
 ## Use cases
 
-- code-first SDL without buy-in in any specific framework
-- robust and clean testing of graphql tools
+- code-first buy-in in any specific framework
+- testing of graphql code
 - writing all kinds `*-to-graphql/graphql-to-*` generators
 
 ## Features
 
-- no deps (other than `graphql` peerDependency)
+- almost no deps
 - semantic, verbose aprroach - no magic
-- clean and powerful fluent apis
+- clean fluent apis
+- all apis are just a function on `ASTNote`
 - multi build thanks to [@pika](`https://github.com/pikapkg/pack`)
 
 ### creation functions
@@ -61,7 +62,7 @@ import { a, b, c } from 'graphql-extra/pkg/dist-src/api'
 
 ## Sneak peek
 
-### create AST node
+### create
 
 ```ts
 import { namedtypeNode } from 'graphql-extra'
@@ -69,7 +70,7 @@ import { namedtypeNode } from 'graphql-extra'
 const named: NamedTypenode = namedTypeNode('Int')
 ```
 
-`graphql-nexus`-like experience whith aliased function names
+`graphql-nexus`-like experience with `t` aliased function names
 
 ```ts
 import { t } from 'graphql-extra'
@@ -101,7 +102,7 @@ const node: ObjectTypeDefinitionNode = t.objectType({
 })
 ```
 
-### modify object
+### modify
 
 ```ts
 import { objectTypeApi } from 'graphql-extra'
@@ -118,12 +119,12 @@ if(node === obj.node) {
 }
 ```
 
-### modify document
+### document
 
-Top-level entry point/ reference for all typeDefs
+Top-level entry point/ schema alternative
 
 ```ts
-import { documentApi } from 'graphql-extra'
+import { documentSchemaApi } from 'graphql-extra'
 
 const typeDefs = /* GraphQL */ `
   type Person {
@@ -140,7 +141,7 @@ const moreTypeDefs = /* GraphQL */ `
   }
 `
 
-const ast = documentApi().addSDL(typeDefs).addSDL(moreTypeDefs)
+const ast = documentSchemaApi(typeDefs).addSDL(moreTypeDefs)
 
 const obj1 = ast.getType('Person')
                 .getField('id')
@@ -148,17 +149,9 @@ const obj1 = ast.getType('Person')
 
 const obj2 = ast.createObjectType({...}).addDescription('...')
 
-ast.toSDLString()
-
-/*
-  ...
-
-  type Person {
-    id: Int!
-    name: String!
-  }
-
-  ...
-*/
+// serialise in any time
+const typedefsString = ast.toString()
+const documentNode = ast.toDocument()
+const introspectionSchema = ast.toSchema()
 
 ```

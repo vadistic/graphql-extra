@@ -1,5 +1,5 @@
 import {
-  KindEnum, Kind, ASTKindToNode, parse, ASTNode,
+  KindEnum, Kind, ASTKindToNode, parse, ASTNode, DefinitionNode, DocumentNode,
 } from 'graphql'
 
 export function normaliseString(input: string): string {
@@ -41,7 +41,8 @@ export function normaliseGql(input: string | ASTNode): string | ASTNode {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-const getFirstNodeOfKind = <K extends KindEnum>(kind: K) => (
+
+const _getFirstNodeOfKind = <K extends KindEnum>(kind: K) => (
   input: ASTNode,
 ): ASTKindToNode[K] | undefined => {
   if (input !== null && typeof input === 'object') {
@@ -50,12 +51,20 @@ const getFirstNodeOfKind = <K extends KindEnum>(kind: K) => (
     }
 
     for (const val of Object.values(input)) {
-      const maybe = getFirstNodeOfKind(kind)(val)
+      const maybe = _getFirstNodeOfKind(kind)(val)
 
       if (maybe) {
         return maybe
       }
     }
+  }
+
+  return undefined
+}
+
+const _getFirstDocDefinition = (doc: DocumentNode): DefinitionNode | undefined => {
+  if (doc.kind === Kind.DOCUMENT) {
+    return doc.definitions[0]
   }
 
   return undefined
@@ -79,13 +88,15 @@ const parsed = <A, R>(fn: (arg: A) => R | undefined) => (arg: A | string): R | u
   return fn(arg)
 }
 
-// eslint-disable-next-line max-len
-const getDefinedParsedFirstNode = <K extends KindEnum>(kind: K): (node: ASTNode | string) => ASTKindToNode[K] =>
-  defined(parsed(getFirstNodeOfKind(kind)))
+export const getFirstDefinition = defined(parsed(_getFirstDocDefinition))
 
-export const getFirstObjectType = getDefinedParsedFirstNode(Kind.OBJECT_TYPE_DEFINITION)
-export const getFirstInputType = getDefinedParsedFirstNode(Kind.INPUT_OBJECT_TYPE_DEFINITION)
-export const getFirstEnumType = getDefinedParsedFirstNode(Kind.ENUM_TYPE_DEFINITION)
-export const getFirstInputObjectType = getDefinedParsedFirstNode(Kind.INPUT_OBJECT_TYPE_DEFINITION)
-export const getFirstUnionType = getDefinedParsedFirstNode(Kind.UNION_TYPE_DEFINITION)
-export const getFirstScalarType = getDefinedParsedFirstNode(Kind.SCALAR_TYPE_DEFINITION)
+export const getFirstNodeOfKind = <K extends KindEnum>(
+  kind: K): (node: ASTNode | string) => ASTKindToNode[K] =>
+    defined(parsed(_getFirstNodeOfKind(kind)))
+
+export const getFirstObjectType = getFirstNodeOfKind(Kind.OBJECT_TYPE_DEFINITION)
+export const getFirstInputType = getFirstNodeOfKind(Kind.INPUT_OBJECT_TYPE_DEFINITION)
+export const getFirstEnumType = getFirstNodeOfKind(Kind.ENUM_TYPE_DEFINITION)
+export const getFirstInputObjectType = getFirstNodeOfKind(Kind.INPUT_OBJECT_TYPE_DEFINITION)
+export const getFirstUnionType = getFirstNodeOfKind(Kind.UNION_TYPE_DEFINITION)
+export const getFirstScalarType = getFirstNodeOfKind(Kind.SCALAR_TYPE_DEFINITION)

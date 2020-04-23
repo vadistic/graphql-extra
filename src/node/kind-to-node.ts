@@ -1,119 +1,75 @@
-import {
-  argumentNode,
-  booleanValueNode,
-  directiveDefinitionNode,
-  directiveNode,
-  documentNode,
-  enumTypeDefinitionNode,
-  enumTypeExtensionNode,
-  enumValueDefinitionNode,
-  enumValueNode,
-  fieldDefinitionNode,
-  fieldNode,
-  floatValueNode,
-  fragmentDefinitionNode,
-  fragmentSpreadNode,
-  inlineFragmentNode,
-  inputObjectTypeDefinitionNode,
-  inputObjectTypeExtensionNode,
-  inputValueDefinitionNode,
-  interfaceTypeDefinitionNode,
-  interfaceTypeExtensionNode,
-  intValueNode,
-  listTypeNode,
-  listValueNode,
-  namedTypeNode,
-  nameNode,
-  nonNullTypeNode,
-  nullValueNode,
-  objectFieldNode,
-  objectTypeDefinitionNode,
-  objectTypeExtensionNode,
-  objectValueNode,
-  operationDefinitionNode,
-  operationTypeDefinitionNode,
-  scalarTypeDefinitionNode,
-  scalarTypeExtensionNode,
-  schemaDefinitionNode,
-  schemaExtensionNode,
-  selectionSetNode,
-  stringValueNode,
-  unionTypeDefinitionNode,
-  unionTypeExtensionNode,
-  variableDefinitionNode,
-  variableNode,
-} from './ast'
+import * as AST from './ast'
 
 /**
  * @category Helper
  */
 export const astKindToNodeFnMap = {
   // NAME
-  Name: nameNode,
+  Name: AST.nameNode,
 
   // DOCUMENT
-  Document: documentNode,
-  OperationDefinition: operationDefinitionNode,
-  VariableDefinition: variableDefinitionNode,
-  SelectionSet: selectionSetNode,
-  Field: fieldNode,
-  Argument: argumentNode,
+  Document: AST.documentNode,
+  OperationDefinition: AST.operationDefinitionNode,
+  VariableDefinition: AST.variableDefinitionNode,
+  SelectionSet: AST.selectionSetNode,
+  Field: AST.fieldNode,
+  Argument: AST.argumentNode,
 
   // FRAGMENTS
-  FragmentSpread: fragmentSpreadNode,
-  InlineFragment: inlineFragmentNode,
-  FragmentDefinition: fragmentDefinitionNode,
+  FragmentSpread: AST.fragmentSpreadNode,
+  InlineFragment: AST.inlineFragmentNode,
+  FragmentDefinition: AST.fragmentDefinitionNode,
 
   // VALUES
-  Variable: variableNode,
-  IntValue: intValueNode,
-  FloatValue: floatValueNode,
-  StringValue: stringValueNode,
-  BooleanValue: booleanValueNode,
-  NullValue: nullValueNode,
-  EnumValue: enumValueNode,
-  ListValue: listValueNode,
-  ObjectValue: objectValueNode,
-  ObjectField: objectFieldNode,
+  Variable: AST.variableNode,
+  IntValue: AST.intValueNode,
+  FloatValue: AST.floatValueNode,
+  StringValue: AST.stringValueNode,
+  BooleanValue: AST.booleanValueNode,
+  NullValue: AST.nullValueNode,
+  EnumValue: AST.enumValueNode,
+  ListValue: AST.listValueNode,
+  ObjectValue: AST.objectValueNode,
+  ObjectField: AST.objectFieldNode,
 
   // DIRECTIVES
-  Directive: directiveNode,
+  Directive: AST.directiveNode,
 
   // TYPES
-  NamedType: namedTypeNode,
-  ListType: listTypeNode,
-  NonNullType: nonNullTypeNode,
+  NamedType: AST.namedTypeNode,
+  ListType: AST.listTypeNode,
+  NonNullType: AST.nonNullTypeNode,
 
   // TYPE SYSTEM DEFINITIONS
-  SchemaDefinition: schemaDefinitionNode,
-  OperationTypeDefinition: operationTypeDefinitionNode,
+  SchemaDefinition: AST.schemaDefinitionNode,
+  OperationTypeDefinition: AST.operationTypeDefinitionNode,
 
   // TYPE DEFINITIONS
-  ScalarTypeDefinition: scalarTypeDefinitionNode,
-  ObjectTypeDefinition: objectTypeDefinitionNode,
-  InterfaceTypeDefinition: interfaceTypeDefinitionNode,
-  UnionTypeDefinition: unionTypeDefinitionNode,
-  EnumValueDefinition: enumValueDefinitionNode,
-  InputObjectTypeDefinition: inputObjectTypeDefinitionNode,
+  ScalarTypeDefinition: AST.scalarTypeDefinitionNode,
+  ObjectTypeDefinition: AST.objectTypeDefinitionNode,
+  InterfaceTypeDefinition: AST.interfaceTypeDefinitionNode,
+  UnionTypeDefinition: AST.unionTypeDefinitionNode,
+  EnumValueDefinition: AST.enumValueDefinitionNode,
+  InputObjectTypeDefinition: AST.inputObjectTypeDefinitionNode,
 
   // TYPE FIELD DEFINITIONS
-  FieldDefinition: fieldDefinitionNode,
-  InputValueDefinition: inputValueDefinitionNode,
-  EnumTypeDefinition: enumTypeDefinitionNode,
+  FieldDefinition: AST.fieldDefinitionNode,
+  InputValueDefinition: AST.inputValueDefinitionNode,
+  EnumTypeDefinition: AST.enumTypeDefinitionNode,
 
   // DIRECTIVE DEFINITIONS
-  DirectiveDefinition: directiveDefinitionNode,
+  DirectiveDefinition: AST.directiveDefinitionNode,
 
   // TYPE SYSTEM EXTENSIONS
-  SchemaExtension: schemaExtensionNode,
+  SchemaExtension: AST.schemaExtensionNode,
 
   // TYPE EXTENSIONS
-  ScalarTypeExtension: scalarTypeExtensionNode,
-  ObjectTypeExtension: objectTypeExtensionNode,
-  InterfaceTypeExtension: interfaceTypeExtensionNode,
-  UnionTypeExtension: unionTypeExtensionNode,
-  EnumTypeExtension: enumTypeExtensionNode,
-  InputObjectTypeExtension: inputObjectTypeExtensionNode,
+  ScalarTypeExtension: AST.scalarTypeExtensionNode,
+  ObjectTypeExtension: AST.objectTypeExtensionNode,
+  InterfaceTypeExtension: AST.interfaceTypeExtensionNode,
+  UnionTypeExtension: AST.unionTypeExtensionNode,
+  EnumTypeExtension: AST.enumTypeExtensionNode,
+  InputObjectTypeExtension: AST.inputObjectTypeExtensionNode,
 }
 
 /**
@@ -138,10 +94,8 @@ export type AstKindToNodeFn<K> = K extends keyof AstKindToNodeFnMap
 /**
  * @category Helper
  */
-export function astKindToNodeFn<K extends keyof AstKindToNodeFnMap>(
-  kind: K,
-): (
-    props: Parameters<typeof astKindToNodeFnMap[K]>[0],
-  ) => ReturnType<typeof astKindToNodeFnMap[K]> {
+export function astKindToNodeFn<K extends keyof AstKindToNodeFnMap>(kind: K): (
+  props: Parameters<typeof astKindToNodeFnMap[K]>[0],
+) => ReturnType<typeof astKindToNodeFnMap[K]> {
   return (astKindToNodeFnMap as any)[kind]
 }

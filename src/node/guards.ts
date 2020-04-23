@@ -1,49 +1,4 @@
-import type {
-  ArgumentNode,
-  ASTNode,
-  BooleanValueNode,
-  DirectiveDefinitionNode,
-  DirectiveNode,
-  DocumentNode,
-  EnumTypeDefinitionNode,
-  EnumTypeExtensionNode,
-  EnumValueDefinitionNode,
-  EnumValueNode,
-  FieldDefinitionNode,
-  FieldNode,
-  FloatValueNode,
-  FragmentDefinitionNode,
-  FragmentSpreadNode,
-  InlineFragmentNode,
-  InputObjectTypeDefinitionNode,
-  InputObjectTypeExtensionNode,
-  InputValueDefinitionNode,
-  InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
-  IntValueNode,
-  ListTypeNode,
-  ListValueNode,
-  NamedTypeNode,
-  NameNode,
-  NonNullTypeNode,
-  NullValueNode,
-  ObjectFieldNode,
-  ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
-  ObjectValueNode,
-  OperationDefinitionNode,
-  OperationTypeDefinitionNode,
-  ScalarTypeDefinitionNode,
-  ScalarTypeExtensionNode,
-  SchemaDefinitionNode,
-  SchemaExtensionNode,
-  SelectionSetNode,
-  StringValueNode,
-  UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
-  VariableDefinitionNode,
-  VariableNode,
-} from 'graphql'
+import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
 
 //
@@ -55,7 +10,7 @@ import { Kind } from 'graphql'
  *
  * @category AST Guard
  */
-export function isNameNode(node: ASTNode): node is NameNode {
+export function isNameNode(node: GQL.ASTNode): node is GQL.NameNode {
   return node.kind === Kind.NAME
 }
 
@@ -68,7 +23,7 @@ export function isNameNode(node: ASTNode): node is NameNode {
  *
  * @category AST Guard
  */
-export function isDocumentNode(node: ASTNode): node is DocumentNode {
+export function isDocumentNode(node: GQL.ASTNode): node is GQL.DocumentNode {
   return node.kind === Kind.DOCUMENT
 }
 
@@ -77,7 +32,7 @@ export function isDocumentNode(node: ASTNode): node is DocumentNode {
  *
  * @category AST Guard
  */
-export function isOperationDefinitionNode(node: ASTNode): node is OperationDefinitionNode {
+export function isOperationDefinitionNode(node: GQL.ASTNode): node is GQL.OperationDefinitionNode {
   return node.kind === Kind.OPERATION_DEFINITION
 }
 
@@ -86,7 +41,7 @@ export function isOperationDefinitionNode(node: ASTNode): node is OperationDefin
  *
  * @category AST Guard
  */
-export function isVariableDefinitionNode(node: ASTNode): node is VariableDefinitionNode {
+export function isVariableDefinitionNode(node: GQL.ASTNode): node is GQL.VariableDefinitionNode {
   return node.kind === Kind.VARIABLE_DEFINITION
 }
 
@@ -95,7 +50,7 @@ export function isVariableDefinitionNode(node: ASTNode): node is VariableDefinit
  *
  * @category AST Guard
  */
-export function isSelectionSetNode(node: ASTNode): node is SelectionSetNode {
+export function isSelectionSetNode(node: GQL.ASTNode): node is GQL.SelectionSetNode {
   return node.kind === Kind.SELECTION_SET
 }
 
@@ -104,7 +59,7 @@ export function isSelectionSetNode(node: ASTNode): node is SelectionSetNode {
  *
  * @category AST Guard
  */
-export function isFieldNode(node: ASTNode): node is FieldNode {
+export function isFieldNode(node: GQL.ASTNode): node is GQL.FieldNode {
   return node.kind === Kind.FIELD
 }
 
@@ -113,7 +68,7 @@ export function isFieldNode(node: ASTNode): node is FieldNode {
  *
  * @category AST Guard
  */
-export function isArgumentNode(node: ASTNode): node is ArgumentNode {
+export function isArgumentNode(node: GQL.ASTNode): node is GQL.ArgumentNode {
   return node.kind === Kind.ARGUMENT
 }
 
@@ -126,7 +81,7 @@ export function isArgumentNode(node: ASTNode): node is ArgumentNode {
  *
  * @category AST Guard
  */
-export function isFragmentSpreadNode(node: ASTNode): node is FragmentSpreadNode {
+export function isFragmentSpreadNode(node: GQL.ASTNode): node is GQL.FragmentSpreadNode {
   return node.kind === Kind.FRAGMENT_SPREAD
 }
 
@@ -135,7 +90,7 @@ export function isFragmentSpreadNode(node: ASTNode): node is FragmentSpreadNode 
  *
  * @category AST Guard
  */
-export function isInlineFragmentNode(node: ASTNode): node is InlineFragmentNode {
+export function isInlineFragmentNode(node: GQL.ASTNode): node is GQL.InlineFragmentNode {
   return node.kind === Kind.INLINE_FRAGMENT
 }
 
@@ -144,7 +99,7 @@ export function isInlineFragmentNode(node: ASTNode): node is InlineFragmentNode 
  *
  * @category AST Guard
  */
-export function isFragmentDefinitionNode(node: ASTNode): node is FragmentDefinitionNode {
+export function isFragmentDefinitionNode(node: GQL.ASTNode): node is GQL.FragmentDefinitionNode {
   return node.kind === Kind.FRAGMENT_DEFINITION
 }
 
@@ -157,7 +112,7 @@ export function isFragmentDefinitionNode(node: ASTNode): node is FragmentDefinit
  *
  * @category AST Guard
  */
-export function isVariableNode(node: ASTNode): node is VariableNode {
+export function isVariableNode(node: GQL.ASTNode): node is GQL.VariableNode {
   return node.kind === Kind.VARIABLE
 }
 
@@ -166,7 +121,7 @@ export function isVariableNode(node: ASTNode): node is VariableNode {
  *
  * @category AST Guard
  */
-export function isIntValueNode(node: ASTNode): node is IntValueNode {
+export function isIntValueNode(node: GQL.ASTNode): node is GQL.IntValueNode {
   return node.kind === Kind.INT
 }
 
@@ -175,7 +130,7 @@ export function isIntValueNode(node: ASTNode): node is IntValueNode {
  *
  * @category AST Guard
  */
-export function isFloatValueNode(node: ASTNode): node is FloatValueNode {
+export function isFloatValueNode(node: GQL.ASTNode): node is GQL.FloatValueNode {
   return node.kind === Kind.FLOAT
 }
 
@@ -184,7 +139,7 @@ export function isFloatValueNode(node: ASTNode): node is FloatValueNode {
  *
  * @category AST Guard
  */
-export function isStringValueNode(node: ASTNode): node is StringValueNode {
+export function isStringValueNode(node: GQL.ASTNode): node is GQL.StringValueNode {
   return node.kind === Kind.STRING
 }
 
@@ -193,7 +148,7 @@ export function isStringValueNode(node: ASTNode): node is StringValueNode {
  *
  * @category AST Guard
  */
-export function isBooleanValueNode(node: ASTNode): node is BooleanValueNode {
+export function isBooleanValueNode(node: GQL.ASTNode): node is GQL.BooleanValueNode {
   return node.kind === Kind.BOOLEAN
 }
 
@@ -202,7 +157,7 @@ export function isBooleanValueNode(node: ASTNode): node is BooleanValueNode {
  *
  * @category AST Guard
  */
-export function isNullValueNode(node: ASTNode): node is NullValueNode {
+export function isNullValueNode(node: GQL.ASTNode): node is GQL.NullValueNode {
   return node.kind === Kind.NULL
 }
 
@@ -211,7 +166,7 @@ export function isNullValueNode(node: ASTNode): node is NullValueNode {
  *
  * @category AST Guard
  */
-export function iEnumValueNode(node: ASTNode): node is EnumValueNode {
+export function iEnumValueNode(node: GQL.ASTNode): node is GQL.EnumValueNode {
   return node.kind === Kind.ENUM
 }
 
@@ -220,7 +175,7 @@ export function iEnumValueNode(node: ASTNode): node is EnumValueNode {
  *
  * @category AST Guard
  */
-export function isListValueNode(node: ASTNode): node is ListValueNode {
+export function isListValueNode(node: GQL.ASTNode): node is GQL.ListValueNode {
   return node.kind === Kind.LIST
 }
 
@@ -229,7 +184,7 @@ export function isListValueNode(node: ASTNode): node is ListValueNode {
  *
  * @category AST Guard
  */
-export function isObjectValueNode(node: ASTNode): node is ObjectValueNode {
+export function isObjectValueNode(node: GQL.ASTNode): node is GQL.ObjectValueNode {
   return node.kind === Kind.OBJECT
 }
 
@@ -238,7 +193,7 @@ export function isObjectValueNode(node: ASTNode): node is ObjectValueNode {
  *
  * @category AST Guard
  */
-export function isObjectFieldNode(node: ASTNode): node is ObjectFieldNode {
+export function isObjectFieldNode(node: GQL.ASTNode): node is GQL.ObjectFieldNode {
   return node.kind === Kind.OBJECT_FIELD
 }
 
@@ -251,7 +206,7 @@ export function isObjectFieldNode(node: ASTNode): node is ObjectFieldNode {
  *
  * @category AST Guard
  */
-export function isDirectiveNode(node: ASTNode): node is DirectiveNode {
+export function isDirectiveNode(node: GQL.ASTNode): node is GQL.DirectiveNode {
   return node.kind === Kind.DIRECTIVE
 }
 
@@ -264,7 +219,7 @@ export function isDirectiveNode(node: ASTNode): node is DirectiveNode {
  *
  * @category AST Guard
  */
-export function isNamedTypeNode(node: ASTNode): node is NamedTypeNode {
+export function isNamedTypeNode(node: GQL.ASTNode): node is GQL.NamedTypeNode {
   return node.kind === Kind.NAMED_TYPE
 }
 
@@ -273,7 +228,7 @@ export function isNamedTypeNode(node: ASTNode): node is NamedTypeNode {
  *
  * @category AST Guard
  */
-export function isListTypeNode(node: ASTNode): node is ListTypeNode {
+export function isListTypeNode(node: GQL.ASTNode): node is GQL.ListTypeNode {
   return node.kind === Kind.LIST_TYPE
 }
 
@@ -282,7 +237,7 @@ export function isListTypeNode(node: ASTNode): node is ListTypeNode {
  *
  * @category AST Guard
  */
-export function isNonNullTypeNode(node: ASTNode): node is NonNullTypeNode {
+export function isNonNullTypeNode(node: GQL.ASTNode): node is GQL.NonNullTypeNode {
   return node.kind === Kind.NON_NULL_TYPE
 }
 
@@ -295,7 +250,7 @@ export function isNonNullTypeNode(node: ASTNode): node is NonNullTypeNode {
  *
  * @category AST Guard
  */
-export function isSchemaDefinitionNode(node: ASTNode): node is SchemaDefinitionNode {
+export function isSchemaDefinitionNode(node: GQL.ASTNode): node is GQL.SchemaDefinitionNode {
   return node.kind === Kind.SCHEMA_DEFINITION
 }
 
@@ -304,7 +259,7 @@ export function isSchemaDefinitionNode(node: ASTNode): node is SchemaDefinitionN
  *
  * @category AST Guard
  */
-export function isOperationTypeDefinitionNode(node: ASTNode): node is OperationTypeDefinitionNode {
+export function isOperationTypeDefinitionNode(node: GQL.ASTNode): node is GQL.OperationTypeDefinitionNode {
   return node.kind === Kind.OPERATION_TYPE_DEFINITION
 }
 
@@ -317,7 +272,7 @@ export function isOperationTypeDefinitionNode(node: ASTNode): node is OperationT
  *
  * @category AST Guard
  */
-export function isScalarTypeDefinitionNode(node: ASTNode): node is ScalarTypeDefinitionNode {
+export function isScalarTypeDefinitionNode(node: GQL.ASTNode): node is GQL.ScalarTypeDefinitionNode {
   return node.kind === Kind.SCALAR_TYPE_DEFINITION
 }
 
@@ -326,7 +281,7 @@ export function isScalarTypeDefinitionNode(node: ASTNode): node is ScalarTypeDef
  *
  * @category AST Guard
  */
-export function isObjectTypeDefinitionNode(node: ASTNode): node is ObjectTypeDefinitionNode {
+export function isObjectTypeDefinitionNode(node: GQL.ASTNode): node is GQL.ObjectTypeDefinitionNode {
   return node.kind === Kind.OBJECT_TYPE_DEFINITION
 }
 
@@ -335,7 +290,7 @@ export function isObjectTypeDefinitionNode(node: ASTNode): node is ObjectTypeDef
  *
  * @category AST Guard
  */
-export function isFieldDefinitionNode(node: ASTNode): node is FieldDefinitionNode {
+export function isFieldDefinitionNode(node: GQL.ASTNode): node is GQL.FieldDefinitionNode {
   return node.kind === Kind.FIELD_DEFINITION
 }
 
@@ -344,7 +299,7 @@ export function isFieldDefinitionNode(node: ASTNode): node is FieldDefinitionNod
  *
  * @category AST Guard
  */
-export function isInputValueDefinitionNode(node: ASTNode): node is InputValueDefinitionNode {
+export function isInputValueDefinitionNode(node: GQL.ASTNode): node is GQL.InputValueDefinitionNode {
   return node.kind === Kind.INPUT_VALUE_DEFINITION
 }
 
@@ -353,7 +308,7 @@ export function isInputValueDefinitionNode(node: ASTNode): node is InputValueDef
  *
  * @category AST Guard
  */
-export function isInterfaceTypeDefinitionNode(node: ASTNode): node is InterfaceTypeDefinitionNode {
+export function isInterfaceTypeDefinitionNode(node: GQL.ASTNode): node is GQL.InterfaceTypeDefinitionNode {
   return node.kind === Kind.INTERFACE_TYPE_DEFINITION
 }
 
@@ -362,7 +317,7 @@ export function isInterfaceTypeDefinitionNode(node: ASTNode): node is InterfaceT
  *
  * @category AST Guard
  */
-export function isUnionTypeDefinitionNode(node: ASTNode): node is UnionTypeDefinitionNode {
+export function isUnionTypeDefinitionNode(node: GQL.ASTNode): node is GQL.UnionTypeDefinitionNode {
   return node.kind === Kind.UNION_TYPE_DEFINITION
 }
 
@@ -371,7 +326,7 @@ export function isUnionTypeDefinitionNode(node: ASTNode): node is UnionTypeDefin
  *
  * @category AST Guard
  */
-export function isEnumTypeDefinitionNode(node: ASTNode): node is EnumTypeDefinitionNode {
+export function isEnumTypeDefinitionNode(node: GQL.ASTNode): node is GQL.EnumTypeDefinitionNode {
   return node.kind === Kind.ENUM_TYPE_DEFINITION
 }
 
@@ -380,7 +335,7 @@ export function isEnumTypeDefinitionNode(node: ASTNode): node is EnumTypeDefinit
  *
  * @category AST Guard
  */
-export function isEnumValueDefinitionNode(node: ASTNode): node is EnumValueDefinitionNode {
+export function isEnumValueDefinitionNode(node: GQL.ASTNode): node is GQL.EnumValueDefinitionNode {
   return node.kind === Kind.ENUM_VALUE_DEFINITION
 }
 
@@ -390,8 +345,8 @@ export function isEnumValueDefinitionNode(node: ASTNode): node is EnumValueDefin
  * @category AST Guard
  */
 export function isInputObjectTypeDefinitionNode(
-  node: ASTNode,
-): node is InputObjectTypeDefinitionNode {
+  node: GQL.ASTNode,
+): node is GQL.InputObjectTypeDefinitionNode {
   return node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION
 }
 
@@ -404,7 +359,7 @@ export function isInputObjectTypeDefinitionNode(
  *
  * @category AST Guard
  */
-export function isDirectiveDefinitionNode(node: ASTNode): node is DirectiveDefinitionNode {
+export function isDirectiveDefinitionNode(node: GQL.ASTNode): node is GQL.DirectiveDefinitionNode {
   return node.kind === Kind.DIRECTIVE_DEFINITION
 }
 
@@ -417,7 +372,7 @@ export function isDirectiveDefinitionNode(node: ASTNode): node is DirectiveDefin
  *
  * @category AST Guard
  */
-export function isSchemaExtensionNode(node: ASTNode): node is SchemaExtensionNode {
+export function isSchemaExtensionNode(node: GQL.ASTNode): node is GQL.SchemaExtensionNode {
   return node.kind === Kind.SCHEMA_EXTENSION
 }
 
@@ -430,7 +385,7 @@ export function isSchemaExtensionNode(node: ASTNode): node is SchemaExtensionNod
  *
  * @category AST Guard
  */
-export function isScalarTypeExtensionNode(node: ASTNode): node is ScalarTypeExtensionNode {
+export function isScalarTypeExtensionNode(node: GQL.ASTNode): node is GQL.ScalarTypeExtensionNode {
   return node.kind === Kind.SCALAR_TYPE_EXTENSION
 }
 
@@ -439,7 +394,7 @@ export function isScalarTypeExtensionNode(node: ASTNode): node is ScalarTypeExte
  *
  * @category AST Guard
  */
-export function isObjectTypeExtensionNode(node: ASTNode): node is ObjectTypeExtensionNode {
+export function isObjectTypeExtensionNode(node: GQL.ASTNode): node is GQL.ObjectTypeExtensionNode {
   return node.kind === Kind.OBJECT_TYPE_EXTENSION
 }
 
@@ -448,7 +403,7 @@ export function isObjectTypeExtensionNode(node: ASTNode): node is ObjectTypeExte
  *
  * @category AST Guard
  */
-export function isInterfaceTypeExtensionNode(node: ASTNode): node is InterfaceTypeExtensionNode {
+export function isInterfaceTypeExtensionNode(node: GQL.ASTNode): node is GQL.InterfaceTypeExtensionNode {
   return node.kind === Kind.INTERFACE_TYPE_EXTENSION
 }
 
@@ -457,7 +412,7 @@ export function isInterfaceTypeExtensionNode(node: ASTNode): node is InterfaceTy
  *
  * @category AST Guard
  */
-export function isUnionTypeExtensionNode(node: ASTNode): node is UnionTypeExtensionNode {
+export function isUnionTypeExtensionNode(node: GQL.ASTNode): node is GQL.UnionTypeExtensionNode {
   return node.kind === Kind.UNION_TYPE_EXTENSION
 }
 
@@ -466,7 +421,7 @@ export function isUnionTypeExtensionNode(node: ASTNode): node is UnionTypeExtens
  *
  * @category AST Guard
  */
-export function isEnumTypeExtensionNode(node: ASTNode): node is EnumTypeExtensionNode {
+export function isEnumTypeExtensionNode(node: GQL.ASTNode): node is GQL.EnumTypeExtensionNode {
   return node.kind === Kind.ENUM_TYPE_EXTENSION
 }
 
@@ -476,7 +431,7 @@ export function isEnumTypeExtensionNode(node: ASTNode): node is EnumTypeExtensio
  * @category AST Guard
  */
 export function isInputObjectTypeExtensionNode(
-  node: ASTNode,
-): node is InputObjectTypeExtensionNode {
+  node: GQL.ASTNode,
+): node is GQL.InputObjectTypeExtensionNode {
   return node.kind === Kind.INPUT_OBJECT_TYPE_EXTENSION
 }
