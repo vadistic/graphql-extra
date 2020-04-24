@@ -19,8 +19,8 @@ export class OperationDefinitionApi extends Mix(NameOptionalApiMixin, Directives
     return this.node.operation
   }
 
-  setOperationType(value: GQL.OperationTypeNode): this {
-    mutable(this.node).operation = value
+  setOperationType(operation: GQL.OperationTypeNode): this {
+    mutable(this.node).operation = operation
 
     return this
   }

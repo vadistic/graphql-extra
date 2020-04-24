@@ -1,8 +1,8 @@
 import { print } from 'graphql'
 
-import { t } from '../../src'
+import { t } from '..'
 
-describe('node > alias', () => {
+describe('AST alias', () => {
   test('objectType', () => {
     // props input
     const res = t.objectType({
@@ -150,7 +150,11 @@ describe('node > alias', () => {
       name: 'MyInput',
       description: 'My input',
       fields: [
-        { name: 'id', description: 'field description', type: { name: 'ID', nonNull: true } },
+        {
+          name: 'id',
+          description: 'field description',
+          type: { name: 'ID', nonNull: true },
+        },
       ],
     })
 

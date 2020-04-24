@@ -29,6 +29,8 @@ export class OperationTypeDefinitionApiMixin {
     return { opType: this.node.operationTypes?.[index], index }
   }
 
+  // ────────────────────────────────────────────────────────────────────────────────
+
   getOperationType(operation: GQL.OperationTypeNode): OperationTypeDefinitionApi | undefined {
     const { opType } = this._findOperationNode(operation)
 
