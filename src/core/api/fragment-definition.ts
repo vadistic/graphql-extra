@@ -1,6 +1,8 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+import { validateNodeKind } from '../errors'
 import { NameOptionalApiMixin } from '../mixins/name'
 
 /**
@@ -11,6 +13,8 @@ import { NameOptionalApiMixin } from '../mixins/name'
 export class FragmentDefinitionApi extends Mix(NameOptionalApiMixin) {
   constructor(readonly node: GQL.FragmentDefinitionNode) {
     super([node])
+
+    validateNodeKind(Kind.FRAGMENT_DEFINITION, node)
   }
 }
 /**

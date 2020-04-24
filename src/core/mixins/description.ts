@@ -3,10 +3,6 @@ import type * as GQL from 'graphql'
 import { stringValueNode } from '../../node'
 import { mutable } from '../../utils'
 
-//
-// ─── DESCRIPTION API MIXIN ──────────────────────────────────────────────────────
-//
-
 /**
  * @category API Mixins
  */

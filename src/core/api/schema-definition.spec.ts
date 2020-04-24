@@ -28,7 +28,7 @@ describe('SchemaDefinitionApi & SchemaExtensionApi', () => {
     [SchemaExtensionApi.name, extApi],
   ]
 
-  test('SchemaDefinitionApi > DescriptionApiMixin', () => {
+  test('DescriptionApiMixin', () => {
     defApi.setDescription('ABC')
 
     expect(defApi.node.description?.value).toBe('ABC')

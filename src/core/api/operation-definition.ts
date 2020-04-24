@@ -1,7 +1,9 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 import { mutable } from '../../utils'
+import { validateNodeKind } from '../errors'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { NameOptionalApiMixin } from '../mixins/name'
 
@@ -13,6 +15,8 @@ import { NameOptionalApiMixin } from '../mixins/name'
 export class OperationDefinitionApi extends Mix(NameOptionalApiMixin, DirectivesApiMixin) {
   constructor(readonly node: GQL.OperationDefinitionNode) {
     super([node], [node])
+
+    validateNodeKind(Kind.OPERATION_DEFINITION, node)
   }
 
   getOperationType(): GQL.OperationTypeNode {

@@ -1,4 +1,7 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
+
+import { validateNodeKind } from '../errors'
 
 /**
  *  API for GraphQL `SelectionSetNode`
@@ -7,6 +10,7 @@ import type * as GQL from 'graphql'
  */
 export class SelectionSetApi {
   constructor(readonly node: GQL.SelectionSetNode) {
+    validateNodeKind(Kind.SELECTION_SET, node)
   }
 }
 /**

@@ -5,6 +5,7 @@ import {
   TypeNodeProps, nameNode, nonNullTypeNode, listTypeNode, typeNode,
 } from '../../node'
 import { applyPropsCloned, mutable } from '../../utils'
+import { validateNodeKindArr, validateNodeKind } from '../errors'
 import type { Typename } from '../types'
 
 /**
@@ -13,7 +14,9 @@ import type { Typename } from '../types'
  * @category API Public
  */
 export class TypeApi {
-  constructor(readonly node: GQL.TypeNode) {}
+  constructor(readonly node: GQL.TypeNode) {
+    validateNodeKindArr([Kind.NAMED_TYPE, Kind.LIST_TYPE, Kind.NON_NULL_TYPE], node)
+  }
 
   getNamedType(): GQL.NamedTypeNode {
     return this._getNamedType(this.node)
@@ -113,7 +116,9 @@ export function typeApi(node: GQL.TypeNode): TypeApi {
  * @category API Public
  */
 export class NamedTypeApi {
-  constructor(readonly node: GQL.NamedTypeNode) {}
+  constructor(readonly node: GQL.NamedTypeNode) {
+    validateNodeKind(Kind.NAMED_TYPE, node)
+  }
 
   getTypename(): Typename {
     return this.node.name.value

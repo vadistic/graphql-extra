@@ -1,6 +1,8 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+import { validateNodeKind } from '../errors'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { FieldDefinitionsApiMixin } from '../mixins/field-definition'
 import { InputValuesAsFieldsApiMixin } from '../mixins/input-values-as-fields'
@@ -35,6 +37,8 @@ export class ObjectExtApi extends Mix(
 ) {
   constructor(readonly node: GQL.ObjectTypeExtensionNode) {
     super([node], [node], [node], [node])
+
+    validateNodeKind(Kind.OBJECT_TYPE_EXTENSION, node)
   }
 }
 
@@ -62,6 +66,8 @@ export class InterfaceExtApi extends Mix(
 ) {
   constructor(readonly node: GQL.InterfaceTypeExtensionNode) {
     super([node], [node], [node], [node])
+
+    validateNodeKind(Kind.INTERFACE_TYPE_EXTENSION, node)
   }
 }
 
@@ -88,6 +94,8 @@ export class UnionExtApi extends Mix(
 ) {
   constructor(readonly node: GQL.UnionTypeExtensionNode) {
     super([node], [node], [node])
+
+    validateNodeKind(Kind.UNION_TYPE_EXTENSION, node)
   }
 }
 
@@ -114,6 +122,8 @@ export class ScalarExtApi extends Mix(
 ) {
   constructor(readonly node: GQL.ScalarTypeExtensionNode) {
     super([node], [node], [node])
+
+    validateNodeKind(Kind.SCALAR_TYPE_EXTENSION, node)
   }
 }
 
@@ -140,6 +150,8 @@ export class EnumExtApi extends Mix(
 ) {
   constructor(readonly node: GQL.EnumTypeExtensionNode) {
     super([node], [node], [node])
+
+    validateNodeKind(Kind.ENUM_TYPE_EXTENSION, node)
   }
 }
 
@@ -167,6 +179,8 @@ export class InputExtApi extends Mix(
 ) {
   constructor(readonly node: GQL.InputObjectTypeExtensionNode) {
     super([node], [node], [node], [node])
+
+    validateNodeKind(Kind.INPUT_OBJECT_TYPE_EXTENSION, node)
   }
 }
 

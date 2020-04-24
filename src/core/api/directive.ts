@@ -1,6 +1,8 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+import { validateNodeKind } from '../errors'
 import { ArgumentsApiMixin } from '../mixins/argument'
 import { NameApiMixin } from '../mixins/name'
 
@@ -12,6 +14,8 @@ import { NameApiMixin } from '../mixins/name'
 export class DirectiveApi extends Mix(NameApiMixin, ArgumentsApiMixin) {
   constructor(readonly node: GQL.DirectiveNode) {
     super([node], [node])
+
+    validateNodeKind(Kind.DIRECTIVE, node)
   }
 }
 

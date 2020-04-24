@@ -11,6 +11,7 @@ import {
   oneToManyUpdate,
   oneToManyRemove,
 } from '../crud'
+import { validateNodeKind } from '../errors'
 import { getName } from '../helper'
 import { DescriptionApiMixin } from '../mixins/description'
 import { DirectivesApiMixin } from '../mixins/directive'
@@ -161,6 +162,8 @@ export class InputValueApi extends Mix(
 ) {
   constructor(readonly node: GQL.InputValueDefinitionNode) {
     super([node], [node], [node], [node])
+
+    validateNodeKind(Kind.INPUT_VALUE_DEFINITION, node)
   }
 
   toField(): FieldDefinitionApi {
@@ -208,6 +211,8 @@ export class FieldDefinitionApi extends Mix(
 ) {
   constructor(readonly node: GQL.FieldDefinitionNode) {
     super([node], [node], [node], [node], [node])
+
+    validateNodeKind(Kind.FIELD_DEFINITION, node)
   }
 
   toInputValue(): InputValueApi {

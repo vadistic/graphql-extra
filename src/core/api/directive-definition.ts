@@ -1,10 +1,12 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 import { nameNode } from '../../node'
 import {
   applyPropsArr, applyProps, deepMutable, mutable,
 } from '../../utils'
+import { validateNodeKind } from '../errors'
 import { getName } from '../helper'
 import { DescriptionApiMixin } from '../mixins/description'
 import { NameApiMixin } from '../mixins/name'
@@ -21,6 +23,8 @@ export class DirectiveDefinitionApi extends Mix(
 ) {
   constructor(readonly node: GQL.DirectiveDefinitionNode) {
     super([node], [node], [node])
+
+    validateNodeKind(Kind.DIRECTIVE_DEFINITION, node)
   }
 
   isRepeatable(): boolean {

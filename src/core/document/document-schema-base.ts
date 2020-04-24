@@ -46,11 +46,6 @@ export type DocumentSchemaRoots = {
   subscription: GQL.ObjectTypeDefinitionNode | undefined
 }
 
-/**
- * API for GraphQL `DocumentNode` with schema
- *
- * @category API Public
- */
 export abstract class DocumentSchemaApiBase {
   maps: DocumentSchemaTypeMap = {
     type: new Map(),

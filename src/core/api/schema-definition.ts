@@ -1,6 +1,8 @@
 import type * as GQL from 'graphql'
+import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+import { validateNodeKind } from '../errors'
 import { DescriptionApiMixin } from '../mixins/description'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { OperationTypeDefinitionApiMixin } from '../mixins/operation-type-definition'
@@ -13,6 +15,8 @@ import { OperationTypeDefinitionApiMixin } from '../mixins/operation-type-defini
 export class SchemaDefinitionApi extends Mix(DescriptionApiMixin, DirectivesApiMixin, OperationTypeDefinitionApiMixin) {
   constructor(readonly node: GQL.SchemaDefinitionNode) {
     super([node], [node], [node])
+
+    validateNodeKind(Kind.SCHEMA_DEFINITION, node)
   }
 }
 
@@ -36,6 +40,8 @@ export function schemaDefinitionApi(node: GQL.SchemaDefinitionNode): SchemaDefin
 export class SchemaExtensionApi extends Mix(DirectivesApiMixin, OperationTypeDefinitionApiMixin) {
   constructor(readonly node: GQL.SchemaExtensionNode) {
     super([node], [node])
+
+    validateNodeKind(Kind.SCHEMA_EXTENSION, node)
   }
 }
 
