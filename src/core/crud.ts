@@ -1,23 +1,29 @@
 /* eslint-disable no-param-reassign */
-import { applyPropsCloned, isScalarValue } from '../utils'
+import { ASTNode, GraphQLError } from 'graphql'
 
-export interface OneToManyGetProps {
-  node: any
-  key: string
-  elementName: string
-  parentName: string
+import {
+  ArrayElement, concat, isPrimitive, applyPropsCloned, Primitive,
+} from '../utils'
+import { Typename } from './types'
+
+
+export interface OneToManyFindOneProps<N extends ASTNode, K extends keyof N, T > {
+  node: N
+  key: K
+  target: T
+  getter: (el: ArrayElement<N[K]>) => T
 }
 
-export function oneToManyGet<Node>({
+export function oneToManyFindOneOrFail<N extends ASTNode, K extends keyof N, T = Typename>({
   node,
   key,
-  elementName,
-  parentName,
-}: OneToManyGetProps): Node {
-  const res = (node[key] || []).find((el: any) => el.name.value === elementName)
+  target,
+  getter,
+}: OneToManyFindOneProps<N, K, T>): ArrayElement<N[K]> {
+  const res = ((node[key] || []) as any[]).find((el: any) => getter(el) === target)
 
   if (!res) {
-    throw Error(`${key} element '${elementName}' on ${node.kind} '${parentName}' does not exist`)
+    throw new GraphQLError(`cannot get ${target} in ${key} of ${node.kind}`, node)
   }
 
   return res
@@ -25,125 +31,137 @@ export function oneToManyGet<Node>({
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export interface OneToManyCreateProps<Node, Props> {
-  node: any
-  key: string
-  elementName: string
-  parentName: string
-  nodeCreateFn: (props: Props) => Node
-  props: Props
+export interface OneToManyCreateProps<N extends ASTNode, K extends keyof N, T, P > {
+  node: N
+  key: K
+  target: T
+  getter: (el: ArrayElement<N[K]>) => T
+  factory: (props: P) => ArrayElement<N[K]>
+  props: P
 }
 
-export function oneToManyCreate<Node, Props>({
+export function oneToManyCreate<N extends ASTNode, K extends keyof N, T, P>({
   node,
   key,
-  elementName,
-  parentName,
+  target,
+  getter,
+  factory,
   props,
-  nodeCreateFn,
-}: OneToManyCreateProps<Node, Props>): void {
+}: OneToManyCreateProps<N, K, T, P>): void {
   if (!node[key]) {
     node[key] = [] as any
   }
 
-  const property = (node[key] || []) as any[]
-  const index = property.findIndex((el) => el.name.value === elementName)
+  const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
 
   if (index !== -1) {
-    throw Error(
-      `cannot create - '${elementName}' in ${key} of ${node.kind} '${parentName}' already exists`,
-    )
+    throw new GraphQLError(`cannot create '${target}' in ${key} of ${node.kind}`, node)
   }
 
-  property.push(applyPropsCloned(nodeCreateFn, props))
+  const arr = (node[key] || []) as any[]
+
+  if (!node[key]) {
+    node[key] = arr as any
+  }
+
+  concat(arr, factory(props))
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export interface OneToManyUpdateProps<Node, Props> {
-  node: any
-  key: string
-  elementName: string
-  parentName: string
-  nodeCreateFn: (props: Props) => Node
-  props: Props | Partial<Props | Node>
+export interface OneToManyUpdateProps<N extends ASTNode, K extends keyof N, T, P> {
+  node: N
+  key: K
+  target: T
+  getter: (el: ArrayElement<N[K]>) => T
+  factory: (props: P) => ArrayElement<N[K]>
+  props: P extends Primitive ? P : Partial<P>
 }
 
-export function oneToManyUpdate<Node, Props>({
+export function oneToManyUpdate<N extends ASTNode, K extends keyof N, T, P>({
   node,
   key,
-  elementName,
-  parentName,
+  target,
+  getter,
+  factory,
   props,
-  nodeCreateFn,
-}: OneToManyUpdateProps<Node, Props>): void {
-  if (!node[key]) {
-    node[key] = []
-  }
-
-  const property: any[] = node[key]
-
-  const index = property.findIndex((el) => el.name.value === elementName)
-
-  if (property.length === 0 || index === -1) {
-    throw Error(
-      `cannot get - '${elementName}' in ${key} of ${node.kind} '${parentName}' does not exist`,
-    )
-  }
-
-  const { kind, ...prevProps } = property[index]
-  const nextProps = isScalarValue(props) ? props : { ...prevProps, ...props }
-
-  property[index] = applyPropsCloned(nodeCreateFn, nextProps)
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-export function oneToManyUpsert<Node, Props>({
-  node,
-  key,
-  elementName,
-  props,
-  nodeCreateFn,
-}: OneToManyCreateProps<Node, Props>): void {
-  if (!node[key]) {
-    node[key] = []
-  }
-
-  const property: any[] = node[key]
-
-  const index = property.findIndex((el) => el.name.value === elementName)
-
-  if (index !== -1) {
-    const { kind, ...prevProps } = property[index]
-    const nextProps = isScalarValue(props) ? props : { ...prevProps, ...props }
-    const nextNode = applyPropsCloned(nodeCreateFn, nextProps)
-
-    property[index] = nextNode
-  }
-  else {
-    const nextNode = applyPropsCloned(nodeCreateFn, props)
-
-    property.push(nextNode)
-  }
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-export function oneToManyRemove({
-  node, key, elementName, parentName,
-}: OneToManyGetProps): void {
-  if (!node[key]) {
-    node[key] = []
-  }
-
-  const property: any[] = node[key]
-  const index = property.findIndex((el) => el.name.value === elementName)
+}: OneToManyUpdateProps<N, K, T, P>): void {
+  const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
 
   if (index === -1) {
-    throw Error(
-      `cannot remove - '${elementName}' in ${key} of ${node.kind} '${parentName}' does not exist`,
-    )
+    throw new GraphQLError(`cannot update '${target}' in ${key} of ${node.kind}`, node)
+  }
+
+  const arr = (node[key] || []) as any[]
+
+  if (!node[key]) {
+    node[key] = arr as any
+  }
+
+  const { kind, ...prev } = arr[index]
+
+  arr[index] = isPrimitive(props)
+  // cannot spread primitive props values
+    ? { ...prev, ...(applyPropsCloned(factory, props as any) as any) }
+  // partial would not play well with factory fns
+    : applyPropsCloned(factory, { ...prev, ...props as any })
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+export interface OneToManyUpsertProps<N extends ASTNode, K extends keyof N, T, P> {
+  node: N
+  key: K
+  target: T
+  getter: (el: ArrayElement<N[K]>) => T
+  factory: (props: P) => ArrayElement<N[K]>
+  props: P
+}
+
+export function oneToManyUpsert<N extends ASTNode, K extends keyof N, T, P>({
+  node,
+  key,
+  target,
+  getter,
+  factory,
+  props,
+}: OneToManyUpsertProps<N, K, T, P>): void {
+  const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
+
+  const arr = (node[key] || []) as any[]
+
+  if (!node[key]) {
+    node[key] = arr as any
+  }
+
+  if (index === -1) {
+    concat(arr, factory(props))
+  }
+  else {
+    const { kind, ...prev } = arr[index]
+
+    arr[index] = isPrimitive(props)
+      // cannot spread primitive props values
+      ? { ...prev, ...(applyPropsCloned(factory, props) as any) }
+      // partial would not play well with factory fns
+      : applyPropsCloned(factory, { ...prev, ...props })
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+export function oneToManyRemoveOrFail<N extends ASTNode, K extends keyof N, T = Typename>({
+  node, key, target, getter,
+}: OneToManyFindOneProps<N, K, T>): void {
+  if (!node[key]) {
+    (node[key] as unknown as any[]) = []
+  }
+
+  const property = node[key] as unknown as any[]
+  const index = property.findIndex((el) => getter(el) === target)
+
+  if (index === -1) {
+    throw new GraphQLError(`cannot remove ${target} in ${key} of ${node.kind}`, node)
   }
 
   property.splice(index, 1)

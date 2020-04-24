@@ -4,11 +4,11 @@ import { InputValueDefinitionNodeProps, inputValueDefinitionNode, TypeNodeProps 
 import { InputValueApi, inputValueApi } from '../api/input-value-and-field-definition'
 import type { TypeApi } from '../api/type'
 import {
-  oneToManyGet,
   oneToManyCreate,
   oneToManyUpsert,
   oneToManyUpdate,
-  oneToManyRemove,
+  oneToManyRemoveOrFail,
+  oneToManyFindOneOrFail,
 } from '../crud'
 import { getName } from '../helper'
 import type { Fieldname, Typename } from '../types'
@@ -47,11 +47,11 @@ export class InputValuesAsFieldsApiMixin {
   }
 
   getField(fieldname: Fieldname): InputValueApi {
-    const arg = oneToManyGet<GQL.InputValueDefinitionNode>({
+    const arg = oneToManyFindOneOrFail({
       node: this.node,
       key: 'fields',
-      elementName: fieldname,
-      parentName: this.node.name.value,
+      target: fieldname,
+      getter: (el) => el.name.value,
     })
 
     return inputValueApi(arg)
@@ -61,9 +61,9 @@ export class InputValuesAsFieldsApiMixin {
     oneToManyCreate({
       node: this.node,
       key: 'fields',
-      elementName: getName(props),
-      parentName: this.node.name.value,
-      nodeCreateFn: inputValueDefinitionNode,
+      target: getName(props.name),
+      getter: (el) => el.name.value,
+      factory: inputValueDefinitionNode,
       props,
     })
 
@@ -74,9 +74,9 @@ export class InputValuesAsFieldsApiMixin {
     oneToManyUpsert({
       node: this.node,
       key: 'fields',
-      elementName: getName(props),
-      parentName: this.node.name.value,
-      nodeCreateFn: inputValueDefinitionNode,
+      target: getName(props.name),
+      getter: (el) => el.name.value,
+      factory: inputValueDefinitionNode,
       props,
     })
 
@@ -90,9 +90,9 @@ export class InputValuesAsFieldsApiMixin {
     oneToManyUpdate({
       node: this.node,
       key: 'fields',
-      elementName: fieldname,
-      parentName: this.node.name.value,
-      nodeCreateFn: inputValueDefinitionNode,
+      target: fieldname,
+      getter: (el) => el.name.value,
+      factory: inputValueDefinitionNode,
       props,
     })
 
@@ -100,11 +100,11 @@ export class InputValuesAsFieldsApiMixin {
   }
 
   removeField(fieldname: Fieldname): this {
-    oneToManyRemove({
+    oneToManyRemoveOrFail({
       node: this.node,
       key: 'fields',
-      elementName: fieldname,
-      parentName: this.node.name.value,
+      target: fieldname,
+      getter: (el) => el.name.value,
     })
 
     return this

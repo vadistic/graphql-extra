@@ -5,11 +5,11 @@ import { Mix } from 'mix-classes'
 import { InputValueDefinitionNodeProps, inputValueDefinitionNode, TypeNodeProps } from '../../node'
 import { mutable } from '../../utils'
 import {
-  oneToManyGet,
   oneToManyCreate,
   oneToManyUpsert,
   oneToManyUpdate,
-  oneToManyRemove,
+  oneToManyRemoveOrFail,
+  oneToManyFindOneOrFail,
 } from '../crud'
 import { validateNodeKind } from '../errors'
 import { getName } from '../helper'
@@ -54,11 +54,11 @@ export class InputValuesAsArgumentsApiMixin {
   }
 
   getArgument(argname: Argname): InputValueApi {
-    const arg = oneToManyGet<GQL.InputValueDefinitionNode>({
+    const arg = oneToManyFindOneOrFail({
       node: this.node,
       key: 'arguments',
-      elementName: argname,
-      parentName: this.node.name.value,
+      target: argname,
+      getter: (el) => el.name.value,
     })
 
     return inputValueApi(arg)
@@ -68,9 +68,9 @@ export class InputValuesAsArgumentsApiMixin {
     oneToManyCreate({
       node: this.node,
       key: 'arguments',
-      elementName: getName(props),
-      parentName: this.node.name.value,
-      nodeCreateFn: inputValueDefinitionNode,
+      target: getName(props),
+      getter: (el) => el.name.value,
+      factory: inputValueDefinitionNode,
       props,
     })
 
@@ -81,9 +81,9 @@ export class InputValuesAsArgumentsApiMixin {
     oneToManyUpsert({
       node: this.node,
       key: 'arguments',
-      elementName: getName(props),
-      parentName: this.node.name.value,
-      nodeCreateFn: inputValueDefinitionNode,
+      target: getName(props),
+      getter: (el) => el.name.value,
+      factory: inputValueDefinitionNode,
       props,
     })
 
@@ -97,9 +97,9 @@ export class InputValuesAsArgumentsApiMixin {
     oneToManyUpdate({
       node: this.node,
       key: 'arguments',
-      elementName: argname,
-      parentName: this.node.name.value,
-      nodeCreateFn: inputValueDefinitionNode,
+      target: argname,
+      getter: (el) => el.name.value,
+      factory: inputValueDefinitionNode,
       props,
     })
 
@@ -107,11 +107,11 @@ export class InputValuesAsArgumentsApiMixin {
   }
 
   removeArgument(argname: Argname): this {
-    oneToManyRemove({
+    oneToManyRemoveOrFail({
       node: this.node,
       key: 'arguments',
-      elementName: argname,
-      parentName: this.node.name.value,
+      target: argname,
+      getter: (el) => el.name.value,
     })
 
     return this

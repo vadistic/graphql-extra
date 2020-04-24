@@ -3,11 +3,11 @@ import type * as GQL from 'graphql'
 import { DirectiveNodeProps, directiveNode } from '../../node'
 import { DirectiveApi, directiveApi } from '../api/directive'
 import {
-  oneToManyGet,
   oneToManyCreate,
   oneToManyUpdate,
   oneToManyUpsert,
-  oneToManyRemove,
+  oneToManyRemoveOrFail,
+  oneToManyFindOneOrFail,
 } from '../crud'
 import { getName } from '../helper'
 import type { Directivename } from '../types'
@@ -50,11 +50,11 @@ export class DirectivesApiMixin {
   }
 
   getDirective(directivename: Directivename): DirectiveApi {
-    const directive = oneToManyGet<GQL.DirectiveNode>({
+    const directive = oneToManyFindOneOrFail({
       node: this.node,
       key: 'directives',
-      elementName: directivename,
-      parentName: getName(this.node),
+      target: directivename,
+      getter: (el) => el.name.value,
     })
 
     return directiveApi(directive)
@@ -64,9 +64,9 @@ export class DirectivesApiMixin {
     oneToManyCreate({
       node: this.node,
       key: 'directives',
-      elementName: getName(props),
-      parentName: getName(this.node),
-      nodeCreateFn: directiveNode,
+      target: getName(props),
+      getter: (el) => el.name.value,
+      factory: directiveNode,
       props,
     })
 
@@ -80,9 +80,9 @@ export class DirectivesApiMixin {
     oneToManyUpdate({
       node: this.node,
       key: 'directives',
-      elementName: directivename,
-      parentName: getName(this.node),
-      nodeCreateFn: directiveNode,
+      target: directivename,
+      getter: (el) => el.name.value,
+      factory: directiveNode,
       props,
     })
 
@@ -93,9 +93,9 @@ export class DirectivesApiMixin {
     oneToManyUpsert({
       node: this.node,
       key: 'directives',
-      elementName: getName(props),
-      parentName: getName(this.node),
-      nodeCreateFn: directiveNode,
+      target: getName(props),
+      getter: (el) => el.name.value,
+      factory: directiveNode,
       props,
     })
 
@@ -103,11 +103,11 @@ export class DirectivesApiMixin {
   }
 
   removeDirective(directivename: Directivename): this {
-    oneToManyRemove({
+    oneToManyRemoveOrFail({
       node: this.node,
       key: 'directives',
-      elementName: directivename,
-      parentName: getName(this.node),
+      target: directivename,
+      getter: (el) => el.name.value,
     })
 
     return this

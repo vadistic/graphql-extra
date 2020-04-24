@@ -3,7 +3,7 @@ import * as GQL from 'graphql'
 import {
   operationTypeDefinitionNode, OperationTypeDefinitionNodeProps, NamedTypeNodeProps, namedTypeNode,
 } from '../../node/ast'
-import { nullableFn, mutable, concat } from '../../utils'
+import { applyNullable, mutable, concat } from '../../utils'
 import { operationTypeDefinitionApi, OperationTypeDefinitionApi } from '../api/operation-type-definition'
 import { Typename } from '../types'
 
@@ -34,7 +34,7 @@ export class OperationTypeDefinitionApiMixin {
   getOperationType(operation: GQL.OperationTypeNode): OperationTypeDefinitionApi | undefined {
     const { opType } = this._findOperationNode(operation)
 
-    return nullableFn(operationTypeDefinitionApi)(opType)
+    return applyNullable(operationTypeDefinitionApi)(opType)
   }
 
   getOperationTypename(operation: GQL.OperationTypeNode): string | undefined {

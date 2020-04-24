@@ -12,6 +12,19 @@ export class SelectionSetApi {
   constructor(readonly node: GQL.SelectionSetNode) {
     validateNodeKind(Kind.SELECTION_SET, node)
   }
+
+  isEmpty(): boolean {
+    return this.node.selections.length === 0
+  }
+
+  // createField(props: FieldNodeProps | GQL.FieldNode) {
+  //   oneToManyCreate({
+  //     node: this.node,
+  //     nodeCreateFn: fieldNode,
+  //     key: 'selections',
+
+  //   })
+  // }
 }
 /**
  * `SelectionSetApi` constructor fn

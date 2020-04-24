@@ -54,7 +54,7 @@ export function getName(input: any): string {
   }
 
   if ('name' in input && !!input.name) {
-    return getName(input.name)
+    return typeof input.name === 'string' ? input.name : getName(input.name)
   }
 
   if ('kind' in input && !!input.kind) {

@@ -2,11 +2,14 @@ import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+import { selectionSetNode } from '../../node'
+import { mutable } from '../../utils'
 import { validateNodeKind, validationError } from '../errors'
 import { ArgumentsApiMixin } from '../mixins/argument'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { NameApiMixin } from '../mixins/name'
 import { SelectionAssertionApiMixin } from '../mixins/selection-assertion'
+import { SelectionSetApi, selectionSetApi } from './selection-set'
 
 // ! apis & mixins together to resolve import cycles
 
@@ -38,7 +41,17 @@ export class SelectionSetApiMixin {
   constructor(readonly node: SelectionSetApiMixinNode) {}
 
   hasSelectionSet(): boolean {
-    return !!this.node.selectionSet?.selections.length
+    return !!this.node.selectionSet
+  }
+
+  // TODO: add option to specify if this seletionse should be created
+  getSelectionSet(): SelectionSetApi {
+    if (!this.node.selectionSet) {
+      mutable(this.node).selectionSet = selectionSetNode([])
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return selectionSetApi(this.node.selectionSet!)
   }
 
   getSelections(): SelectionApi[] {

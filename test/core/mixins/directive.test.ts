@@ -24,7 +24,7 @@ describe('DirectivesApiMixin', () => {
     expect(api.getDirectiveNames()).toMatchObject(['server'])
 
     expect(() => api.createDirective('server')).toThrowErrorMatchingInlineSnapshot(
-      '"cannot create - \'server\' in directives of OperationDefinition \'MyOp\' already exists"',
+      '"cannot create \'server\' in directives of OperationDefinition"',
     )
   })
 
@@ -47,7 +47,7 @@ describe('DirectivesApiMixin', () => {
     expect(api.getDirective('client').hasArgument('cache')).toBeTruthy()
 
     expect(() => api.updateDirective('XYZ', { name: 'ABC' })).toThrowErrorMatchingInlineSnapshot(
-      "\"cannot get - 'XYZ' in directives of OperationDefinition 'MyOp' does not exist\"",
+      '"cannot update \'XYZ\' in directives of OperationDefinition"',
     )
   })
 
@@ -85,7 +85,7 @@ describe('DirectivesApiMixin', () => {
     expect(api.hasDirective('server')).toBeFalsy()
 
     expect(() => api.removeDirective('XYZ')).toThrowErrorMatchingInlineSnapshot(
-      "\"cannot remove - 'XYZ' in directives of OperationDefinition 'MyOp' does not exist\"",
+      '"cannot remove XYZ in directives of OperationDefinition"',
     )
   })
 })

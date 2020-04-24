@@ -3,11 +3,11 @@ import type * as GQL from 'graphql'
 import { ArgumentNodeProps, argumentNode } from '../../node'
 import { ArgumentApi, argumentApi } from '../api/argument'
 import {
-  oneToManyGet,
+  oneToManyFindOneOrFail,
   oneToManyCreate,
   oneToManyUpdate,
   oneToManyUpsert,
-  oneToManyRemove,
+  oneToManyRemoveOrFail,
 } from '../crud'
 import { getName } from '../helper'
 import type { Argname } from '../types'
@@ -40,11 +40,11 @@ export class ArgumentsApiMixin {
   }
 
   getArgument(argname: Argname): ArgumentApi {
-    const arg = oneToManyGet<GQL.ArgumentNode>({
+    const arg = oneToManyFindOneOrFail({
       node: this.node,
       key: 'arguments',
-      elementName: argname,
-      parentName: this.node.name.value,
+      target: argname,
+      getter: (el) => el.name.value,
     })
 
     return argumentApi(arg)
@@ -54,9 +54,9 @@ export class ArgumentsApiMixin {
     oneToManyCreate({
       node: this.node,
       key: 'arguments',
-      elementName: getName(props.name),
-      parentName: this.node.name.value,
-      nodeCreateFn: argumentNode,
+      target: getName(props.name),
+      getter: (el) => el.name.value,
+      factory: argumentNode,
       props,
     })
 
@@ -67,9 +67,9 @@ export class ArgumentsApiMixin {
     oneToManyUpdate({
       node: this.node,
       key: 'arguments',
-      elementName: argname,
-      parentName: this.node.name.value,
-      nodeCreateFn: argumentNode,
+      target: argname,
+      getter: (el) => el.name.value,
+      factory: argumentNode,
       props,
     })
 
@@ -80,9 +80,9 @@ export class ArgumentsApiMixin {
     oneToManyUpsert({
       node: this.node,
       key: 'arguments',
-      elementName: getName(props.name),
-      parentName: this.node.name.value,
-      nodeCreateFn: argumentNode,
+      target: getName(props.name),
+      getter: (el) => el.name.value,
+      factory: argumentNode,
       props,
     })
 
@@ -90,11 +90,11 @@ export class ArgumentsApiMixin {
   }
 
   removeArgument(argname: Argname): this {
-    oneToManyRemove({
+    oneToManyRemoveOrFail({
       node: this.node,
       key: 'arguments',
-      elementName: argname,
-      parentName: this.node.name.value,
+      target: argname,
+      getter: (el) => el.name.value,
     })
 
     return this
