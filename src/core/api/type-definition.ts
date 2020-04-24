@@ -1,12 +1,12 @@
 import type * as GQL from 'graphql'
 import { Mix } from 'mix-classes'
 
-import { TypeDefinitionAssertionApiMixin } from '../mixins/assertion'
 import { DescriptionApiMixin } from '../mixins/description'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { FieldDefinitionsApiMixin } from '../mixins/field-definition'
 import { InputValuesAsFieldsApiMixin } from '../mixins/input-values-as-fields'
 import { NameApiMixin } from '../mixins/name'
+import { TypeDefinitionAssertionApiMixin } from '../mixins/type-assertion'
 
 /**
  * API for GraphQL `TypeDefinitionNode`

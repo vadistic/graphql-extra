@@ -5,7 +5,7 @@ import type * as AST from '../../node'
 import { cloneDeep } from '../../utils'
 import type * as API from '../api'
 import type { SDLInput } from '../helper'
-import { astNodeToApi, AstKindToApiClass } from '../kind-to-api'
+import { astNodeToApi, AstKindToApiType } from '../kind-to-api'
 import type { Typename, Directivename } from '../types'
 import { DocumentSchemaApiBase, DocumentSchemaRoots } from './document-schema-base'
 
@@ -60,10 +60,10 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
     return Array.from(this.maps.type.values()).map(astNodeToApi)
   }
 
-  getAllTypesOfKind<K extends GQL.TypeDefinitionNode['kind']>(kind: K): AstKindToApiClass<K>[] {
+  getAllTypesOfKind<K extends GQL.TypeDefinitionNode['kind']>(kind: K): AstKindToApiType<K>[] {
     return Array.from(this.maps.type.values())
       .filter((node) => node.kind === kind)
-      .map(astNodeToApi) as AstKindToApiClass<K>[]
+      .map(astNodeToApi) as AstKindToApiType<K>[]
   }
 
   getAllScalarTypes(): API.ScalarTypeApi[] {
@@ -99,10 +99,10 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
     return Array.from(this.maps.extension.values()).map(astNodeToApi)
   }
 
-  getAllExtsOfKind<K extends GQL.TypeExtensionNode['kind']>(kind: K): AstKindToApiClass<K>[] {
+  getAllExtsOfKind<K extends GQL.TypeExtensionNode['kind']>(kind: K): AstKindToApiType<K>[] {
     return Array.from(this.maps.extension.values())
       .filter((node) => node.kind === kind)
-      .map(astNodeToApi) as AstKindToApiClass<K>[]
+      .map(astNodeToApi) as AstKindToApiType<K>[]
   }
 
   getAllScalarExts(): API.ScalarExtApi[] {
@@ -170,28 +170,28 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
   getTypeOfKind<K extends GQL.TypeDefinitionNode['kind']>(
     typename: Typename,
     kind: K,
-  ): AstKindToApiClass<K> {
+  ): AstKindToApiType<K> {
     const node = this._getNodeOfKind(typename, 'type', kind)
 
-    return astNodeToApi(node) as AstKindToApiClass<K>
+    return astNodeToApi(node) as AstKindToApiType<K>
   }
 
   createTypeOfKind<K extends GQL.TypeDefinitionNode['kind']>(
     props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
-  ): AstKindToApiClass<K> {
+  ): AstKindToApiType<K> {
     const node = this._createNodeOfKind(props, 'type', kind)
 
-    return astNodeToApi(node) as AstKindToApiClass<K>
+    return astNodeToApi(node) as AstKindToApiType<K>
   }
 
   getOrCreateTypeOfKind<K extends GQL.TypeDefinitionNode['kind']>(
     props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
-  ): AstKindToApiClass<K> {
+  ): AstKindToApiType<K> {
     const node = this._getOrCreateNodeOfKind(props, 'type', kind)
 
-    return astNodeToApi(node) as AstKindToApiClass<K>
+    return astNodeToApi(node) as AstKindToApiType<K>
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
@@ -200,28 +200,28 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
   getExtOfKind<K extends GQL.TypeExtensionNode['kind']>(
     typename: Typename,
     kind: K,
-  ): AstKindToApiClass<K> {
+  ): AstKindToApiType<K> {
     const node = this._getNodeOfKind(typename, 'extension', kind)
 
-    return astNodeToApi(node) as AstKindToApiClass<K>
+    return astNodeToApi(node) as AstKindToApiType<K>
   }
 
   createExtOfKind<K extends GQL.TypeExtensionNode['kind']>(
     props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
-  ): AstKindToApiClass<K> {
+  ): AstKindToApiType<K> {
     const node = this._createNodeOfKind(props, 'extension', kind)
 
-    return astNodeToApi(node) as AstKindToApiClass<K>
+    return astNodeToApi(node) as AstKindToApiType<K>
   }
 
   getOrExtTypeOfKind<K extends GQL.TypeExtensionNode['kind']>(
     props: GQL.ASTKindToNode[K] | AST.AstKindToNodeFnParm<K>,
     kind: K,
-  ): AstKindToApiClass<K> {
+  ): AstKindToApiType<K> {
     const node = this._getOrCreateNodeOfKind(props, 'extension', kind)
 
-    return astNodeToApi(node) as AstKindToApiClass<K>
+    return astNodeToApi(node) as AstKindToApiType<K>
   }
 
   // ─────────────────────────────────────────────────────────────────

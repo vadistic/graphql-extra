@@ -1,5 +1,5 @@
 export * from './argument'
-export * from './assertion'
+export * from './type-assertion'
 export * from './description'
 export * from './directive'
 export * from './field-definition'

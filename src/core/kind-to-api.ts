@@ -1,4 +1,4 @@
-import { ASTKindToNode, KindEnum } from 'graphql'
+import type { ASTKindToNode, KindEnum } from 'graphql'
 
 import { ContstructorType } from '../utils'
 import * as API from './api'
@@ -6,7 +6,7 @@ import * as API from './api'
 /**
  * @category Helper
  */
-export const astKindToApiClassMap = {
+export const astKindToApiMap = {
   // NAME
   // Name
 
@@ -36,15 +36,16 @@ export const astKindToApiClassMap = {
   // ObjectField:
 
   // DIRECTIVES
-  // Directive:
+  Directive: API.DirectiveApi,
 
   // TYPES
-  // NamedType:
-  // ListType:
-  // NonNullType:
+  // ! could be also be NamedTypeApi
+  NamedType: API.TypeApi,
+  ListType: API.TypeApi,
+  NonNullType: API.TypeApi,
 
   // TYPE SYSTEM DEFINITIONS
-  // SchemaDefinition:
+  SchemaDefinition: API.SchemaDefinitionApi,
   // OperationTypeDefinition:
 
   // TYPE DEFINITIONS
@@ -64,7 +65,7 @@ export const astKindToApiClassMap = {
   DirectiveDefinition: API.DirectiveDefinitionApi,
 
   // TYPE SYSTEM EXTENSIONS
-  // SchemaExtension:
+  SchemaExtension: API.SchemaExtensionApi,
 
   // TYPE EXTENSIONS
   ScalarTypeExtension: API.ScalarExtApi,
@@ -78,26 +79,28 @@ export const astKindToApiClassMap = {
 /**
  * @category Helper
  */
-export type AstKindToApiClass<K> = K extends keyof typeof astKindToApiClassMap
-  ? ContstructorType<typeof astKindToApiClassMap[K]>
+export type AstKindToApiType<K> = K extends keyof typeof astKindToApiMap
+  ? ContstructorType<typeof astKindToApiMap[K]>
   : never
 
 /**
  * @category Helper
  */
-export function astKindToApiFn<K extends KindEnum>(
-  kind: K,
-): (node: ASTKindToNode[K]) => AstKindToApiClass<K> {
-  const Clazz = (astKindToApiClassMap as any)[kind]
+export function astKindToApi<K extends KindEnum>(kind: K): (node: ASTKindToNode[K]) => AstKindToApiType<K> {
+  const Clazz = (astKindToApiMap as any)[kind]
 
-  return (node: ASTKindToNode[K]): AstKindToApiClass<K> => new Clazz(node)
+  if (!Clazz) {
+    throw Error(astNodeToApi.name + ` - not supported kind ${kind}`)
+  }
+
+  return (node: ASTKindToNode[K]): AstKindToApiType<K> => new Clazz(node)
 }
 
 /**
  * @category Helper
  */
-export function astNodeToApi<K extends KindEnum>(node: { kind: K }): AstKindToApiClass<K> {
-  const Clazz = (astKindToApiClassMap as any)[node.kind]
+export function astNodeToApi<K extends KindEnum>(node: { kind: K }): AstKindToApiType<K> {
+  const Clazz = (astKindToApiMap as any)[node.kind]
 
   if (!Clazz) {
     throw Error(astNodeToApi.name + ` - not supported kind ${node.kind}`)

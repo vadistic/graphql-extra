@@ -97,5 +97,11 @@ export type AstKindToNodeFn<K> = K extends keyof AstKindToNodeFnMap
 export function astKindToNodeFn<K extends keyof AstKindToNodeFnMap>(kind: K): (
   props: Parameters<typeof astKindToNodeFnMap[K]>[0],
 ) => ReturnType<typeof astKindToNodeFnMap[K]> {
-  return (astKindToNodeFnMap as any)[kind]
+  const nodeFn = (astKindToNodeFnMap as any)[kind]
+
+  if (!nodeFn) {
+    throw Error(astKindToNodeFn.name + ` - invalid kind ${kind}`)
+  }
+
+  return nodeFn
 }

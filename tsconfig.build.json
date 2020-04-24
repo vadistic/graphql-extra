@@ -6,5 +6,12 @@
     "outDir": "dist"
   },
   "include": ["src"],
-  "exclude": ["pkg", "node_modules", "**/test/**", "**/**.test.ts"]
+  "exclude": [
+    "pkg",
+    "node_modules",
+    "**/test/**",
+    "**/**.test.ts",
+    "**/spec/**",
+    "**/**.spec.ts"
+  ]
 }

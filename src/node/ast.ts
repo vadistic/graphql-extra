@@ -14,21 +14,30 @@ import {
 //
 
 /**
+ * `NameNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type NameNodeObjProps = {
+  name: string
+}
+
+/**
  * `NameNode` create input
  *
  * @category AST Node
  */
-export type NameNodeProps = string
+export type NameNodeProps = NameNodeObjProps | string
 
 /**
  * create `NameNode`
  *
  * @category AST Node
  */
-export function nameNode(value: NameNodeProps): GQL.NameNode {
+export function nameNode(props: NameNodeProps): GQL.NameNode {
   return {
     kind: Kind.NAME,
-    value,
+    value: typeof props === 'string' ? props : props.name,
   }
 }
 
@@ -536,17 +545,17 @@ export function directiveNode(directive: DirectiveNodeProps): GQL.DirectiveNode 
  *
  * @category AST Node
  */
-export type NamedTypeNodeProps = GQL.NameNode | string
+export type NamedTypeNodeProps = GQL.NameNode | NameNodeProps | string
 
 /**
  * create `NamedTypeNode`
  *
  * @category AST Node
  */
-export function namedTypeNode(value: NamedTypeNodeProps): GQL.NamedTypeNode {
+export function namedTypeNode(props: NamedTypeNodeProps): GQL.NamedTypeNode {
   return {
     kind: Kind.NAMED_TYPE,
-    name: applyProps(nameNode, value),
+    name: applyProps(nameNode, props),
   }
 }
 

@@ -13,6 +13,7 @@ import { mutable } from '../../utils'
 export type DescriptionApiMixinNode =
   | GQL.TypeDefinitionNode
   | GQL.DirectiveDefinitionNode
+  | GQL.SchemaDefinitionNode
   | GQL.FieldDefinitionNode
   | GQL.InputValueDefinitionNode
   | GQL.EnumValueDefinitionNode
@@ -23,16 +24,19 @@ export type DescriptionApiMixinNode =
 export class DescriptionApiMixin {
   constructor(readonly node: DescriptionApiMixinNode) {}
 
-  // FIXME: by undefined??
-  hasDescription(): boolean {
-    return !!this.node.description
+  hasDescription(value?: string): boolean {
+    if (value) {
+      return this.node.description?.value === value
+    }
+
+    return !!this.node.description?.value
   }
 
   getDescription(): string | undefined {
     return this.node.description?.value
   }
 
-  setDescription(value: string): this {
+  setDescription(value: string | undefined): this {
     if (typeof value === 'undefined') {
       mutable(this.node).description = undefined
     }

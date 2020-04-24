@@ -16,9 +16,10 @@ import type { Directivename } from '../types'
  * @category API Mixins
  */
 export type DirectivesApiMixinNode =
-  | GQL.SchemaDefinitionNode
   | GQL.TypeDefinitionNode
-  | GQL.TypeSystemExtensionNode
+  | GQL.SchemaDefinitionNode
+  | GQL.TypeExtensionNode
+  | GQL.SchemaExtensionNode
   | GQL.FieldDefinitionNode
   | GQL.InputValueDefinitionNode
   | GQL.EnumValueDefinitionNode

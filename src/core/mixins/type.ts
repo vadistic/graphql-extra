@@ -1,7 +1,11 @@
 import type * as GQL from 'graphql'
 
 import type { TypeNodeProps } from '../../node'
-import { TypeApi, typeApi } from '../api/type'
+import { mutable } from '../../utils'
+import {
+  TypeApi, typeApi, namedTypeApi, NamedTypeApi,
+} from '../api/type'
+import { Typename } from '../types'
 
 /**
  * @category API Mixins
@@ -21,7 +25,7 @@ export class TypeApiMixin {
     return typeApi(this.node.type)
   }
 
-  getTypename(): string {
+  getTypename(): Typename {
     return this.getType().getTypename()
   }
 
@@ -29,8 +33,8 @@ export class TypeApiMixin {
     return this.getType().getNamedType()
   }
 
-  setTypename(value: string): this {
-    this.getType().setTypename(value)
+  setTypename(typename: Typename): this {
+    this.getType().setTypename(typename)
 
     return this
   }
@@ -49,14 +53,14 @@ export class TypeApiMixin {
     return this.getType().isList(deep)
   }
 
-  setNonNullType(value = true): this {
-    this.getType().setNonNull(value)
+  setNonNullType(to = true): this {
+    this.getType().setNonNull(to)
 
     return this
   }
 
-  setListType(value = true): this {
-    this.getType().setList(value)
+  setListType(to = true): this {
+    this.getType().setList(to)
 
     return this
   }
@@ -66,5 +70,42 @@ export class TypeApiMixin {
  * @category API Mixins
  */
 export function typeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
+  return new TypeApiMixin(node)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+
+/**
+ * @category API Mixins
+ */
+export type NamedTypeApiMixinNode =
+  | GQL.OperationTypeDefinitionNode
+
+/**
+ * @category API Mixins
+ */
+export class NamedTypeApiMixin {
+  constructor(protected node: NamedTypeApiMixinNode) {}
+
+  getNamedType(): NamedTypeApi {
+    return namedTypeApi(this.node.type)
+  }
+
+  getTypename(): Typename {
+    return this.node.type.name.value
+  }
+
+  setTypename(typename: Typename): this {
+    mutable(this.node.type.name).value = typename
+
+    return this
+  }
+}
+
+/**
+ * @category API Mixins
+ */
+export function namedTypeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
   return new TypeApiMixin(node)
 }

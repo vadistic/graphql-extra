@@ -73,8 +73,8 @@ const _getFirstDocDefinition = (doc: DocumentNode): DefinitionNode | undefined =
 const defined = <A, R>(fn: (arg: A) => R | undefined) => (arg: A): R => {
   const res = fn(arg)
 
-  if (!res) {
-    throw Error(`Undefined return from function ${fn.name}`)
+  if (res === undefined) {
+    throw Error(`undefined return from "defined" function ${fn.name}`)
   }
 
   return res

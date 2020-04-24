@@ -104,3 +104,33 @@ export class TypeApi {
 export function typeApi(node: GQL.TypeNode): TypeApi {
   return new TypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * API for GraphQL `NamedTypeNode`
+ *
+ * @category API Public
+ */
+export class NamedTypeApi {
+  constructor(readonly node: GQL.NamedTypeNode) {}
+
+  getTypename(): Typename {
+    return this.node.name.value
+  }
+
+  setTypename(value: Typename): this {
+    mutable(this.node).name = nameNode(value)
+
+    return this
+  }
+}
+
+/**
+ * `NamedTypeApi` constructor fn
+ *
+ * @category API Public
+ */
+export function namedTypeApi(node: GQL.NamedTypeNode): NamedTypeApi {
+  return new NamedTypeApi(node)
+}
