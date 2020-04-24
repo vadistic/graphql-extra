@@ -16,14 +16,18 @@ import type { Directivename } from '../types'
  * @category API Mixins
  */
 export type DirectivesApiMixinNode =
-  | GQL.TypeDefinitionNode
-  | GQL.SchemaDefinitionNode
-  | GQL.TypeExtensionNode
-  | GQL.SchemaExtensionNode
-  | GQL.FieldDefinitionNode
-  | GQL.InputValueDefinitionNode
   | GQL.EnumValueDefinitionNode
+  | GQL.FieldDefinitionNode
+  | GQL.FieldNode
+  | GQL.FragmentDefinitionNode
+  | GQL.FragmentSpreadNode
+  | GQL.InputValueDefinitionNode
   | GQL.OperationDefinitionNode
+  | GQL.SchemaDefinitionNode
+  | GQL.SchemaExtensionNode
+  | GQL.TypeDefinitionNode
+  | GQL.TypeExtensionNode
+  | GQL.InlineFragmentNode
 
 /**
  * @category API Mixins

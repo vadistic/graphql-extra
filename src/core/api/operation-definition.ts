@@ -6,15 +6,21 @@ import { mutable } from '../../utils'
 import { validateNodeKind } from '../errors'
 import { DirectivesApiMixin } from '../mixins/directive'
 import { NameOptionalApiMixin } from '../mixins/name'
+import { SelectionSetApiMixin } from './selection'
+
 
 /**
  *  API for GraphQL `OperationDefinitionNode`
  *
  * @category API Public
  */
-export class OperationDefinitionApi extends Mix(NameOptionalApiMixin, DirectivesApiMixin) {
+export class OperationDefinitionApi extends Mix(
+  NameOptionalApiMixin,
+  DirectivesApiMixin,
+  SelectionSetApiMixin,
+) {
   constructor(readonly node: GQL.OperationDefinitionNode) {
-    super([node], [node])
+    super([node], [node], [node])
 
     validateNodeKind(Kind.OPERATION_DEFINITION, node)
   }

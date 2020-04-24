@@ -7,14 +7,16 @@ import { mutable } from '../../utils'
  * @category API Mixins
  */
 export type NameApiMixinNode =
-  | GQL.TypeDefinitionNode
-  | GQL.DirectiveDefinitionNode
-  | GQL.TypeExtensionNode
-  | GQL.FieldDefinitionNode
-  | GQL.InputValueDefinitionNode
-  | GQL.EnumValueDefinitionNode
-  | GQL.DirectiveNode
   | GQL.ArgumentNode
+  | GQL.DirectiveDefinitionNode
+  | GQL.DirectiveNode
+  | GQL.EnumValueDefinitionNode
+  | GQL.FieldDefinitionNode
+  | GQL.FieldNode
+  | GQL.FragmentSpreadNode
+  | GQL.InputValueDefinitionNode
+  | GQL.TypeDefinitionNode
+  | GQL.TypeExtensionNode
 
 /**
  * @category API Mixins
@@ -40,6 +42,7 @@ export function nameApiMixin(node: NameApiMixinNode): NameApiMixin {
   return new NameApiMixin(node)
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @category API Mixins

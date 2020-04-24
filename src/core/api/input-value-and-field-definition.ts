@@ -20,7 +20,7 @@ import { TypeApiMixin } from '../mixins/type'
 import type { Argname, Typename } from '../types'
 import { TypeApi } from './type'
 
-// ! 2 apis & mixin together in one file because it's hard to untangle circural dependency
+// ! apis & mixins together to resolve import cycles
 
 /**
  * @category API Mixins

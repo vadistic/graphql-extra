@@ -19,10 +19,10 @@ import type { Fieldname, Typename } from '../types'
  * @category API Mixins
  */
 export type FieldDefinitionsApiMixinNode =
-  | GQL.ObjectTypeDefinitionNode
   | GQL.InterfaceTypeDefinitionNode
-  | GQL.ObjectTypeExtensionNode
   | GQL.InterfaceTypeExtensionNode
+  | GQL.ObjectTypeDefinitionNode
+  | GQL.ObjectTypeExtensionNode
 
 /**
  * @category API Mixins

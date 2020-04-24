@@ -15,7 +15,9 @@ import type { Argname } from '../types'
 /**
  * @category API Mixins
  */
-export type ArgumentsApiMixinNode = GQL.DirectiveNode | GQL.FieldNode
+export type ArgumentsApiMixinNode =
+  | GQL.DirectiveNode
+  | GQL.FieldNode
 
 /**
  * @category API Mixins

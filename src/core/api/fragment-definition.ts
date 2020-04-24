@@ -3,16 +3,22 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 import { validateNodeKind } from '../errors'
+import { DirectivesApiMixin } from '../mixins/directive'
 import { NameOptionalApiMixin } from '../mixins/name'
+import { SelectionSetApiMixin } from './selection'
 
 /**
  *  API for GraphQL `FragmentDefinitionNode`
  *
  * @category API Public
  */
-export class FragmentDefinitionApi extends Mix(NameOptionalApiMixin) {
+export class FragmentDefinitionApi extends Mix(
+  NameOptionalApiMixin,
+  DirectivesApiMixin,
+  SelectionSetApiMixin,
+) {
   constructor(readonly node: GQL.FragmentDefinitionNode) {
-    super([node])
+    super([node], [node], [node])
 
     validateNodeKind(Kind.FRAGMENT_DEFINITION, node)
   }

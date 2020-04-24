@@ -288,7 +288,6 @@ export function fragmentSpreadNode(props: FragmentSpreadNodeProps): GQL.Fragment
  * @category AST Node
  */
 export type InlineFragmentNodeProps = {
-  name: GQL.NameNode | NameNodeProps
   typeCondition?: GQL.NamedTypeNode | NamedTypeNodeProps
   directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
   selections: GQL.SelectionSetNode | SelectionSetNodeProps

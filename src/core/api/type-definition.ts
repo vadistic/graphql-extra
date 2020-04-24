@@ -23,8 +23,6 @@ export type TypeDefinitonApi =
   | ScalarTypeApi
   | UnionTypeApi
 
-// ────────────────────────────────────────────────────────────────────────────────
-
 /**
  * API for GraphQL `ObjectTypeDefinitionNode`
  *

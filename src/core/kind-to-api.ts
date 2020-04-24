@@ -12,16 +12,16 @@ export const astKindToApiMap = {
 
   // DOCUMENT
   // Document:
-  // OperationDefinition:
+  OperationDefinition: API.OperationDefinitionApi,
   // VariableDefinition:
-  // SelectionSet:
+  SelectionSet: API.SelectionSetApi,
   // Field:
   // Argument:
 
   // FRAGMENTS
-  // FragmentSpread:
-  // InlineFragment:
-  // FragmentDefinition:
+  FragmentSpread: API.FragmentSpreadApi,
+  InlineFragment: API.InlineFragmentApi,
+  FragmentDefinition: API.FragmentDefinitionApi,
 
   // VALUES
   // Variable:
@@ -30,7 +30,7 @@ export const astKindToApiMap = {
   // StringValue:
   // BooleanValue:
   // NullValue:
-  // EnumValue:
+  EnumValue: API.EnumValueApi,
   // ListValue:
   // ObjectValue:
   // ObjectField:
@@ -46,7 +46,7 @@ export const astKindToApiMap = {
 
   // TYPE SYSTEM DEFINITIONS
   SchemaDefinition: API.SchemaDefinitionApi,
-  // OperationTypeDefinition:
+  OperationTypeDefinition: API.OperationDefinitionApi,
 
   // TYPE DEFINITIONS
   ScalarTypeDefinition: API.ScalarTypeApi,

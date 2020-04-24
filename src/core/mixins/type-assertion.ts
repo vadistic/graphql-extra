@@ -17,15 +17,13 @@ import type {
   ScalarExtApi,
   UnionExtApi,
 } from '../api/type-extension'
+import { assertionError } from '../errors'
 
 /**
  * @category API Mixins
  */
 export class TypeDefinitionAssertionApiMixin {
   constructor(readonly node: GQL.TypeDefinitionNode) {}
-
-  private readonly assertionErr = (kind: GQL.KindEnum): Error =>
-    Error(`asserted type '${kind}', but node ${this.node.name.value} is '${this.node.kind}'`)
 
   isEnumType(): this is EnumTypeApi {
     return this.node.kind === Kind.ENUM_TYPE_DEFINITION
@@ -52,51 +50,39 @@ export class TypeDefinitionAssertionApiMixin {
   }
 
   assertEnumType(): EnumTypeApi {
-    if (!this.isEnumType()) {
-      throw this.assertionErr(Kind.ENUM_TYPE_DEFINITION)
-    }
+    if (this.isEnumType()) return this
 
-    return this
+    throw assertionError(Kind.ENUM_TYPE_DEFINITION, this.node)
   }
 
   assertInputType(): InputTypeApi {
-    if (!this.isInputType()) {
-      throw this.assertionErr(Kind.INPUT_OBJECT_TYPE_DEFINITION)
-    }
+    if (this.isInputType()) return this
 
-    return this
+    throw assertionError(Kind.INPUT_OBJECT_TYPE_DEFINITION, this.node)
   }
 
   assertInterfaceType(): InterfaceTypeApi {
-    if (!this.isInterfaceType()) {
-      throw this.assertionErr(Kind.INTERFACE_TYPE_DEFINITION)
-    }
+    if (this.isInterfaceType()) return this
 
-    return this
+    throw assertionError(Kind.INTERFACE_TYPE_DEFINITION, this.node)
   }
 
   assertObjectType(): ObjectTypeApi {
-    if (!this.isObjectType()) {
-      throw this.assertionErr(Kind.OBJECT_TYPE_DEFINITION)
-    }
+    if (this.isObjectType()) return this
 
-    return this
+    throw assertionError(Kind.OBJECT_TYPE_DEFINITION, this.node)
   }
 
   assertScalarType(): ScalarTypeApi {
-    if (!this.isScalarType()) {
-      throw this.assertionErr(Kind.SCALAR_TYPE_DEFINITION)
-    }
+    if (this.isScalarType()) return this
 
-    return this
+    throw assertionError(Kind.SCALAR_TYPE_DEFINITION, this.node)
   }
 
   assertUnionType(): UnionTypeApi {
-    if (!this.isUnionType()) {
-      throw this.assertionErr(Kind.UNION_TYPE_DEFINITION)
-    }
+    if (this.isUnionType()) return this
 
-    return this
+    throw assertionError(Kind.UNION_TYPE_DEFINITION, this.node)
   }
 }
 
@@ -116,9 +102,6 @@ export function typeDefinitionAssertionApiMixin(
  */
 export class TypeExtensionAssertionApiMixin {
   constructor(readonly node: GQL.TypeExtensionNode) {}
-
-  private readonly assertionErr = (kind: GQL.KindEnum): Error =>
-    Error(`asserted type '${kind}', but node ${this.node.name.value} is '${this.node.kind}'`)
 
   isEnumExt(): this is EnumExtApi {
     return this.node.kind === Kind.ENUM_TYPE_EXTENSION
@@ -144,52 +127,42 @@ export class TypeExtensionAssertionApiMixin {
     return this.node.kind === Kind.UNION_TYPE_EXTENSION
   }
 
-  assertEnumExt(): EnumExtApi {
-    if (!this.isEnumExt()) {
-      throw this.assertionErr(Kind.ENUM_TYPE_EXTENSION)
-    }
+  // ────────────────────────────────────────────────────────────────────────────────
 
-    return this
+  assertEnumExt(): EnumExtApi {
+    if (this.isEnumExt()) return this
+
+    throw assertionError(Kind.ENUM_TYPE_EXTENSION, this.node)
   }
 
   assertInputExt(): InputExtApi {
-    if (!this.isInputExt()) {
-      throw this.assertionErr(Kind.INPUT_OBJECT_TYPE_EXTENSION)
-    }
+    if (this.isInputExt()) return this
 
-    return this
+    throw assertionError(Kind.INPUT_OBJECT_TYPE_EXTENSION, this.node)
   }
 
   assertInterfaceExt(): InterfaceExtApi {
-    if (!this.isInterfaceExt()) {
-      throw this.assertionErr(Kind.INTERFACE_TYPE_EXTENSION)
-    }
+    if (this.isInterfaceExt()) return this
 
-    return this
+    throw assertionError(Kind.INTERFACE_TYPE_EXTENSION, this.node)
   }
 
   assertObjectExt(): ObjectExtApi {
-    if (!this.isObjectExt()) {
-      throw this.assertionErr(Kind.OBJECT_TYPE_EXTENSION)
-    }
+    if (this.isObjectExt()) return this
 
-    return this
+    throw assertionError(Kind.OBJECT_TYPE_EXTENSION, this.node)
   }
 
   assertScalarExt(): ScalarExtApi {
-    if (!this.isScalarExt()) {
-      throw this.assertionErr(Kind.SCALAR_TYPE_EXTENSION)
-    }
+    if (this.isScalarExt()) return this
 
-    return this
+    throw assertionError(Kind.SCALAR_TYPE_EXTENSION, this.node)
   }
 
   assertUnionExt(): UnionExtApi {
-    if (!this.isUnionExt()) {
-      throw this.assertionErr(Kind.UNION_TYPE_EXTENSION)
-    }
+    if (this.isUnionExt()) return this
 
-    return this
+    throw assertionError(Kind.UNION_TYPE_EXTENSION, this.node)
   }
 }
 

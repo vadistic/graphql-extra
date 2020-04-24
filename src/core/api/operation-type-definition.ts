@@ -5,7 +5,7 @@ import { Mix } from 'mix-classes'
 import { NamedTypeNodeProps, namedTypeNode } from '../../node/ast'
 import { mutable, applyProps } from '../../utils'
 import { validateNodeKind } from '../errors'
-import { NamedTypeApiMixin } from '../mixins'
+import { NamedTypeApiMixin } from '../mixins/type'
 import { NamedTypeApi, namedTypeApi } from './type'
 
 

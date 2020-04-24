@@ -64,7 +64,6 @@ describe('AST node', () => {
       AST.fieldNode('myAstField'),
       AST.fragmentSpreadNode('MyFramgentSpread'),
       AST.inlineFragmentNode({
-        name: 'MyInlineFragment',
         selections: ['myInlineFragmentField'],
         typeCondition: 'SomeType',
       }),
@@ -122,7 +121,6 @@ describe('AST node', () => {
 
   test('inlineFragmentNode', () => {
     const node = AST.inlineFragmentNode({
-      name: 'MyInlineFragment',
       selections: ['myField'],
       typeCondition: 'MyType',
     })

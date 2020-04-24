@@ -7,12 +7,12 @@ import { mutable } from '../../utils'
  * @category API Mixins
  */
 export type DescriptionApiMixinNode =
-  | GQL.TypeDefinitionNode
   | GQL.DirectiveDefinitionNode
-  | GQL.SchemaDefinitionNode
+  | GQL.EnumValueDefinitionNode
   | GQL.FieldDefinitionNode
   | GQL.InputValueDefinitionNode
-  | GQL.EnumValueDefinitionNode
+  | GQL.SchemaDefinitionNode
+  | GQL.TypeDefinitionNode
 
 /**
  * @category API Mixins
