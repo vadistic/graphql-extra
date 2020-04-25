@@ -31,9 +31,10 @@ export class ObjectExtApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.FieldDefinitionsApiMixin,
   Mixin.TypeExtensionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.ObjectTypeExtensionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.OBJECT_TYPE_EXTENSION, node)
   }
@@ -60,9 +61,10 @@ export class InterfaceExtApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.FieldDefinitionsApiMixin,
   Mixin.TypeExtensionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InterfaceTypeExtensionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INTERFACE_TYPE_EXTENSION, node)
   }
@@ -88,9 +90,10 @@ export class UnionExtApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeExtensionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeExtensionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.UNION_TYPE_EXTENSION, node)
   }
@@ -116,9 +119,10 @@ export class ScalarExtApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeExtensionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.ScalarTypeExtensionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.SCALAR_TYPE_EXTENSION, node)
   }
@@ -144,9 +148,10 @@ export class EnumExtApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeExtensionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeExtensionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.ENUM_TYPE_EXTENSION, node)
   }
@@ -173,9 +178,10 @@ export class InputExtApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.InputValuesAsFieldsApiMixin,
   Mixin.TypeExtensionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InputObjectTypeExtensionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INPUT_OBJECT_TYPE_EXTENSION, node)
   }

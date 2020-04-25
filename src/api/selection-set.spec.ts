@@ -1,4 +1,4 @@
-import { Ast, Api } from '../internal'
+import { Ast, Api, Mixin } from '../internal'
 
 describe(Api.SelectionSetApi.name, () => {
   const p = Api.SelectionSetApi.prototype
@@ -13,7 +13,15 @@ describe(Api.SelectionSetApi.name, () => {
 
   const api = Api.selectionSetApi(node)
 
-  test(p.isEmpty.name, () => {
-    expect(api.isEmpty()).toBeFalsy()
+  describe('methods', () => {
+    test(p.isEmpty.name, () => {
+      expect(api.isEmpty()).toBeFalsy()
+    })
+  })
+
+  describe('mixins', () => {
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('SelectionSet')).toBe(true)
+    })
   })
 })

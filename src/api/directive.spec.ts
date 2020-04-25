@@ -20,5 +20,9 @@ describe(Api.DirectiveApi.name, () => {
     test(Mixin.ArgumentsApiMixin.name, () => {
       expect(api.getArgument('age').getValue()).toEqual(value)
     })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('Directive')).toBe(true)
+    })
   })
 })

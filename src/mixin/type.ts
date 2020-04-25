@@ -73,7 +73,6 @@ export function typeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-
 /**
  * @category API Mixins
  */

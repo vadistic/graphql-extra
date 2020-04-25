@@ -131,7 +131,7 @@ export class FieldDefinitionsApiMixin {
     return this
   }
 
-  getFieldArguments(fieldname: Fieldname): Api.InputValueApi[] {
+  getFieldArguments(fieldname: Fieldname): Api.InputValueDefinitionApi[] {
     return this.getField(fieldname).getArguments()
   }
 

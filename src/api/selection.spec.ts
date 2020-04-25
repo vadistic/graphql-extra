@@ -30,6 +30,10 @@ describe(Api.FieldApi.name, () => {
     test(Mixin.SelectionAssertionApiMixin.name, () => {
       expect(api.isField()).toBeTruthy()
     })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('Field')).toBe(true)
+    })
   })
 })
 
@@ -53,6 +57,10 @@ describe(Api.FragmentSpreadApi.name, () => {
 
     test(Mixin.SelectionAssertionApiMixin.name, () => {
       expect(api.isFragmentSpread()).toBeTruthy()
+    })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('FragmentSpread')).toBe(true)
     })
   })
 })
@@ -78,6 +86,10 @@ describe(Api.InlineFragmentApi.name, () => {
 
     test(Mixin.SelectionAssertionApiMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
+    })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('InlineFragment')).toBe(true)
     })
   })
 })

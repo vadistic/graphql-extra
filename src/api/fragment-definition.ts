@@ -15,9 +15,10 @@ export class FragmentDefinitionApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.SelectionSetApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FragmentDefinitionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.FRAGMENT_DEFINITION, node)
   }

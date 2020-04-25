@@ -15,9 +15,10 @@ export class OperationDefinitionApi extends Mix(
   Mixin.NameOptionalApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.SelectionSetApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.OperationDefinitionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.OPERATION_DEFINITION, node)
   }

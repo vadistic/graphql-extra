@@ -15,9 +15,10 @@ export class SchemaDefinitionApi extends Mix(
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.OperationTypeDefinitionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.SchemaDefinitionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.SCHEMA_DEFINITION, node)
   }
@@ -43,9 +44,10 @@ export function schemaDefinitionApi(node: GQL.SchemaDefinitionNode): SchemaDefin
 export class SchemaExtensionApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.OperationTypeDefinitionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.SchemaExtensionNode) {
-    super([node], [node])
+    super([node], [node], [node])
 
     validateNodeKind(Kind.SCHEMA_EXTENSION, node)
   }

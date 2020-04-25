@@ -15,9 +15,10 @@ export class EnumValueDefinitionApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.EnumValueDefinitionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.ENUM_VALUE_DEFINITION, node)
   }

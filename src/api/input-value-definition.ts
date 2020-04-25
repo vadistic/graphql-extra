@@ -11,14 +11,15 @@ import { mutable, validateNodeKind } from '../utils'
  *
  * @category API Public
  */
-export class InputValueApi extends Mix(
+export class InputValueDefinitionApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InputValueDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INPUT_VALUE_DEFINITION, node)
   }
@@ -37,7 +38,7 @@ export class InputValueApi extends Mix(
   }
 
   // TODO: value node helper
-  setDefaultValue(value: GQL.ValueNode): InputValueApi {
+  setDefaultValue(value: GQL.ValueNode): InputValueDefinitionApi {
     mutable(this.node).defaultValue = value
 
     return this
@@ -50,6 +51,6 @@ export class InputValueApi extends Mix(
  * @category API Public
  */
 
-export function inputValueApi(node: GQL.InputValueDefinitionNode): Api.InputValueApi {
-  return new Api.InputValueApi(node)
+export function inputValueDefinitionApi(node: GQL.InputValueDefinitionNode): Api.InputValueDefinitionApi {
+  return new Api.InputValueDefinitionApi(node)
 }

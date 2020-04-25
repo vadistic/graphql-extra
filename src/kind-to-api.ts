@@ -58,7 +58,7 @@ export const kindToApiMap = {
 
   // TYPE FIELD DEFINITIONS
   FieldDefinition: Api.FieldDefinitionApi,
-  InputValueDefinition: Api.InputValueApi,
+  InputValueDefinition: Api.InputValueDefinitionApi,
   EnumValueDefinition: Api.EnumValueDefinitionApi,
 
   // DIRECTIVE DEFINITIONS

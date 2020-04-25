@@ -30,11 +30,11 @@ export class InputValuesAsArgumentsApiMixin {
     return this.node.arguments?.map(getName) ?? []
   }
 
-  getArguments(): Api.InputValueApi[] {
-    return this.node.arguments?.map(Api.inputValueApi) ?? []
+  getArguments(): Api.InputValueDefinitionApi[] {
+    return this.node.arguments?.map(Api.inputValueDefinitionApi) ?? []
   }
 
-  getArgumentsByTypename(typename: Typename): Api.InputValueApi[] {
+  getArgumentsByTypename(typename: Typename): Api.InputValueDefinitionApi[] {
     return this.getArguments().filter((arg) => arg.getTypename() === typename)
   }
 
@@ -44,7 +44,7 @@ export class InputValuesAsArgumentsApiMixin {
     return this.node.arguments.some((arg) => arg.name.value === argname)
   }
 
-  getArgument(argname: Argname): Api.InputValueApi {
+  getArgument(argname: Argname): Api.InputValueDefinitionApi {
     const arg = oneToManyFindOneOrFail({
       node: this.node,
       key: 'arguments',
@@ -52,7 +52,7 @@ export class InputValuesAsArgumentsApiMixin {
       getter: (el) => el.name.value,
     })
 
-    return Api.inputValueApi(arg)
+    return Api.inputValueDefinitionApi(arg)
   }
 
   createArgument(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {

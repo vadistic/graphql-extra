@@ -11,9 +11,12 @@ import { mutable, validateNodeKind } from '../utils'
  *
  * @category API Public
  */
-export class ArgumentApi extends Mix(Mixin.NameApiMixin) {
+export class ArgumentApi extends Mix(
+  Mixin.NameApiMixin,
+  Mixin.KindAssertionApiMixin,
+) {
   constructor(readonly node: GQL.ArgumentNode) {
-    super([node])
+    super([node], [node])
 
     validateNodeKind(Kind.ARGUMENT, node)
   }

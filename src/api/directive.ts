@@ -11,9 +11,13 @@ import { validateNodeKind } from '../utils'
  *
  * @category API Public
  */
-export class DirectiveApi extends Mix(Mixin.NameApiMixin, Mixin.ArgumentsApiMixin) {
+export class DirectiveApi extends Mix(
+  Mixin.NameApiMixin,
+  Mixin.ArgumentsApiMixin,
+  Mixin.KindAssertionApiMixin,
+) {
   constructor(readonly node: GQL.DirectiveNode) {
-    super([node], [node])
+    super([node], [node], [node])
 
     validateNodeKind(Kind.DIRECTIVE, node)
   }

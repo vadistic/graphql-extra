@@ -17,19 +17,20 @@ export class FieldDefinitionApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.InputValuesAsArgumentsApiMixin,
   Mixin.TypeApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FieldDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.FIELD_DEFINITION, node)
   }
 
-  toInputValue(): Api.InputValueApi {
+  toInputValue(): Api.InputValueDefinitionApi {
     const {
       kind, arguments: args, loc, ...rest
     } = this.node
 
-    return Api.inputValueApi({ kind: Kind.INPUT_VALUE_DEFINITION, ...rest })
+    return Api.inputValueDefinitionApi({ kind: Kind.INPUT_VALUE_DEFINITION, ...rest })
   }
 }
 

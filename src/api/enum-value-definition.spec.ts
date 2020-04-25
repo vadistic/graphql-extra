@@ -25,5 +25,9 @@ describe(Api.EnumValueDefinitionApi.name, () => {
     test(Mixin.DirectivesApiMixin.name, () => {
       expect(api.hasDirective('Client')).toBeTruthy()
     })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('EnumValueDefinition')).toBe(true)
+    })
   })
 })

@@ -32,9 +32,10 @@ export class FieldApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.SelectionSetApiMixin,
   Mixin.SelectionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FieldNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.FIELD, node)
   }
@@ -59,9 +60,10 @@ export class FragmentSpreadApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.SelectionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FragmentSpreadNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.FRAGMENT_SPREAD, node)
   }
@@ -88,9 +90,10 @@ export class InlineFragmentApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.SelectionSetApiMixin,
   Mixin.SelectionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InlineFragmentNode) {
-    super([node], [node])
+    super([node], [node], [node])
 
     validateNodeKind(Kind.INLINE_FRAGMENT, node)
   }

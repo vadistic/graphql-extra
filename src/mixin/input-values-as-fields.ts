@@ -29,11 +29,11 @@ export class InputValuesAsFieldsApiMixin {
     return this.node.fields?.map(getName) ?? []
   }
 
-  getFields(): Api.InputValueApi[] {
-    return this.node.fields?.map(Api.inputValueApi) ?? []
+  getFields(): Api.InputValueDefinitionApi[] {
+    return this.node.fields?.map(Api.inputValueDefinitionApi) ?? []
   }
 
-  getFieldsByTypename(typename: Typename): Api.InputValueApi[] {
+  getFieldsByTypename(typename: Typename): Api.InputValueDefinitionApi[] {
     return this.getFields().filter((field) => field.getType().getTypename() === typename)
   }
 
@@ -45,7 +45,7 @@ export class InputValuesAsFieldsApiMixin {
     return this.node.fields.some((field) => field.name.value === fieldname)
   }
 
-  getField(fieldname: Fieldname): Api.InputValueApi {
+  getField(fieldname: Fieldname): Api.InputValueDefinitionApi {
     const field = oneToManyFindOneOrFail({
       node: this.node,
       key: 'fields',
@@ -53,7 +53,7 @@ export class InputValuesAsFieldsApiMixin {
       getter: (el) => el.name.value,
     })
 
-    return Api.inputValueApi(field)
+    return Api.inputValueDefinitionApi(field)
   }
 
   createField(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {

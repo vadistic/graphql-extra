@@ -1,7 +1,15 @@
-import { Api, Mixin } from '../internal'
+import { Api, Mixin, Ast } from '../internal'
 
 describe(Api.DirectiveDefinitionApi.name, () => {
   const p = Api.DirectiveDefinitionApi.prototype
+
+  const node = Ast.directiveDefinitionNode({
+    name: 'Client',
+    locations: ['ARGUMENT_DEFINITION'],
+    description: 'My description',
+  })
+
+  const api = Api.directiveDefinitionApi(node)
 
   describe('methods', () => {
     // eslint-disable-next-line jest/expect-expect
@@ -44,6 +52,10 @@ describe(Api.DirectiveDefinitionApi.name, () => {
     // eslint-disable-next-line jest/expect-expect
     test(Mixin.InputValuesAsArgumentsApiMixin.name, () => {
 
+    })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('DirectiveDefinition')).toBe(true)
     })
   })
 })

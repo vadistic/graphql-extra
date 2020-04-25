@@ -1,6 +1,8 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
+import { Mix } from 'mix-classes'
 
+import { Mixin } from '../internal'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -8,8 +10,11 @@ import { validateNodeKind } from '../utils'
  *
  * @category API Public
  */
-export class SelectionSetApi {
+
+export class SelectionSetApi extends Mix(Mixin.KindAssertionApiMixin) {
   constructor(readonly node: GQL.SelectionSetNode) {
+    super([node])
+
     validateNodeKind(Kind.SELECTION_SET, node)
   }
 

@@ -25,5 +25,9 @@ describe(Api.ArgumentApi.name, () => {
     test(Mixin.NameApiMixin.name, () => {
       expect(api.getName()).toBe('age')
     })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('Argument')).toBe(true)
+    })
   })
 })

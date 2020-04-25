@@ -40,4 +40,8 @@ describe(Api.OperationTypeDefinitionApi.name, () => {
       expect(api.getTypename()).toBe('ApiQuery')
     })
   })
+
+  test(Mixin.KindAssertionApiMixin.name, () => {
+    expect(api.isKind('OperationTypeDefinition')).toBe(true)
+  })
 })

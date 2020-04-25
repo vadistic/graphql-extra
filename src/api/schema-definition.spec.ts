@@ -23,27 +23,36 @@ describe(Api.SchemaDefinitionApi.name + ' & ' + Api.SchemaExtensionApi.name, () 
     apiExt,
   ]
 
-  test(Mixin.DescriptionApiMixin.name, () => {
-    apiDef.setDescription('ABC')
+  describe('mixins', () => {
+    test(Mixin.DescriptionApiMixin.name, () => {
+      apiDef.setDescription('ABC')
 
-    expect(apiDef.node.description?.value).toBe('ABC')
-    expect(apiDef.hasDescription('ABC')).toBeTruthy()
-  })
+      expect(apiDef.node.description?.value).toBe('ABC')
+      expect(apiDef.hasDescription('ABC')).toBeTruthy()
+    })
 
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(apiDef.isKind('SchemaDefinition')).toBe(true)
+    })
 
-  test.each(cases)(Mixin.DirectivesApiMixin.name, (api) => {
-    api.upsertDirective('Client')
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(apiExt.isKind('SchemaExtension')).toBe(true)
+    })
 
-    expect(api.node.directives?.[0].name.value).toBe('Client')
-    expect(api.hasDirective('Client')).toBeTruthy()
-  })
+    test.each(cases)(Mixin.DirectivesApiMixin.name, (api) => {
+      api.upsertDirective('Client')
 
-  test.each(cases)(Mixin.OperationTypeDefinitionApiMixin.name, (api) => {
-    expect(api.getOperationTypename('query')).toBe('MyQueryRootType')
-    api.updateOperationType('mutation', 'MyRenamedMutationRootType')
+      expect(api.node.directives?.[0].name.value).toBe('Client')
+      expect(api.hasDirective('Client')).toBeTruthy()
+    })
 
-    expect(api.getMutationTypename()).toBe('MyRenamedMutationRootType')
-    expect(api.node.operationTypes?.find((op) => op.operation === 'mutation')?.type.name.value)
-      .toBe('MyRenamedMutationRootType')
+    test.each(cases)(Mixin.OperationTypeDefinitionApiMixin.name, (api) => {
+      expect(api.getOperationTypename('query')).toBe('MyQueryRootType')
+      api.updateOperationType('mutation', 'MyRenamedMutationRootType')
+
+      expect(api.getMutationTypename()).toBe('MyRenamedMutationRootType')
+      expect(api.node.operationTypes?.find((op) => op.operation === 'mutation')?.type.name.value)
+        .toBe('MyRenamedMutationRootType')
+    })
   })
 })

@@ -28,5 +28,9 @@ describe(Api.FragmentDefinitionApi.name, () => {
     test(Mixin.SelectionSetApiMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
     })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('FragmentDefinition')).toBe(true)
+    })
   })
 })

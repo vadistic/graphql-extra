@@ -22,9 +22,10 @@ export class DirectiveDefinitionApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,
   Mixin.InputValuesAsArgumentsApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.DirectiveDefinitionNode) {
-    super([node], [node], [node])
+    super([node], [node], [node], [node])
 
     validateNodeKind(Kind.DIRECTIVE_DEFINITION, node)
   }

@@ -1,8 +1,12 @@
-import { Api, Mixin } from '../internal'
+import { Api, Mixin, Ast } from '../internal'
 
 
 describe(Api.FieldDefinitionApi.name, () => {
   const p = Api.FieldDefinitionApi.prototype
+
+  const node = Ast.fieldDefinitionNode({ name: 'myField', type: 'Int!' })
+
+  const api = Api.fieldDefinitionApi(node)
 
   describe('methods', () => {
     // eslint-disable-next-line jest/expect-expect
@@ -34,6 +38,10 @@ describe(Api.FieldDefinitionApi.name, () => {
     // eslint-disable-next-line jest/expect-expect
     test(Mixin.TypeApiMixin.name, () => {
       //
+    })
+
+    test(Mixin.KindAssertionApiMixin.name, () => {
+      expect(api.isKind('FieldDefinition')).toBe(true)
     })
   })
 })

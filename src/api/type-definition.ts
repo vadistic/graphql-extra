@@ -30,9 +30,10 @@ export class ObjectTypeApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.FieldDefinitionsApiMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.ObjectTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.OBJECT_TYPE_DEFINITION, node)
   }
@@ -60,9 +61,10 @@ export class InterfaceTypeApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.FieldDefinitionsApiMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InterfaceTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INTERFACE_TYPE_DEFINITION, node)
   }
@@ -89,9 +91,10 @@ export class UnionTypeApi extends Mix(
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.UNION_TYPE_DEFINITION, node)
   }
@@ -118,9 +121,10 @@ export class ScalarTypeApi extends Mix(
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.ScalarTypeDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.SCALAR_TYPE_DEFINITION, node)
   }
@@ -147,9 +151,10 @@ export class EnumTypeApi extends Mix(
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.ENUM_TYPE_DEFINITION, node)
   }
@@ -177,9 +182,10 @@ export class InputTypeApi extends Mix(
   Mixin.DirectivesApiMixin,
   Mixin.InputValuesAsFieldsApiMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
+  Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InputObjectTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INPUT_OBJECT_TYPE_DEFINITION, node)
   }
