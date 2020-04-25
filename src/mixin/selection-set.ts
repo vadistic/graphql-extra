@@ -1,9 +1,8 @@
 import type * as GQL from 'graphql'
-import { Kind } from 'graphql'
 
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
-import { mutable, validationError } from '../utils'
+import { mutable } from '../utils'
 
 /**
  * @category API Mixins
@@ -24,7 +23,7 @@ export class SelectionSetApiMixin {
     return !!this.node.selectionSet
   }
 
-  // TODO: add option to specify if this seletionSet should be created ??
+  // TODO: maybe add option to specify if this seletionSet should be created ??
   getSelectionSet(): Api.SelectionSetApi {
     if (!this.node.selectionSet) {
       mutable(this.node).selectionSet = Ast.selectionSetNode([])
@@ -35,13 +34,7 @@ export class SelectionSetApiMixin {
   }
 
   getSelections(): Api.SelectionApi[] {
-    return this.node.selectionSet?.selections.map((node): Api.SelectionApi => {
-      if (node.kind === Kind.FIELD) return Api.fieldApi(node)
-      if (node.kind === Kind.FRAGMENT_SPREAD) return Api.fragmentSpreadApi(node)
-      if (node.kind === Kind.INLINE_FRAGMENT) return Api.inlineFragmentApi(node)
-
-      throw validationError([Kind.FIELD, Kind.FRAGMENT_SPREAD, Kind.INLINE_FRAGMENT], node)
-    }) ?? []
+    return this.node.selectionSet?.selections.map(Api.selectionApi) ?? []
   }
 }
 

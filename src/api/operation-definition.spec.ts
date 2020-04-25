@@ -37,6 +37,8 @@ describe(Api.OperationDefinitionApi.name, () => {
 
     test(Mixin.SelectionSetApiMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
+
+      expect(api.getSelectionSet()).toBeTruthy()
     })
 
     test(Mixin.KindAssertionApiMixin.name, () => {

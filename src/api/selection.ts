@@ -3,8 +3,8 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Mixin } from '../internal'
-import { validateNodeKind } from '../utils'
+import { Mixin, Api } from '../internal'
+import { validateNodeKind, validationError } from '../utils'
 
 
 /**
@@ -16,6 +16,20 @@ export type SelectionApi =
   | FragmentSpreadApi
   | InlineFragmentApi
   | FieldApi
+
+
+/**
+ *  polymorfic contructor fn for `SelectionApi`
+ *
+ * @category API Public
+ */
+export function selectionApi(node: GQL.SelectionNode): SelectionApi {
+  if (node.kind === Kind.FIELD) return Api.fieldApi(node)
+  if (node.kind === Kind.FRAGMENT_SPREAD) return Api.fragmentSpreadApi(node)
+  if (node.kind === Kind.INLINE_FRAGMENT) return Api.inlineFragmentApi(node)
+
+  throw validationError([Kind.FIELD, Kind.FRAGMENT_SPREAD, Kind.INLINE_FRAGMENT], node)
+}
 
 // ────────────────────────────────────────────────────────────────────────────────
 

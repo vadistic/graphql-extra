@@ -10,6 +10,10 @@ export function getName(input: any): string {
     return input
   }
 
+  if (!input) {
+    return 'unknown'
+  }
+
   if ('kind' in input && input.kind === Kind.NAME) {
     return input.value
   }

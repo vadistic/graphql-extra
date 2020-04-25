@@ -6,31 +6,33 @@ import { isPrimitive, applyPropsCloned, Primitive } from './apply-props'
 import { getName } from './get-name'
 import { concat } from './mutable'
 
-export interface CrudProps<Node extends ASTNode, Key extends keyof Node, Target, Props> {
-  node: Node
-  key: Key
+export interface CrudProps<N extends ASTNode, K extends keyof N> {
+  node: N
+  key: K
 }
+
+type Getter<N extends ASTNode, K extends keyof N> = (el: ArrayElement<N[K]>) => string | boolean
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-
-export interface CrudFindOneProps<Node extends ASTNode, Key extends keyof Node, Target, Props> {
-  getter: (el: ArrayElement<Node[Key]>) => Target
-  target: Target
+export interface CrudFindOneProps<N extends ASTNode, K extends keyof N, E, P> {
+  getter: (el: E) => string | boolean
+  target: string | boolean
 }
 
-export function crudFindOne <N extends ASTNode, K extends keyof N, T, P>({
+export function crudFindOne<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
   node,
   key,
   getter,
   target,
-}: CrudProps<N, K, T, P> & CrudFindOneProps<N, K, T, P>): ArrayElement<N[K]> {
+}: CrudProps<N, K> & CrudFindOneProps<N, K, E, P>): ArrayElement<N[K]> {
   const res = ((node[key] || []) as any[]).find((el: any) => getter(el) === target)
 
   if (!res) {
     throw new GraphQLError(
       `cannot get '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it does not exist', node,
+      + 'because it does not exist',
+      node,
     )
   }
 
@@ -39,19 +41,19 @@ export function crudFindOne <N extends ASTNode, K extends keyof N, T, P>({
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export interface CrudCreateProps <Node extends ASTNode, Key extends keyof Node, Target, Props> {
-  getter: (el: ArrayElement<Node[Key]>) => Target
-  factory: (props: Props) => ArrayElement<Node[Key]>
-  props: Props | ArrayElement<Node[Key]>
+export interface CrudCreateProps<N extends ASTNode, K extends keyof N, E, P> {
+  getter: Getter<N, K>
+  factory: (props: P) => E
+  props: P | E
 }
 
-export function crudCreate <N extends ASTNode, K extends keyof N, T, P>({
+export function crudCreate<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
   node,
   key,
   getter,
   factory,
   props,
-}: CrudProps<N, K, T, P>& CrudCreateProps<N, K, T, P>): void {
+}: CrudProps<N, K> & CrudCreateProps<N, K, E, P>): void {
   const next = applyPropsCloned(factory, props)
   const target = getter(next)
   const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
@@ -59,7 +61,8 @@ export function crudCreate <N extends ASTNode, K extends keyof N, T, P>({
   if (index !== -1) {
     throw new GraphQLError(
       `cannot create '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it already exists', node,
+      + 'because it already exists',
+      node,
     )
   }
 
@@ -74,27 +77,29 @@ export function crudCreate <N extends ASTNode, K extends keyof N, T, P>({
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export interface CrudUpdateProps <Node extends ASTNode, Key extends keyof Node, Target, Props> {
-  getter: (el: ArrayElement<Node[Key]>) => Target
-  factory: (props: Props) => ArrayElement<Node[Key]>
-  target: Target
-  props: (Props extends Primitive ? Props : Partial<Props>) | ArrayElement<Node[Key]>
+export interface CrudUpdateProps<N extends ASTNode, K extends keyof N, E, P> {
+  getter: Getter<N, K>
+  factory: (props: P) => E
+  target: string | boolean
+  // this allows primitives and force typescript to infer P from factory props
+  props: P extends Primitive ? P : Partial<P> | E
 }
 
-export function crudUpdate <N extends ASTNode, K extends keyof N, T, P>({
+export function crudUpdate<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
   node,
   key,
   getter,
   factory,
   props,
   target,
-}: CrudProps<N, K, T, P> & CrudUpdateProps<N, K, T, P>): void {
+}: CrudProps<N, K> & CrudUpdateProps<N, K, E, P>): void {
   const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
 
   if (index === -1) {
     throw new GraphQLError(
       `cannot update '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it does not exist', node,
+      + 'because it does not exist',
+      node,
     )
   }
 
@@ -109,26 +114,26 @@ export function crudUpdate <N extends ASTNode, K extends keyof N, T, P>({
 
   arr[index] = isPrimitive(props)
     // cannot spread primitive props values
-    ? { ...prev, ...(applyPropsCloned(factory, props as P)) as any }
+    ? { ...prev, ...(applyPropsCloned(factory, props as P) as any) }
     // merge because there is slight chance partial would not play well with factory fns
-    : applyPropsCloned(factory, { ...prev, ...props as P })
+    : applyPropsCloned(factory, { ...prev, ...(props as P) })
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export interface CrudUpsertProps <Node extends ASTNode, Key extends keyof Node, Target, Props> {
-  getter: (el: ArrayElement<Node[Key]>) => Target
-  factory: (props: Props) => ArrayElement<Node[Key]>
-  props: Props | ArrayElement<Node[Key]>
+export interface CrudUpsertProps<N extends ASTNode, K extends keyof N, E, P> {
+  getter: Getter<N, K>
+  factory: (props: P) => E
+  props: P | E
 }
 
-export function crudUpsert <N extends ASTNode, K extends keyof N, T, P>({
+export function crudUpsert<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
   node,
   key,
   getter,
   factory,
   props,
-}: CrudProps<N, K, T, P> & CrudUpsertProps<N, K, T, P>): void {
+}: CrudProps<N, K> & CrudUpsertProps<N, K, E, P>): void {
   const next = applyPropsCloned(factory, props)
   const target = getter(next)
   const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
@@ -143,30 +148,31 @@ export function crudUpsert <N extends ASTNode, K extends keyof N, T, P>({
     concat(arr, next)
   }
   else {
-    arr[index] = { ...arr[index], ...next as any }
+    arr[index] = { ...arr[index], ...next }
   }
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export interface CrudRemoveProps<Node extends ASTNode, Key extends keyof Node, Target, Props>{
-  getter: (el: ArrayElement<Node[Key]>) => Target
-  target: Target
+export interface CrudRemoveProps<N extends ASTNode, K extends keyof N, E, P> {
+  getter: Getter<N, K>
+  target: string | boolean
 }
 
-export function crudRemove <N extends ASTNode, K extends keyof N, T, P>({
+export function crudRemove<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
   node,
   key,
   getter,
   target,
-}: CrudProps<N, K, T, P> & CrudRemoveProps<N, K, T, P>): void {
-  const arr = node[key] as unknown as any[]
+}: CrudProps<N, K> & CrudRemoveProps<N, K, E, P>): void {
+  const arr = (node[key] as unknown) as any[]
   const index = (arr || []).findIndex((el) => getter(el) === target)
 
   if (index === -1) {
     throw new GraphQLError(
       `cannot remove '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it does not exist', node,
+      + 'because it does not exist',
+      node,
     )
   }
 
