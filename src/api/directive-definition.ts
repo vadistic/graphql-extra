@@ -13,11 +13,9 @@ import {
   getName,
 } from '../utils'
 
-
 /**
  * @category API Public
  */
-
 export class DirectiveDefinitionApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,

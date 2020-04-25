@@ -2,10 +2,14 @@ import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+// eslint-disable-next-line import/no-cycle
 import { Ast, Mixin } from '../internal'
 import { Typename } from '../types'
 import {
-  applyPropsCloned, mutable, validateNodeKindsArr, validateNodeKind,
+  applyPropsCloned,
+  mutable,
+  validateNodeKindsArr,
+  validateNodeKind,
 } from '../utils'
 
 /**

@@ -2,6 +2,7 @@ import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+// eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
 import { validateNodeKind } from '../utils'
 

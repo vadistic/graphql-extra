@@ -814,9 +814,9 @@ export type FieldDefinitionNodeProps = {
   type: GQL.TypeNode | TypeNodeProps
   directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
 
-  // shorthand
-  nonNull?: boolean
-  list?: string
+  // TODO: shorthand
+  // nonNull?: boolean
+  // list?: boolean
 }
 
 /**
@@ -1189,7 +1189,7 @@ export type UnionTypeExtensionNodeProps = {
  *
  * @category AST Node
  */
-export function unionTypeExtensionNode(props: UnionTypeDefinitionNodeProps): GQL.UnionTypeExtensionNode {
+export function unionTypeExtensionNode(props: UnionTypeExtensionNodeProps): GQL.UnionTypeExtensionNode {
   return {
     kind: Kind.UNION_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1216,7 +1216,7 @@ export type EnumTypeExtensionNodeProps = {
  *
  * @category AST Node
  */
-export function enumTypeExtensionNode(props: EnumTypeDefinitionNodeProps): GQL.EnumTypeExtensionNode {
+export function enumTypeExtensionNode(props: EnumTypeExtensionNodeProps): GQL.EnumTypeExtensionNode {
   return {
     kind: Kind.ENUM_TYPE_EXTENSION,
     name: applyProps(nameNode, props.name),
@@ -1244,7 +1244,7 @@ export type InputObjectTypeExtensionNodeProps = {
  * @category AST Node
  */
 export function inputObjectTypeExtensionNode(
-  props: InputObjectTypeDefinitionNodeProps,
+  props: InputObjectTypeExtensionNodeProps,
 ): GQL.InputObjectTypeExtensionNode {
   return {
     kind: Kind.INPUT_OBJECT_TYPE_EXTENSION,

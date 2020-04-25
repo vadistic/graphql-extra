@@ -1,5 +1,5 @@
-import { t, Api, nodeToApi } from '../../src'
-import { objectTypeApi } from '../../src/api'
+import { t, Api, nodeToApi } from '../src'
+import { objectTypeApi } from '../src/api'
 
 // TODO: do it from dist!
 

@@ -1,6 +1,6 @@
 import { print } from 'graphql'
 
-import * as t from './alias'
+import { t } from '../src'
 
 describe('AST alias', () => {
   test('objectType', () => {

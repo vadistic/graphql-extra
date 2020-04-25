@@ -5,40 +5,35 @@ describe(Mixin.ArgumentsApiMixin.name, () => {
 
   const args = [{ name: 'maxAge', value: Ast.intValueNode(123) }]
 
-  const nodes = [
-    Ast.directiveNode({
-      name: 'Cache',
-      arguments: args,
-    }),
-    Ast.fieldNode({
-      name: 'myField',
-      arguments: args,
-    }),
-  ]
+  const node = Ast.directiveNode({
+    name: 'Cache',
+    arguments: args,
+  })
 
-  const apis = nodes.map(Mixin.argumentsApiMixin)
+  const api = Mixin.argumentsApiMixin(node)
 
-  test.each(apis)(p.getArgumentNames.name, (api) => {
+
+  test(p.getArgumentNames.name, () => {
     expect(api.getArgumentNames()).toEqual(['maxAge'])
   })
 
-  test.each(apis)(p.hasArgument.name, (api) => {
+  test(p.hasArgument.name, () => {
     expect(api.hasArgument('maxAge')).toBe(true)
     expect(api.hasArgument('something')).toBe(false)
   })
 
-  test.each(apis)(p.getArguments.name, (api) => {
+  test(p.getArguments.name, () => {
     expect(api.getArguments().every((arg) => arg instanceof Api.ArgumentApi)).toBe(true)
   })
 
-  test.each(apis)(p.getArgument.name, (api) => {
+  test(p.getArgument.name, () => {
     expect(api.getArgument('maxAge')).toBeInstanceOf(Api.ArgumentApi)
     expect(() => api.getArgument('something')).toThrowError('cannot get')
   })
 
   // this test also covers crud helper
 
-  test.each(apis)(p.createArgument.name, (api) => {
+  test(p.createArgument.name, () => {
     const argname = 'hello'
     const value = Ast.booleanValueNode(true)
 
@@ -47,7 +42,7 @@ describe(Mixin.ArgumentsApiMixin.name, () => {
     expect(api.getArgument(argname).getValue()).toEqual(value)
   })
 
-  test.each(apis)(p.updateArgument.name, (api) => {
+  test(p.updateArgument.name, () => {
     const value = Ast.nullValueNode()
 
     // partial
@@ -63,7 +58,7 @@ describe(Mixin.ArgumentsApiMixin.name, () => {
     expect(() => api.updateArgument('something', {})).toThrowError('cannot update')
   })
 
-  test.each(apis)(p.upsertArgument.name, (api) => {
+  test(p.upsertArgument.name, () => {
     const value = Ast.stringValueNode('hello')
 
     // existing
@@ -75,7 +70,7 @@ describe(Mixin.ArgumentsApiMixin.name, () => {
     expect(api.getArgument('maxAge2').getValue()).toEqual(value)
   })
 
-  test.each(apis)(p.removeArgument.name, (api) => {
+  test(p.removeArgument.name, () => {
     // ok
     api.removeArgument('maxAge2')
     expect(api.hasArgument('maAge2')).toBe(false)

@@ -1,7 +1,8 @@
 import { GraphQLSchema, parse } from 'graphql'
 
-import { documentSchemaApi, t } from '../../src'
-import { STARWARS_TYPEDEFS } from '../fixture'
+import { STARWARS_TYPEDEFS } from '../../test/fixture'
+import * as t from '../alias'
+import { documentSchemaApi } from './document-schema'
 
 describe('DocumentSchemaApi', () => {
   const doc = documentSchemaApi(STARWARS_TYPEDEFS)
