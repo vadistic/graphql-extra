@@ -24,7 +24,7 @@ export class SelectionSetApiMixin {
     return !!this.node.selectionSet
   }
 
-  // TODO: add option to specify if this seletionse should be created
+  // TODO: add option to specify if this seletionSet should be created ??
   getSelectionSet(): Api.SelectionSetApi {
     if (!this.node.selectionSet) {
       mutable(this.node).selectionSet = Ast.selectionSetNode([])

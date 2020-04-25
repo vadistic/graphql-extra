@@ -3,7 +3,13 @@ import * as GQL from 'graphql'
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Typename } from '../types'
-import { applyNullable, mutable, concat } from '../utils'
+import {
+  applyNullable,
+  crudCreate,
+  crudUpdate,
+  crudUpsert,
+  crudRemove,
+} from '../utils'
 
 /**
  * @category API Mixins
@@ -18,19 +24,8 @@ export type OperationTypeDefinitionApiMixinNode =
 export class OperationTypeDefinitionApiMixin {
   constructor(readonly node: OperationTypeDefinitionApiMixinNode) {}
 
-  protected _findOperationNode(operation: GQL.OperationTypeNode): {
-    opType: GQL.OperationTypeDefinitionNode | undefined
-    index: number
-  } {
-    const index = this.node.operationTypes?.findIndex((type) => type.operation === operation) ?? -1
-
-    return { opType: this.node.operationTypes?.[index], index }
-  }
-
-  // ────────────────────────────────────────────────────────────────────────────────
-
   getOperationType(operation: GQL.OperationTypeNode): Api.OperationTypeDefinitionApi | undefined {
-    const { opType } = this._findOperationNode(operation)
+    const opType = this.node.operationTypes?.find((type) => type.operation === operation)
 
     return applyNullable(Api.operationTypeDefinitionApi)(opType)
   }
@@ -40,7 +35,7 @@ export class OperationTypeDefinitionApiMixin {
   }
 
   hasOperationType(operation: GQL.OperationTypeNode): boolean {
-    return !!this._findOperationNode(operation).opType
+    return !!this.getOperationType(operation)
   }
 
   getOperationTypes(): Api.OperationTypeDefinitionApi[] {
@@ -54,75 +49,54 @@ export class OperationTypeDefinitionApiMixin {
   // ────────────────────────────────────────────────────────────────────────────────
 
   createOperationType(props: GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps): this {
-    const { opType } = this._findOperationNode(props.operation)
-
-    if (opType) {
-      throw Error(
-        `cannot create - '${props.operation}' in ${this.node.kind} `
-        + `'${opType.operation}: ${opType.type.name.value}' already exists`,
-      )
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    concat(this.node.operationTypes!, Ast.operationTypeDefinitionNode(props))
+    crudCreate({
+      node: this.node,
+      key: 'operationTypes',
+      getter: (el) => el.operation,
+      factory: Ast.operationTypeDefinitionNode,
+      props,
+    })
 
     return this
   }
 
   updateOperationType(
     operation: GQL.OperationTypeNode,
-    props: GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps | Ast.NamedTypeNodeProps,
+    props: Partial<GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps>,
   ): this {
-    const { opType } = this._findOperationNode(operation)
-
-    if (!opType) {
-      throw Error(
-        `cannot update - '${operation}' in ${this.node.kind} `
-        + `'${operation}' does not exists`,
-      )
-    }
-
-    if (typeof props === 'object' && 'operation' in props) {
-      Object.assign(opType, Ast.operationTypeDefinitionNode(props))
-    }
-    else {
-      Object.assign(opType, Ast.operationTypeDefinitionNode({ operation, type: Ast.namedTypeNode(props) }))
-    }
+    crudUpdate({
+      node: this.node,
+      key: 'operationTypes',
+      getter: (el) => el.operation,
+      factory: Ast.operationTypeDefinitionNode,
+      props,
+      target: operation,
+    })
 
     return this
   }
 
 
   upsertOperationType(props: GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps): this {
-    const { opType } = this._findOperationNode(props.operation)
-
-    if (opType) {
-      Object.assign(opType, Ast.operationTypeDefinitionNode(props))
-    }
-    else {
-      if (!this.node.operationTypes) {
-        mutable(this.node).operationTypes = []
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      concat(this.node.operationTypes!, Ast.operationTypeDefinitionNode(props))
-    }
+    crudUpsert({
+      node: this.node,
+      key: 'operationTypes',
+      getter: (el) => el.operation,
+      factory: Ast.operationTypeDefinitionNode,
+      props,
+    })
 
     return this
   }
 
 
   removeOperationType(operation: GQL.OperationTypeNode): this {
-    const { opType, index } = this._findOperationNode(operation)
-
-    if (!opType) {
-      throw Error(
-        `cannot remove - '${operation}' in ${this.node.kind} `
-        + `'${operation}' does not exists`,
-      )
-    }
-
-    mutable(this.node.operationTypes)?.splice(index, 1)
+    crudRemove({
+      node: this.node,
+      key: 'operationTypes',
+      getter: (el) => el.operation,
+      target: operation,
+    })
 
     return this
   }

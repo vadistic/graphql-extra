@@ -4,11 +4,11 @@ import type * as GQL from 'graphql'
 import { Api, Ast } from '../internal'
 import { Fieldname, Typename } from '../types'
 import {
-  oneToManyCreate,
-  oneToManyUpsert,
-  oneToManyUpdate,
-  oneToManyRemoveOrFail,
-  oneToManyFindOneOrFail,
+  crudCreate,
+  crudUpsert,
+  crudUpdate,
+  crudRemove,
+  crudFindOne,
   getName,
 } from '../utils'
 
@@ -46,21 +46,20 @@ export class InputValuesAsFieldsApiMixin {
   }
 
   getField(fieldname: Fieldname): Api.InputValueDefinitionApi {
-    const field = oneToManyFindOneOrFail({
+    const field = crudFindOne({
       node: this.node,
       key: 'fields',
-      target: fieldname,
       getter: (el) => el.name.value,
+      target: fieldname,
     })
 
     return Api.inputValueDefinitionApi(field)
   }
 
   createField(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    oneToManyCreate({
+    crudCreate({
       node: this.node,
       key: 'fields',
-      target: getName(props.name),
       getter: (el) => el.name.value,
       factory: Ast.inputValueDefinitionNode,
       props,
@@ -70,10 +69,9 @@ export class InputValuesAsFieldsApiMixin {
   }
 
   upsertField(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    oneToManyUpsert({
+    crudUpsert({
       node: this.node,
       key: 'fields',
-      target: getName(props.name),
       getter: (el) => el.name.value,
       factory: Ast.inputValueDefinitionNode,
       props,
@@ -86,24 +84,24 @@ export class InputValuesAsFieldsApiMixin {
     fieldname: Fieldname,
     props: Partial<GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps>,
   ): this {
-    oneToManyUpdate({
+    crudUpdate({
       node: this.node,
       key: 'fields',
-      target: fieldname,
       getter: (el) => el.name.value,
       factory: Ast.inputValueDefinitionNode,
       props,
+      target: fieldname,
     })
 
     return this
   }
 
   removeField(fieldname: Fieldname): this {
-    oneToManyRemoveOrFail({
+    crudRemove({
       node: this.node,
       key: 'fields',
-      target: fieldname,
       getter: (el) => el.name.value,
+      target: fieldname,
     })
 
     return this

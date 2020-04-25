@@ -4,12 +4,11 @@ import type * as GQL from 'graphql'
 import { Api, Ast } from '../internal'
 import { Argname } from '../types'
 import {
-  oneToManyFindOneOrFail,
-  oneToManyCreate,
-  oneToManyUpdate,
-  oneToManyUpsert,
-  oneToManyRemoveOrFail,
-  getName,
+  crudFindOne,
+  crudCreate,
+  crudUpdate,
+  crudUpsert,
+  crudRemove,
 } from '../utils'
 
 /**
@@ -40,21 +39,20 @@ export class ArgumentsApiMixin {
   }
 
   getArgument(argname: Argname): Api.ArgumentApi {
-    const arg = oneToManyFindOneOrFail({
+    const arg = crudFindOne({
       node: this.node,
       key: 'arguments',
-      target: argname,
       getter: (el) => el.name.value,
+      target: argname,
     })
 
     return Api.argumentApi(arg)
   }
 
-  createArgument(props: GQL.ArgumentNode | Ast.ArgumentNodeProps): this {
-    oneToManyCreate({
+  createArgument(props: Ast.ArgumentNodeProps| GQL.ArgumentNode): this {
+    crudCreate({
       node: this.node,
       key: 'arguments',
-      target: getName(props.name),
       getter: (el) => el.name.value,
       factory: Ast.argumentNode,
       props,
@@ -64,23 +62,22 @@ export class ArgumentsApiMixin {
   }
 
   updateArgument(argname: Argname, props: Partial<Ast.ArgumentNodeProps | GQL.ArgumentNode>): this {
-    oneToManyUpdate({
+    crudUpdate({
       node: this.node,
       key: 'arguments',
-      target: argname,
       getter: (el) => el.name.value,
       factory: Ast.argumentNode,
       props,
+      target: argname,
     })
 
     return this
   }
 
   upsertArgument(props: Ast.ArgumentNodeProps | GQL.ArgumentNode): this {
-    oneToManyUpsert({
+    crudUpsert({
       node: this.node,
       key: 'arguments',
-      target: getName(props.name),
       getter: (el) => el.name.value,
       factory: Ast.argumentNode,
       props,
@@ -90,12 +87,13 @@ export class ArgumentsApiMixin {
   }
 
   removeArgument(argname: Argname): this {
-    oneToManyRemoveOrFail({
+    crudRemove({
       node: this.node,
       key: 'arguments',
-      target: argname,
       getter: (el) => el.name.value,
+      target: argname,
     })
+
 
     return this
   }

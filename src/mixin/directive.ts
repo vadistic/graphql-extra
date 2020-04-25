@@ -4,12 +4,11 @@ import type * as GQL from 'graphql'
 import { Api, Ast } from '../internal'
 import { Directivename } from '../types'
 import {
-  oneToManyCreate,
-  oneToManyUpdate,
-  oneToManyUpsert,
-  oneToManyRemoveOrFail,
-  oneToManyFindOneOrFail,
-  getName,
+  crudCreate,
+  crudUpdate,
+  crudUpsert,
+  crudRemove,
+  crudFindOne,
 } from '../utils'
 
 /**
@@ -50,21 +49,20 @@ export class DirectivesApiMixin {
   }
 
   getDirective(directivename: Directivename): Api.DirectiveApi {
-    const directive = oneToManyFindOneOrFail({
+    const directive = crudFindOne({
       node: this.node,
       key: 'directives',
-      target: directivename,
       getter: (el) => el.name.value,
+      target: directivename,
     })
 
     return Api.directiveApi(directive)
   }
 
   createDirective(props: Ast.DirectiveNodeProps | GQL.DirectiveNode): this {
-    oneToManyCreate({
+    crudCreate({
       node: this.node,
       key: 'directives',
-      target: getName(props),
       getter: (el) => el.name.value,
       factory: Ast.directiveNode,
       props,
@@ -77,23 +75,22 @@ export class DirectivesApiMixin {
     directivename: Directivename,
     props: Ast.DirectiveNodeProps | Partial<Ast.DirectiveNodeProps | GQL.DirectiveNode>,
   ): this {
-    oneToManyUpdate({
+    crudUpdate({
       node: this.node,
       key: 'directives',
-      target: directivename,
       getter: (el) => el.name.value,
       factory: Ast.directiveNode,
       props,
+      target: directivename,
     })
 
     return this
   }
 
   upsertDirective(props: Ast.DirectiveNodeProps | GQL.DirectiveNode): this {
-    oneToManyUpsert({
+    crudUpsert({
       node: this.node,
       key: 'directives',
-      target: getName(props),
       getter: (el) => el.name.value,
       factory: Ast.directiveNode,
       props,
@@ -103,11 +100,11 @@ export class DirectivesApiMixin {
   }
 
   removeDirective(directivename: Directivename): this {
-    oneToManyRemoveOrFail({
+    crudRemove({
       node: this.node,
       key: 'directives',
-      target: directivename,
       getter: (el) => el.name.value,
+      target: directivename,
     })
 
     return this

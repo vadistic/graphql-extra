@@ -4,12 +4,11 @@ import type * as GQL from 'graphql'
 import { Api, Ast } from '../internal'
 import { Fieldname, Typename } from '../types'
 import {
-  getName,
-  oneToManyCreate,
-  oneToManyFindOneOrFail,
-  oneToManyRemoveOrFail,
-  oneToManyUpdate,
-  oneToManyUpsert,
+  crudCreate,
+  crudFindOne,
+  crudRemove,
+  crudUpdate,
+  crudUpsert,
 } from '../utils'
 
 /**
@@ -48,21 +47,20 @@ export class FieldDefinitionsApiMixin {
   }
 
   getField(fieldname: Fieldname): Api.FieldDefinitionApi {
-    const field = oneToManyFindOneOrFail({
+    const field = crudFindOne({
       node: this.node,
       key: 'fields',
-      target: fieldname,
       getter: (el) => el.name.value,
+      target: fieldname,
     })
 
     return Api.fieldDefinitionApi(field)
   }
 
   createField(props: Ast.FieldDefinitionNodeProps | GQL.FieldDefinitionNode): this {
-    oneToManyCreate({
+    crudCreate({
       node: this.node,
       key: 'fields',
-      target: getName(props.name),
       getter: (el) => el.name.value,
       factory: Ast.fieldDefinitionNode,
       props,
@@ -75,23 +73,22 @@ export class FieldDefinitionsApiMixin {
     fieldname: Fieldname,
     props: Partial<Ast.FieldDefinitionNodeProps | GQL.FieldDefinitionNode >,
   ): this {
-    oneToManyUpdate({
+    crudUpdate({
       node: this.node,
       key: 'fields',
-      target: fieldname,
       getter: (el) => el.name.value,
       factory: Ast.fieldDefinitionNode,
       props,
+      target: fieldname,
     })
 
     return this
   }
 
   upsertField(props: Ast.FieldDefinitionNodeProps | GQL.FieldDefinitionNode): this {
-    oneToManyUpsert({
+    crudUpsert({
       node: this.node,
       key: 'fields',
-      target: getName(props.name),
       getter: (el) => el.name.value,
       factory: Ast.fieldDefinitionNode,
       props,
@@ -101,11 +98,11 @@ export class FieldDefinitionsApiMixin {
   }
 
   removeField(fieldname: Fieldname): this {
-    oneToManyRemoveOrFail({
+    crudRemove({
       node: this.node,
       key: 'fields',
-      target: fieldname,
       getter: (el) => el.name.value,
+      target: fieldname,
     })
 
     return this

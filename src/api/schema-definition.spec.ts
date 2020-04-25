@@ -48,7 +48,7 @@ describe(Api.SchemaDefinitionApi.name + ' & ' + Api.SchemaExtensionApi.name, () 
 
     test.each(cases)(Mixin.OperationTypeDefinitionApiMixin.name, (api) => {
       expect(api.getOperationTypename('query')).toBe('MyQueryRootType')
-      api.updateOperationType('mutation', 'MyRenamedMutationRootType')
+      api.updateOperationType('mutation', { type: 'MyRenamedMutationRootType' })
 
       expect(api.getMutationTypename()).toBe('MyRenamedMutationRootType')
       expect(api.node.operationTypes?.find((op) => op.operation === 'mutation')?.type.name.value)

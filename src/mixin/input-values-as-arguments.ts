@@ -4,11 +4,11 @@ import type * as GQL from 'graphql'
 import { Api, Ast } from '../internal'
 import { Argname, Typename } from '../types'
 import {
-  oneToManyFindOneOrFail,
-  oneToManyCreate,
-  oneToManyRemoveOrFail,
-  oneToManyUpdate,
-  oneToManyUpsert,
+  crudFindOne,
+  crudCreate,
+  crudRemove,
+  crudUpdate,
+  crudUpsert,
   getName,
 } from '../utils'
 
@@ -45,21 +45,20 @@ export class InputValuesAsArgumentsApiMixin {
   }
 
   getArgument(argname: Argname): Api.InputValueDefinitionApi {
-    const arg = oneToManyFindOneOrFail({
+    const arg = crudFindOne({
       node: this.node,
       key: 'arguments',
-      target: argname,
       getter: (el) => el.name.value,
+      target: argname,
     })
 
     return Api.inputValueDefinitionApi(arg)
   }
 
   createArgument(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    oneToManyCreate({
+    crudCreate({
       node: this.node,
       key: 'arguments',
-      target: getName(props),
       getter: (el) => el.name.value,
       factory: Ast.inputValueDefinitionNode,
       props,
@@ -69,10 +68,9 @@ export class InputValuesAsArgumentsApiMixin {
   }
 
   upsertArgument(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    oneToManyUpsert({
+    crudUpsert({
       node: this.node,
       key: 'arguments',
-      target: getName(props),
       getter: (el) => el.name.value,
       factory: Ast.inputValueDefinitionNode,
       props,
@@ -85,24 +83,24 @@ export class InputValuesAsArgumentsApiMixin {
     argname: Argname,
     props: Partial<GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps>,
   ): this {
-    oneToManyUpdate({
+    crudUpdate({
       node: this.node,
       key: 'arguments',
-      target: argname,
       getter: (el) => el.name.value,
       factory: Ast.inputValueDefinitionNode,
       props,
+      target: argname,
     })
 
     return this
   }
 
   removeArgument(argname: Argname): this {
-    oneToManyRemoveOrFail({
+    crudRemove({
       node: this.node,
       key: 'arguments',
-      target: argname,
       getter: (el) => el.name.value,
+      target: argname,
     })
 
     return this

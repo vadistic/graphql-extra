@@ -6,11 +6,11 @@ import { Mix } from 'mix-classes'
 import { Api, Mixin, Ast } from '../internal'
 import {
   applyPropsArr,
-  applyProps,
-  deepMutable,
   mutable,
   validateNodeKind,
   getName,
+  crudCreate,
+  crudRemove,
 } from '../utils'
 
 /**
@@ -38,62 +38,41 @@ export class DirectiveDefinitionApi extends Mix(
     return this
   }
 
-  getLocations(): GQL.DirectiveLocationEnum[] {
-    return this.node.locations.map(getName) as GQL.DirectiveLocationEnum[]
-  }
-
-  setLocations(values: (GQL.NameNode | GQL.DirectiveLocationEnum)[]): this {
-    mutable(this.node).locations = applyPropsArr(Ast.nameNode, values) as GQL.NameNode[]
-
-    return this
-  }
-
-  // TODO: use crud heler
-  hasLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): boolean {
-    const name = getName(value)
+  hasLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): boolean {
+    const name = getName(location)
 
     return this.node.locations.some((loc) => loc.value === name)
   }
 
-  // TODO: use crud heler
-  createLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): this {
-    const next = applyProps(Ast.nameNode, value)
+  getLocations(): GQL.DirectiveLocationEnum[] {
+    return this.node.locations.map(getName) as GQL.DirectiveLocationEnum[]
+  }
 
-    if (this.node.locations.some((loc) => loc.value === next.value)) {
-      throw Error(`location '${next.value}' on ${this.node.name.value} already exists`)
-    }
-
-    deepMutable(this.node).locations.push(next)
+  setLocations(locations: (GQL.NameNode | GQL.DirectiveLocationEnum)[]): this {
+    mutable(this.node).locations = applyPropsArr(Ast.nameNode, locations) as GQL.NameNode[]
 
     return this
   }
 
-  // TODO: use crud heler
-  upsertLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): this {
-    const next = applyProps(Ast.nameNode, value)
-
-    const index = this.node.locations.findIndex((loc) => loc.value === next.value)
-
-    if (index !== -1) {
-      deepMutable(this.node).locations[index] = next
-    }
-    else {
-      deepMutable(this.node).locations.push(next)
-    }
+  createLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): this {
+    crudCreate({
+      node: this.node,
+      key: 'locations',
+      factory: Ast.nameNode,
+      getter: (el) => el.value,
+      props: location,
+    })
 
     return this
   }
 
-  // TODO: use crud heler
-  removeLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): this {
-    const name = getName(value)
-    const index = this.node.locations.findIndex((loc) => loc.value === name)
-
-    if (index === -1) {
-      throw Error(`location '${name}' on ${this.node.name.value} does not exist`)
-    }
-
-    deepMutable(this.node).locations.splice(index, 1)
+  removeLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): this {
+    crudRemove({
+      node: this.node,
+      key: 'locations',
+      getter: (el) => el.value,
+      target: getName(location),
+    })
 
     return this
   }
