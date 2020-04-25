@@ -1,21 +1,20 @@
 import { operationDefinitionNode } from '../../node'
-import { operationDefinitionApi } from './operation-definition'
+import { SelectionSetApiMixin, selectionSetApiMixin } from './selection'
 
-describe('SelectionSetApiMixin', () => {
+describe(SelectionSetApiMixin.name, () => {
+  const t = SelectionSetApiMixin.prototype
   const node = operationDefinitionNode({
     operation: 'query',
     name: 'MyQuery',
     selections: ['myField'],
   })
+  const api = selectionSetApiMixin(node)
 
-  const api = operationDefinitionApi(node)
-
-
-  test('hasSelections', () => {
+  test(t.hasSelectionSet.name, () => {
     expect(api.hasSelectionSet()).toBeTruthy()
   })
 
-  test('getSelections', () => {
+  test(t.getSelections.name, () => {
     const selections = api.getSelections()
 
     expect(selections.length).toBe(1)

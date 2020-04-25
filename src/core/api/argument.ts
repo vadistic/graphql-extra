@@ -2,6 +2,7 @@ import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
+import { mutable } from '../../utils'
 import { validateNodeKind } from '../errors'
 import { NameApiMixin } from '../mixins/name'
 
@@ -17,12 +18,14 @@ export class ArgumentApi extends Mix(NameApiMixin) {
     validateNodeKind(Kind.ARGUMENT, node)
   }
 
+  // TODO: return js value
   getValue(): GQL.ValueNode {
     return this.node.value
   }
 
+  // TODO: use value helper to provide js value
   setValue(value: GQL.ValueNode): this {
-    Object.assign(this.node, value)
+    mutable(this.node).value = value
 
     return this
   }

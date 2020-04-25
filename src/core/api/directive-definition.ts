@@ -47,12 +47,14 @@ export class DirectiveDefinitionApi extends Mix(
     return this
   }
 
+  // TODO: use crud heler
   hasLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): boolean {
     const name = getName(value)
 
     return this.node.locations.some((loc) => loc.value === name)
   }
 
+  // TODO: use crud heler
   createLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): this {
     const next = applyProps(nameNode, value)
 
@@ -65,6 +67,7 @@ export class DirectiveDefinitionApi extends Mix(
     return this
   }
 
+  // TODO: use crud heler
   upsertLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): this {
     const next = applyProps(nameNode, value)
 
@@ -80,6 +83,7 @@ export class DirectiveDefinitionApi extends Mix(
     return this
   }
 
+  // TODO: use crud heler
   removeLocation(value: GQL.NameNode | GQL.DirectiveLocationEnum): this {
     const name = getName(value)
     const index = this.node.locations.findIndex((loc) => loc.value === name)

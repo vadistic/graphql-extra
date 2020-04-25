@@ -30,7 +30,7 @@ export const astKindToApiMap = {
   // StringValue:
   // BooleanValue:
   // NullValue:
-  EnumValue: API.EnumValueApi,
+  // EnumValue:,
   // ListValue:
   // ObjectValue:
   // ObjectField:
@@ -59,7 +59,7 @@ export const astKindToApiMap = {
   // TYPE FIELD DEFINITIONS
   FieldDefinition: API.FieldDefinitionApi,
   InputValueDefinition: API.InputValueApi,
-  EnumValueDefinition: API.EnumValueApi,
+  EnumValueDefinition: API.EnumValueDefinitionApi,
 
   // DIRECTIVE DEFINITIONS
   DirectiveDefinition: API.DirectiveDefinitionApi,

@@ -174,10 +174,12 @@ export class InputValueApi extends Mix(
     return fieldDefinitionApi({ kind: Kind.FIELD_DEFINITION, ...rest })
   }
 
+  // TODO: value node helper
   getDefaultValue(): GQL.ValueNode | undefined {
     return this.node.defaultValue
   }
 
+  // TODO: value node helper
   setDefaultValue(value: GQL.ValueNode): InputValueApi {
     mutable(this.node).defaultValue = value
 

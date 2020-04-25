@@ -1,33 +1,44 @@
 import { Kind } from 'graphql'
 
 import { operationTypeDefinitionNode } from '../../node'
-import { operationTypeDefinitionApi } from './operation-type-definition'
+import { NamedTypeApiMixin } from '../mixins/type'
+import { operationTypeDefinitionApi, OperationTypeDefinitionApi } from './operation-type-definition'
 
-describe('OperationTypeDefinitionApi', () => {
-  const node = operationTypeDefinitionNode({ operation: 'query', type: 'MyQuery' })
+describe(OperationTypeDefinitionApi.name, () => {
+  const t = OperationTypeDefinitionApi.prototype
+  const node = operationTypeDefinitionNode({
+    operation: 'query',
+    type: 'MyQuery',
+  })
   const api = operationTypeDefinitionApi(node)
 
-  test('getOperation', () => {
-    expect(api.getOperation()).toBe('query')
+  describe('methods', () => {
+    test(t.getOperation.name, () => {
+      expect(api.getOperation()).toBe('query')
+    })
+
+    test(t.setOperation.name, () => {
+      api.setOperation('mutation')
+      expect(api.getOperation()).toBe('mutation')
+    })
+
+    test(t.getType.name, () => {
+      expect(api.getType().node.kind).toBe(Kind.NAMED_TYPE)
+    })
+
+    test(t.setType.name, () => {
+      api.setType({ name: 'AnotherQuery' })
+      expect(api.node.type.name.value).toBe('AnotherQuery')
+    })
   })
 
-  test('setOperation', () => {
-    api.setOperation('mutation')
-    expect(api.getOperation()).toBe('mutation')
-  })
+  describe('mixins', () => {
+    test(NamedTypeApiMixin.name, () => {
+      expect(api.getTypename()).toBe('AnotherQuery')
 
-  test('getType', () => {
-    expect(api.getType().node.kind).toBe(Kind.NAMED_TYPE)
-  })
+      api.setTypename('ApiQuery')
 
-  test('setType', () => {
-    api.setType({ name: 'AnotherQuery' })
-    expect(api.node.type.name.value).toBe('AnotherQuery')
-  })
-
-  test('NamedTypeApiMixin > getTypename', () => {
-    api.setTypename('ApiQuery')
-
-    expect(api.getTypename()).toBe('ApiQuery')
+      expect(api.getTypename()).toBe('ApiQuery')
+    })
   })
 })

@@ -12,7 +12,7 @@ import { NameApiMixin } from '../mixins/name'
  *
  * @category API Public
  */
-export class EnumValueApi extends Mix(NameApiMixin, DescriptionApiMixin, DirectivesApiMixin) {
+export class EnumValueDefinitionApi extends Mix(NameApiMixin, DescriptionApiMixin, DirectivesApiMixin) {
   constructor(readonly node: GQL.EnumValueDefinitionNode) {
     super([node], [node], [node])
 
@@ -21,10 +21,10 @@ export class EnumValueApi extends Mix(NameApiMixin, DescriptionApiMixin, Directi
 }
 
 /**
- * `EnumValueApi` contructor fn
+ * `EnumValueDefinitionApi` contructor fn
  *
  * @category API Public
  */
-export function enumValueApi(node: GQL.EnumValueDefinitionNode): EnumValueApi {
-  return new EnumValueApi(node)
+export function enumValueDefinitionApi(node: GQL.EnumValueDefinitionNode): EnumValueDefinitionApi {
+  return new EnumValueDefinitionApi(node)
 }

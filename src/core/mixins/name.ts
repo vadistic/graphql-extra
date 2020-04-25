@@ -17,6 +17,7 @@ export type NameApiMixinNode =
   | GQL.InputValueDefinitionNode
   | GQL.TypeDefinitionNode
   | GQL.TypeExtensionNode
+  | GQL.FragmentDefinitionNode
 
 /**
  * @category API Mixins
@@ -48,7 +49,6 @@ export function nameApiMixin(node: NameApiMixinNode): NameApiMixin {
  * @category API Mixins
  */
 export type NameOptionalApiMixinNode =
-  | GQL.FragmentDefinitionNode
   | GQL.OperationDefinitionNode
 
 /**

@@ -9,7 +9,7 @@ describe('AST node', () => {
   // ─── NAME ───────────────────────────────────────────────────────────────────────
   //
 
-  test('nameNode', () => {
+  test(AST.nameNode.name, () => {
     const node = AST.nameNode('MyName')
 
     expect(print(node)).toBe(`MyName`)
@@ -19,13 +19,13 @@ describe('AST node', () => {
   // ─── DOCUMENT ───────────────────────────────────────────────────────────────────
   //
 
-  test('documentNode', () => {
+  test(AST.documentNode.name, () => {
     const node = AST.documentNode([])
 
     expect(node).toEqual({ kind: Kind.DOCUMENT, definitions: [] })
   })
 
-  test('operationDefinitionNode', () => {
+  test(AST.operationDefinitionNode.name, () => {
     const node = AST.operationDefinitionNode({
       operation: 'query',
       directives: ['Client'],
@@ -41,7 +41,7 @@ describe('AST node', () => {
     `)
   })
 
-  test('variableDefinitionNode', () => {
+  test(AST.variableDefinitionNode.name, () => {
     const node = AST.variableDefinitionNode({
       variable: 'myVar',
       type: { list: true, name: 'String' },
@@ -50,14 +50,14 @@ describe('AST node', () => {
     expect(print(node)).toBe(`$myVar: [String]`)
   })
 
-  test('variableNode', () => {
+  test(AST.variableNode.name, () => {
     const node = AST.variableNode('abc')
 
     expect(node).toEqual({ kind: Kind.VARIABLE, name: AST.nameNode('abc') })
     expect(print(node)).toBe(`$abc`)
   })
 
-  test('selectionSetNode', () => {
+  test(AST.selectionSetNode.name, () => {
     const node = AST.selectionSetNode([
       'myField',
       { name: 'myPropsField' },
@@ -82,7 +82,7 @@ describe('AST node', () => {
     `)
   })
 
-  test('fieldNode', () => {
+  test(AST.fieldNode.name, () => {
     const node = AST.fieldNode({
       name: 'myField',
       alias: 'myAlias',
@@ -98,7 +98,7 @@ describe('AST node', () => {
     `)
   })
 
-  test('argumentNode', () => {
+  test(AST.argumentNode.name, () => {
     const node = AST.argumentNode({
       name: 'myArgument',
       value: AST.intValueNode(123),
@@ -111,7 +111,7 @@ describe('AST node', () => {
   // ─── FRAGMENTS ──────────────────────────────────────────────────────────────────
   //
 
-  test('fragmentSpreadNode', () => {
+  test(AST.fragmentSpreadNode.name, () => {
     const nodeString = AST.fragmentSpreadNode('MyFragment')
     const nodeProps = AST.fragmentSpreadNode({ name: 'MyFragment', directives: ['Client'] })
 
@@ -119,7 +119,7 @@ describe('AST node', () => {
     expect(print(nodeProps)).toBe(`...MyFragment @Client`)
   })
 
-  test('inlineFragmentNode', () => {
+  test(AST.inlineFragmentNode.name, () => {
     const node = AST.inlineFragmentNode({
       selections: ['myField'],
       typeCondition: 'MyType',
@@ -132,7 +132,7 @@ describe('AST node', () => {
     `)
   })
 
-  test('fragmentDefinitionNode', () => {
+  test(AST.fragmentDefinitionNode.name, () => {
     const node = AST.fragmentDefinitionNode({
       name: 'MyFragment',
       selections: ['myField'],
@@ -152,7 +152,7 @@ describe('AST node', () => {
   // ─── VALUES ─────────────────────────────────────────────────────────────────────
   //
 
-  test('intValueNode', () => {
+  test(AST.intValueNode.name, () => {
     const nodeString = AST.intValueNode('123')
     const nodeStringFloat = AST.intValueNode('123.0001')
     const nodeNumInt = AST.intValueNode(123)
@@ -166,7 +166,7 @@ describe('AST node', () => {
     expect(nodeNumFloat).toEqual(fix)
   })
 
-  test('floatValueNode', () => {
+  test(AST.floatValueNode.name, () => {
     const nodeString = AST.floatValueNode('123.123')
     const nodeNum = AST.floatValueNode(123.123)
 
@@ -176,7 +176,7 @@ describe('AST node', () => {
     expect(nodeNum).toEqual(fix)
   })
 
-  test('stringValueNode', () => {
+  test(AST.stringValueNode.name, () => {
     const node = AST.stringValueNode('hello')
 
     const fix: GQL.StringValueNode = { kind: Kind.STRING, value: 'hello' }
@@ -184,7 +184,7 @@ describe('AST node', () => {
     expect(node).toEqual(fix)
   })
 
-  test('booleanValueNode', () => {
+  test(AST.booleanValueNode.name, () => {
     const nodeStringBoolean = AST.booleanValueNode('true')
     const nodeObject = AST.booleanValueNode({})
 
@@ -201,7 +201,7 @@ describe('AST node', () => {
     expect(nodeNull).toEqual(fixFalse)
   })
 
-  test('nullValueNode', () => {
+  test(AST.nullValueNode.name, () => {
     const node = AST.nullValueNode()
 
     const fix: GQL.NullValueNode = { kind: Kind.NULL }
@@ -209,7 +209,7 @@ describe('AST node', () => {
     expect(node).toEqual(fix)
   })
 
-  test('enumValueNode', () => {
+  test(AST.enumValueNode.name, () => {
     const node = AST.enumValueNode('ABC')
 
     const fix: GQL.EnumValueNode = {
@@ -220,7 +220,7 @@ describe('AST node', () => {
     expect(node).toEqual(fix)
   })
 
-  test('listValueNode', () => {
+  test(AST.listValueNode.name, () => {
     const node = AST.listValueNode([AST.intValueNode(123)])
 
     const fix: GQL.ListValueNode = {
@@ -231,7 +231,7 @@ describe('AST node', () => {
     expect(node).toEqual(fix)
   })
 
-  test('objectValueNode', () => {
+  test(AST.objectValueNode.name, () => {
     const field = AST.objectFieldNode({ name: 'field', value: AST.intValueNode(123) })
     const node = AST.objectValueNode([field])
 
@@ -243,7 +243,7 @@ describe('AST node', () => {
     expect(node).toEqual(fix)
   })
 
-  test('objectFieldNode', () => {
+  test(AST.objectFieldNode.name, () => {
     const value = AST.intValueNode(123)
     const node = AST.objectFieldNode({ name: 'field', value })
 
@@ -260,7 +260,7 @@ describe('AST node', () => {
   // ─── DIRECTIVES ─────────────────────────────────────────────────────────────────
   //
 
-  test('directiveNode', () => {
+  test(AST.directiveNode.name, () => {
     const nodeString = AST.directiveNode('Client')
     const nodeProps = AST.directiveNode({
       name: 'Client',
@@ -275,7 +275,7 @@ describe('AST node', () => {
   // ─── TYPES ──────────────────────────────────────────────────────────────────────
   //
 
-  test('namedTypeNode', () => {
+  test(AST.namedTypeNode.name, () => {
     const nodeString = AST.namedTypeNode('MyType')
     const nodeProps = AST.namedTypeNode({ name: 'MyType' })
     const nodeAST = AST.namedTypeNode(AST.nameNode('MyType'))
@@ -285,7 +285,7 @@ describe('AST node', () => {
     expect(print(nodeAST)).toBe(`MyType`)
   })
 
-  test('listTypeNode', () => {
+  test(AST.listTypeNode.name, () => {
     const nodeString = AST.listTypeNode('String')
     const nodeProps = AST.listTypeNode({ name: 'String' })
     const nodeAST = AST.listTypeNode(AST.namedTypeNode('String'))
@@ -295,7 +295,7 @@ describe('AST node', () => {
     expect(print(nodeAST)).toBe(`[String]`)
   })
 
-  test('nonNullTypeNode', () => {
+  test(AST.nonNullTypeNode.name, () => {
     const nodeString = AST.nonNullTypeNode('String')
     const nodeProps = AST.nonNullTypeNode({ name: 'String' })
     const nodeAST = AST.nonNullTypeNode(AST.namedTypeNode('String'))
@@ -305,7 +305,7 @@ describe('AST node', () => {
     expect(print(nodeAST)).toBe(`String!`)
   })
 
-  test('typeNode', () => {
+  test(AST.typeNode.name, () => {
     const nodeString = AST.typeNode('[String!]!')
     const nodeProps = AST.typeNode({ name: 'String', list: true, nonNull: true })
 
@@ -318,59 +318,59 @@ describe('AST node', () => {
   //
 
   // eslint-disable-next-line jest/expect-expect
-  test('schemaDefinitionNode', () => {
+  test(AST.schemaDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('operationTypeDefinitionNode', () => {
+  test(AST.operationTypeDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('scalarTypeDefinitionNode', () => {
+  test(AST.scalarTypeDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('objectTypeDefinitionNode', () => {
+  test(AST.objectTypeDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('fieldDefinitionNode', () => {
-    //
-  })
-
-
-  // eslint-disable-next-line jest/expect-expect
-  test('inputValueDefinitionNode', () => {
+  test(AST.fieldDefinitionNode.name, () => {
     //
   })
 
 
   // eslint-disable-next-line jest/expect-expect
-  test('interfaceTypeDefinitionNode', () => {
+  test(AST.inputValueDefinitionNode.name, () => {
+    //
+  })
+
+
+  // eslint-disable-next-line jest/expect-expect
+  test(AST.interfaceTypeDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('unionTypeDefinitionNode', () => {
+  test(AST.unionTypeDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('enumTypeDefinitionNode', () => {
+  test(AST.enumTypeDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('enumValueDefinitionNode', () => {
+  test(AST.enumValueDefinitionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('inputObjectTypeDefinitionNode', () => {
+  test(AST.inputObjectTypeDefinitionNode.name, () => {
     //
   })
 
@@ -379,7 +379,7 @@ describe('AST node', () => {
   //
 
   // eslint-disable-next-line jest/expect-expect
-  test('directiveDefinitionNode', () => {
+  test(AST.directiveDefinitionNode.name, () => {
   //
   })
 
@@ -388,7 +388,7 @@ describe('AST node', () => {
   //
 
   // eslint-disable-next-line jest/expect-expect
-  test('schemaExtensionNode', () => {
+  test(AST.schemaExtensionNode.name, () => {
     //
   })
 
@@ -397,32 +397,32 @@ describe('AST node', () => {
   //
 
   // eslint-disable-next-line jest/expect-expect
-  test('scalarTypeExtensionNode', () => {
+  test(AST.scalarTypeExtensionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('objectTypeExtensionNode', () => {
+  test(AST.objectTypeExtensionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('interfaceTypeExtensionNode', () => {
+  test(AST.interfaceTypeExtensionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('unionTypeExtensionNode', () => {
+  test(AST.unionTypeExtensionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('enumTypeExtensionNode', () => {
+  test(AST.enumTypeExtensionNode.name, () => {
     //
   })
 
   // eslint-disable-next-line jest/expect-expect
-  test('inputObjectTypeExtensionNode', () => {
+  test(AST.inputObjectTypeExtensionNode.name, () => {
     //
   })
 })

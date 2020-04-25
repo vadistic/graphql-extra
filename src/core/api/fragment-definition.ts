@@ -4,7 +4,7 @@ import { Mix } from 'mix-classes'
 
 import { validateNodeKind } from '../errors'
 import { DirectivesApiMixin } from '../mixins/directive'
-import { NameOptionalApiMixin } from '../mixins/name'
+import { NameApiMixin } from '../mixins/name'
 import { SelectionSetApiMixin } from './selection'
 
 /**
@@ -13,7 +13,7 @@ import { SelectionSetApiMixin } from './selection'
  * @category API Public
  */
 export class FragmentDefinitionApi extends Mix(
-  NameOptionalApiMixin,
+  NameApiMixin,
   DirectivesApiMixin,
   SelectionSetApiMixin,
 ) {

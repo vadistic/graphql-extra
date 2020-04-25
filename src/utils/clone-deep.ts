@@ -6,10 +6,6 @@ export function cloneDeep<T>(target: T): T {
     return target
   }
 
-  if (target instanceof Date) {
-    return new Date(target.getTime()) as any
-  }
-
   if (Array.isArray(target)) {
     return target.map((n) => cloneDeep(n)) as any
   }

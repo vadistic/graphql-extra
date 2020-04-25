@@ -1,10 +1,15 @@
 import {
   fieldNode, fragmentSpreadNode, inlineFragmentNode, variableNode,
 } from '../../node'
-import { fieldApi, fragmentSpreadApi, inlineFragmentApi } from './selection'
+import {
+  ArgumentsApiMixin, NameApiMixin, DirectivesApiMixin, SelectionAssertionApiMixin,
+} from '../mixins'
+import {
+  fieldApi, fragmentSpreadApi, inlineFragmentApi, FieldApi, SelectionSetApiMixin, FragmentSpreadApi, InlineFragmentApi,
+} from './selection'
 
 
-describe('FieldApi', () => {
+describe(FieldApi.name, () => {
   const node = fieldNode({
     name: 'myField',
     directives: ['Client'],
@@ -14,28 +19,30 @@ describe('FieldApi', () => {
 
   const api = fieldApi(node)
 
-  test('has NameApiMixin', () => {
-    expect(api.getName()).toBe('myField')
-  })
+  describe('mixins', () => {
+    test(NameApiMixin.name, () => {
+      expect(api.getName()).toBe('myField')
+    })
 
-  test('has ArgumentsApiMixin', () => {
-    expect(api.getArgumentNames()).toMatchObject(['age'])
-  })
+    test(ArgumentsApiMixin.name, () => {
+      expect(api.getArgumentNames()).toMatchObject(['age'])
+    })
 
-  test('has DirectivesApiMixin', () => {
-    expect(api.getDirectiveNames()).toMatchObject(['Client'])
-  })
+    test(DirectivesApiMixin.name, () => {
+      expect(api.getDirectiveNames()).toMatchObject(['Client'])
+    })
 
-  test('has SelectionSetApiMixin', () => {
-    expect(api.hasSelectionSet()).toBeTruthy()
-  })
+    test(SelectionSetApiMixin.name, () => {
+      expect(api.hasSelectionSet()).toBeTruthy()
+    })
 
-  test('has SelectionAssertionApiMixin', () => {
-    expect(api.isField()).toBeTruthy()
+    test(SelectionAssertionApiMixin.name, () => {
+      expect(api.isField()).toBeTruthy()
+    })
   })
 })
 
-describe('FragmentSpreadApi', () => {
+describe(FragmentSpreadApi.name, () => {
   const node = fragmentSpreadNode({
     name: 'MyFragment',
     directives: ['Client'],
@@ -43,23 +50,24 @@ describe('FragmentSpreadApi', () => {
 
   const api = fragmentSpreadApi(node)
 
+  describe('mixins', () => {
+    test(NameApiMixin.name, () => {
+      expect(api.getName()).toBe('MyFragment')
+    })
 
-  test('has NameApiMixin', () => {
-    expect(api.getName()).toBe('MyFragment')
-  })
 
+    test(DirectivesApiMixin.name, () => {
+      expect(api.hasDirective('Client')).toBeTruthy()
+    })
 
-  test('has DirectivesApiMixin', () => {
-    expect(api.hasDirective('Client')).toBeTruthy()
-  })
-
-  test('has SelectionAssertionApiMixin', () => {
-    expect(api.isFragmentSpread()).toBeTruthy()
+    test(SelectionAssertionApiMixin.name, () => {
+      expect(api.isFragmentSpread()).toBeTruthy()
+    })
   })
 })
 
 
-describe('InlineFragmentApi', () => {
+describe(InlineFragmentApi.name, () => {
   const node = inlineFragmentNode({
     typeCondition: 'MyType',
     directives: ['Client'],
@@ -68,15 +76,17 @@ describe('InlineFragmentApi', () => {
 
   const api = inlineFragmentApi(node)
 
-  test('has DirectivesApiMixin', () => {
-    expect(api.hasDirective('Client')).toBeTruthy()
-  })
+  describe('mixins', () => {
+    test(DirectivesApiMixin.name, () => {
+      expect(api.hasDirective('Client')).toBeTruthy()
+    })
 
-  test('has SelectionSetApiMixin', () => {
-    expect(api.hasSelectionSet()).toBeTruthy()
-  })
+    test(SelectionSetApiMixin.name, () => {
+      expect(api.hasSelectionSet()).toBeTruthy()
+    })
 
-  test('has SelectionAssertionApiMixin', () => {
-    expect(api.hasSelectionSet()).toBeTruthy()
+    test(SelectionAssertionApiMixin.name, () => {
+      expect(api.hasSelectionSet()).toBeTruthy()
+    })
   })
 })

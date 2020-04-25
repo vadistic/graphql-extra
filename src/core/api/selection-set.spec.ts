@@ -1,7 +1,8 @@
 import { selectionSetNode, fragmentSpreadNode, inlineFragmentNode } from '../../node'
-import { selectionSetApi } from './selection-set'
+import { selectionSetApi, SelectionSetApi } from './selection-set'
 
-describe('SelectionSetApi', () => {
+describe(SelectionSetApi.name, () => {
+  const t = SelectionSetApi.prototype
   const node = selectionSetNode([
     'myField',
     fragmentSpreadNode('MyFragment'),
@@ -12,7 +13,7 @@ describe('SelectionSetApi', () => {
 
   const api = selectionSetApi(node)
 
-  test('isEmpty', () => {
+  test(t.isEmpty.name, () => {
     expect(api.isEmpty()).toBeFalsy()
   })
 })

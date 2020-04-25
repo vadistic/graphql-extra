@@ -354,10 +354,11 @@ export type IntValueNodeProps = string | number
  *
  * @category AST Node
  */
+// TODO: validate?
 export function intValueNode(value: IntValueNodeProps): GQL.IntValueNode {
   return {
     kind: Kind.INT,
-    value: String(Math.floor(+value)),
+    value: '' + parseInt('' + value, 10),
   }
 }
 
@@ -373,10 +374,11 @@ export type FloatValueNodeProps = string | number
  *
  * @category AST Node
  */
+// TODO: validate?
 export function floatValueNode(value: string | number): GQL.FloatValueNode {
   return {
     kind: Kind.FLOAT,
-    value: String(value),
+    value: '' + parseFloat('' + value),
   }
 }
 
