@@ -2,11 +2,11 @@ import type * as GQL from 'graphql'
 import { Kind, parseType } from 'graphql'
 
 import {
-  isAstNode,
   applyPropsNullableArr,
   applyProps,
   applyPropsNullable,
   applyPropsArr,
+  applyNullableImplicit,
 } from './utils'
 
 //
@@ -50,17 +50,19 @@ export function nameNode(props: NameNodeProps): GQL.NameNode {
  *
  * @category AST Node
  */
-export type DocumentNodeProps = ReadonlyArray<GQL.DefinitionNode>
+export type DocumentNodeProps = {
+  definitions: ReadonlyArray<DefinitionNodeProps | GQL.DefinitionNode>
+}
 
 /**
  * create `DocumentNode`
  *
  * @category AST Node
  */
-export function documentNode(definitions: DocumentNodeProps): GQL.DocumentNode {
+export function documentNode({ definitions }: DocumentNodeProps): GQL.DocumentNode {
   return {
     kind: Kind.DOCUMENT,
-    definitions,
+    definitions: applyPropsArr(definitionNode, definitions),
   }
 }
 
@@ -76,7 +78,7 @@ export type OperationDefinitionNodeProps = {
   operation: GQL.OperationTypeNode
   variableDefinitions?: ReadonlyArray<GQL.VariableDefinitionNode | VariableDefinitionNodeProps>
   directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
-  selections: GQL.SelectionSetNode | SelectionSetNodeProps
+  selections: ReadonlyArray<GQL.SelectionNode | SelectionNodeProps>
 }
 
 /**
@@ -91,7 +93,8 @@ export function operationDefinitionNode(props: OperationDefinitionNodeProps): GQ
     name: applyPropsNullable(nameNode, props.name),
     variableDefinitions: applyPropsNullableArr(variableDefinitionNode, props.variableDefinitions),
     directives: applyPropsNullableArr(directiveNode, props.directives),
-    selectionSet: applyProps(selectionSetNode, props.selections),
+    selectionSet: applyProps(selectionSetNode,
+      applyNullableImplicit((selections) => ({ selections }), props.selections)),
   }
 }
 
@@ -131,17 +134,19 @@ export function variableDefinitionNode(props: VariableDefinitionNodeProps): GQL.
  *
  * @category AST Node
  */
-export type VariableNodeProps = string
+export type VariableNodeProps = NameNodeProps
 
 /**
  * create `VariableNode`
  *
  * @category AST Node
  */
-export function variableNode(name: VariableNodeProps): GQL.VariableNode {
+export function variableNode(props: VariableNodeProps): GQL.VariableNode {
+  const leaf = props && typeof props === 'object' ? props.name : props
+
   return {
     kind: Kind.VARIABLE,
-    name: nameNode(name),
+    name: applyNullableImplicit(nameNode, leaf),
   }
 }
 
@@ -152,18 +157,19 @@ export function variableNode(name: VariableNodeProps): GQL.VariableNode {
  *
  * @category AST Node
  */
-export type SelectionSetNodeProps = ReadonlyArray<GQL.SelectionNode | FieldNodeProps>
+export type SelectionSetNodeProps = {
+  selections: ReadonlyArray<SelectionNodeProps | GQL.SelectionNode>
+}
 
 /**
  * create `SelectionSetNode`
  *
  * @category AST Node
  */
-export function selectionSetNode(selections: SelectionSetNodeProps): GQL.SelectionSetNode {
+export function selectionSetNode(props: SelectionSetNodeProps): GQL.SelectionSetNode {
   return {
     kind: Kind.SELECTION_SET,
-    // bit unconventional because selection node is union, and fn is applied only for field props
-    selections: selections.map((el) => (isAstNode(el) ? el : applyProps(fieldNode, el))),
+    selections: applyPropsArr(selectionNode, (props || {}).selections),
   }
 }
 
@@ -179,7 +185,7 @@ export type FieldNodeObjProps = {
   alias?: GQL.NameNode | NameNodeProps
   arguments?: ReadonlyArray<GQL.ArgumentNode | ArgumentNodeProps>
   directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
-  selections?: GQL.SelectionSetNode | SelectionSetNodeProps
+  selections?: ReadonlyArray<SelectionNodeProps | GQL.SelectionNode>
 }
 
 /**
@@ -194,21 +200,21 @@ export type FieldNodeProps = FieldNodeObjProps | string
  *
  * @category AST Node
  */
-export function fieldNode(field: FieldNodeProps): GQL.FieldNode {
-  if (typeof field === 'string') {
+export function fieldNode(props: FieldNodeProps): GQL.FieldNode {
+  if (typeof props === 'string') {
     return {
       kind: Kind.FIELD,
-      name: nameNode(field),
+      name: nameNode(props),
     }
   }
 
   return {
     kind: Kind.FIELD,
-    name: applyProps(nameNode, field.name),
-    alias: applyPropsNullable(nameNode, field.alias),
-    arguments: applyPropsNullableArr(argumentNode, field.arguments),
-    directives: applyPropsNullableArr(directiveNode, field.directives),
-    selectionSet: applyPropsNullable(selectionSetNode, field.selections),
+    name: applyProps(nameNode, props.name),
+    alias: applyPropsNullable(nameNode, props.alias),
+    arguments: applyPropsNullableArr(argumentNode, props.arguments),
+    directives: applyPropsNullableArr(directiveNode, props.directives),
+    selectionSet: applyPropsNullable((selections) => selectionSetNode({ selections }), props.selections),
   }
 }
 
@@ -290,7 +296,7 @@ export function fragmentSpreadNode(props: FragmentSpreadNodeProps): GQL.Fragment
 export type InlineFragmentNodeProps = {
   typeCondition?: GQL.NamedTypeNode | NamedTypeNodeProps
   directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
-  selections: GQL.SelectionSetNode | SelectionSetNodeProps
+  selections: ReadonlyArray<GQL.SelectionNode | SelectionNodeProps>
 }
 
 /**
@@ -303,7 +309,8 @@ export function inlineFragmentNode(props: InlineFragmentNodeProps): GQL.InlineFr
     kind: Kind.INLINE_FRAGMENT,
     typeCondition: applyPropsNullable(namedTypeNode, props.typeCondition),
     directives: applyPropsNullableArr(directiveNode, props.directives),
-    selectionSet: applyProps(selectionSetNode, props.selections),
+    selectionSet: applyProps(selectionSetNode,
+      applyNullableImplicit((selections) => ({ selections }), props.selections)),
   }
 }
 
@@ -319,7 +326,7 @@ export type FragmentDefinitionNodeProps = {
   variableDefinitions?: ReadonlyArray<GQL.VariableDefinitionNode | VariableDefinitionNodeProps>
   typeCondition: GQL.NamedTypeNode | NamedTypeNodeProps
   directives?: ReadonlyArray<GQL.DirectiveNode | DirectiveNodeProps>
-  selections: GQL.SelectionSetNode | SelectionSetNodeProps
+  selections: ReadonlyArray<GQL.SelectionNode | SelectionNodeProps>
 }
 
 /**
@@ -334,7 +341,8 @@ export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): GQL.
     variableDefinitions: applyPropsNullableArr(variableDefinitionNode, props.variableDefinitions),
     typeCondition: applyProps(namedTypeNode, props.typeCondition),
     directives: applyPropsNullableArr(directiveNode, props.directives),
-    selectionSet: applyProps(selectionSetNode, props.selections),
+    selectionSet: applyProps(selectionSetNode,
+      applyNullableImplicit((selections) => ({ selections }), props.selections)),
   }
 }
 
@@ -343,23 +351,43 @@ export function fragmentDefinitionNode(props: FragmentDefinitionNodeProps): GQL.
 //
 
 /**
+ * `IntValueNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type IntValueNodeObjProps = {
+  value: string | number
+}
+
+/**
  * `IntValueNode` create input
  *
  * @category AST Node
  */
-export type IntValueNodeProps = string | number
+export type IntValueNodeProps = IntValueNodeObjProps | string | number
 
 /**
  * create `IntValueNode`
  *
  * @category AST Node
  */
-// TODO: validate?
-export function intValueNode(value: IntValueNodeProps): GQL.IntValueNode {
+export function intValueNode(props: IntValueNodeProps): GQL.IntValueNode {
+  const leaf = props && typeof props === 'object' ? props.value : props
+  const parse = (value: string | number): string => '' + parseInt('' + value, 10)
+
   return {
     kind: Kind.INT,
-    value: '' + parseInt('' + value, 10),
+    value: applyNullableImplicit(parse, leaf),
   }
+}
+
+/**
+ * `IntValueNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type FloatValueNodeObjProps = {
+  value: string | number
 }
 
 /**
@@ -367,7 +395,7 @@ export function intValueNode(value: IntValueNodeProps): GQL.IntValueNode {
  *
  * @category AST Node
  */
-export type FloatValueNodeProps = string | number
+export type FloatValueNodeProps = FloatValueNodeObjProps | string | number
 
 /**
  * create `FloatValueNode`
@@ -375,11 +403,23 @@ export type FloatValueNodeProps = string | number
  * @category AST Node
  */
 // TODO: validate?
-export function floatValueNode(value: string | number): GQL.FloatValueNode {
+export function floatValueNode(props: FloatValueNodeProps): GQL.FloatValueNode {
+  const leaf = props && typeof props === 'object' ? props.value : props
+  const parse = (value: string | number): string => '' + parseFloat('' + value)
+
   return {
     kind: Kind.FLOAT,
-    value: '' + parseFloat('' + value),
+    value: applyNullableImplicit(parse, leaf),
   }
+}
+
+/**
+ * `StringValueNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type StringValueNodeObjProps = {
+  value: string
 }
 
 /**
@@ -387,18 +427,29 @@ export function floatValueNode(value: string | number): GQL.FloatValueNode {
  *
  * @category AST Node
  */
-export type StringValueNodeProps = string
+export type StringValueNodeProps = StringValueNodeObjProps | string
 
 /**
  * create `StringValueNode`
  *
  * @category AST Node
  */
-export function stringValueNode(value: StringValueNodeProps): GQL.StringValueNode {
+export function stringValueNode(props: StringValueNodeProps): GQL.StringValueNode {
+  const leaf = props && typeof props === 'object' ? props.value : props
+
   return {
     kind: Kind.STRING,
-    value,
+    value: leaf,
   }
+}
+
+/**
+ * `BooleanValueNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type BooleanValueNodeObjProps = {
+  value: boolean | string | number
 }
 
 /**
@@ -406,22 +457,25 @@ export function stringValueNode(value: StringValueNodeProps): GQL.StringValueNod
  *
  * @category AST Node
  */
-export type BooleanValueNodeProps = any
+export type BooleanValueNodeProps = BooleanValueNodeObjProps | boolean | string | number
 
 /**
  * create `BooleanValueNode`
  *
  * @category AST Node
  */
-export function booleanValueNode(value: BooleanValueNodeProps): GQL.BooleanValueNode {
+export function booleanValueNode(props: BooleanValueNodeProps): GQL.BooleanValueNode {
   const toBool: any = {
     true: true,
     false: false,
   }
 
+  const leaf = props && typeof props === 'object' ? props.value : props
+  const parse = (value: boolean | string | number): boolean => toBool['' + value] ?? !!value
+
   return {
     kind: Kind.BOOLEAN,
-    value: toBool['' + value] ?? !!value,
+    value: applyNullableImplicit(parse, leaf),
   }
 }
 
@@ -430,10 +484,19 @@ export function booleanValueNode(value: BooleanValueNodeProps): GQL.BooleanValue
  *
  * @category AST Node
  */
-export function nullValueNode(): GQL.NullValueNode {
+export function nullValueNode(props?: never): GQL.NullValueNode {
   return {
     kind: Kind.NULL,
   }
+}
+
+/**
+ * `EnumValueNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type EnumValueNodeObjProps = {
+  value: string
 }
 
 /**
@@ -441,17 +504,19 @@ export function nullValueNode(): GQL.NullValueNode {
  *
  * @category AST Node
  */
-export type EnumValueNodeProps = string
+export type EnumValueNodeProps = EnumValueNodeObjProps | string
 
 /**
  * create `EnumValueNode`
  *
  * @category AST Node
  */
-export function enumValueNode(value: EnumValueNodeProps): GQL.EnumValueNode {
+export function enumValueNode(props: EnumValueNodeProps): GQL.EnumValueNode {
+  const leaf = props && typeof props === 'object' ? props.value : props
+
   return {
     kind: Kind.ENUM,
-    value,
+    value: leaf,
   }
 }
 
@@ -460,17 +525,19 @@ export function enumValueNode(value: EnumValueNodeProps): GQL.EnumValueNode {
  *
  * @category AST Node
  */
-export type ListValueNodeProps = ReadonlyArray<GQL.ValueNode>
+export type ListValueNodeProps = {
+  values: ReadonlyArray<GQL.ValueNode>
+}
 
 /**
  * `ListValueNode`
  *
  * @category AST Node
  */
-export function listValueNode(values: ListValueNodeProps): GQL.ListValueNode {
+export function listValueNode(props: ListValueNodeProps): GQL.ListValueNode {
   return {
     kind: Kind.LIST,
-    values,
+    values: (props || {}).values,
   }
 }
 
@@ -479,19 +546,19 @@ export function listValueNode(values: ListValueNodeProps): GQL.ListValueNode {
  *
  * @category AST Node
  */
-// ! does not need special props since it's simple
-// may need to chnage after implementing value helper
-export type ObjectValueNodeProps = ReadonlyArray<GQL.ObjectFieldNode>
+export type ObjectValueNodeProps = {
+  fields: ReadonlyArray<GQL.ObjectFieldNode>
+}
 
 /**
  * create `ObjectValueNode`
  *
  * @category AST Node
  */
-export function objectValueNode(fields: ObjectValueNodeProps): GQL.ObjectValueNode {
+export function objectValueNode(props: ObjectValueNodeProps): GQL.ObjectValueNode {
   return {
     kind: Kind.OBJECT,
-    fields,
+    fields: (props || {}).fields,
   }
 }
 
@@ -569,7 +636,7 @@ export function directiveNode(directive: DirectiveNodeProps): GQL.DirectiveNode 
  *
  * @category AST Node
  */
-export type NamedTypeNodeProps = GQL.NameNode | NameNodeProps | string
+export type NamedTypeNodeProps = string | NameNodeProps | GQL.NameNode
 
 /**
  * create `NamedTypeNode`
@@ -577,9 +644,11 @@ export type NamedTypeNodeProps = GQL.NameNode | NameNodeProps | string
  * @category AST Node
  */
 export function namedTypeNode(props: NamedTypeNodeProps): GQL.NamedTypeNode {
+  const leaf = props && typeof props === 'object' ? (props as any).value ?? (props as any).name : props
+
   return {
     kind: Kind.NAMED_TYPE,
-    name: applyProps(nameNode, props),
+    name: applyProps(nameNode, leaf),
   }
 }
 
@@ -590,7 +659,7 @@ export function namedTypeNode(props: NamedTypeNodeProps): GQL.NamedTypeNode {
  *
  * @category AST Node
  */
-export type ListTypeNodeProps = GQL.TypeNode |TypeNodeProps | string
+export type ListTypeNodeProps = GQL.TypeNode | TypeNodeProps | string
 
 /**
  * create `ListTypeNode`
@@ -599,11 +668,6 @@ export type ListTypeNodeProps = GQL.TypeNode |TypeNodeProps | string
  */
 export function listTypeNode(props: ListTypeNodeProps): GQL.ListTypeNode {
   const type = applyProps(typeNode, props)
-
-  // ! nesting is skipped
-  if (type.kind === Kind.LIST_TYPE) {
-    return type
-  }
 
   return {
     kind: Kind.LIST_TYPE,
@@ -628,8 +692,8 @@ export type NonNullTypeNodeProps = GQL.TypeNode | TypeNodeProps | string
 export function nonNullTypeNode(props: NonNullTypeNodeProps): GQL.NonNullTypeNode {
   const type = applyProps(typeNode, props)
 
-  // ! nesting is skipped
-  if (type.kind === Kind.NON_NULL_TYPE) {
+  // ! nesting is skipped, type && for partials
+  if (type && type.kind === Kind.NON_NULL_TYPE) {
     return type
   }
 
@@ -647,8 +711,7 @@ export function nonNullTypeNode(props: NonNullTypeNodeProps): GQL.NonNullTypeNod
  * @category AST Node
  */
 export type TypeNodeObjProps = {
-  // FIXME: should it be named `type` ??
-  name: GQL.NamedTypeNode | string
+  named: GQL.NamedTypeNode | NamedTypeNodeProps
   list?: boolean
   nonNull?: boolean
 }
@@ -670,7 +733,7 @@ export function typeNode(type: TypeNodeProps): GQL.TypeNode {
     return parseType(type)
   }
 
-  const namedType = applyProps(namedTypeNode, type.name)
+  const namedType = applyProps(namedTypeNode, type.named)
 
   if (!type.list && !type.nonNull) {
     return namedType
@@ -684,7 +747,7 @@ export function typeNode(type: TypeNodeProps): GQL.TypeNode {
     return nonNullTypeNode(namedType)
   }
 
-  // I've never saw nested list in GraphQL API so this is non-null list default
+  // I've never seen nested list in GraphQL API so non-null list is default
   return nonNullTypeNode(listTypeNode(nonNullTypeNode(namedType)))
 }
 
@@ -1252,4 +1315,161 @@ export function inputObjectTypeExtensionNode(
     directives: applyPropsNullableArr(directiveNode, props.directives),
     fields: applyPropsNullableArr(inputValueDefinitionNode, props.fields),
   }
+}
+
+
+//
+// ─── UNIONS ─────────────────────────────────────────────────────────────────────
+//
+
+export type WithKind<T, K extends GQL.KindEnum> = T & {kind: K}
+export type KindToAstMap<N extends GQL.ASTNode> = {[K in N['kind']]: (props: any) => GQL.ASTKindToNode[K]}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+export type TypeDefinitionNodeProps =
+  | WithKind<ObjectTypeDefinitionNodeProps, 'ObjectTypeDefinition'>
+  | WithKind<InterfaceTypeDefinitionNodeProps, 'InterfaceTypeDefinition'>
+  | WithKind<ScalarTypeDefinitionNodeProps, 'ScalarTypeDefinition'>
+  | WithKind<UnionTypeDefinitionNodeProps, 'UnionTypeDefinition'>
+  | WithKind<EnumTypeDefinitionNodeProps, 'EnumTypeDefinition'>
+  | WithKind<InputObjectTypeDefinitionNodeProps, 'InputObjectTypeDefinition'>
+
+
+export const kindToTypeDefinition: KindToAstMap<GQL.TypeDefinitionNode> = {
+  ObjectTypeDefinition: objectTypeDefinitionNode,
+  InterfaceTypeDefinition: interfaceTypeDefinitionNode,
+  ScalarTypeDefinition: scalarTypeDefinitionNode,
+  UnionTypeDefinition: unionTypeDefinitionNode,
+  EnumTypeDefinition: enumTypeDefinitionNode,
+  InputObjectTypeDefinition: inputObjectTypeDefinitionNode,
+}
+
+export function typeDefinitionNode({ kind, ...props }: TypeDefinitionNodeProps): GQL.TypeDefinitionNode {
+  return kindToTypeDefinition[kind](props)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+export type TypeExtensionNodeProps =
+  | WithKind<ObjectTypeExtensionNodeProps, 'ObjectTypeExtension'>
+  | WithKind<InterfaceTypeExtensionNodeProps, 'InterfaceTypeExtension'>
+  | WithKind<ScalarTypeExtensionNodeProps, 'ScalarTypeExtension'>
+  | WithKind<UnionTypeExtensionNodeProps, 'UnionTypeExtension'>
+  | WithKind<EnumTypeExtensionNodeProps, 'EnumTypeExtension'>
+  | WithKind<InputObjectTypeExtensionNodeProps, 'InputObjectTypeExtension'>
+
+export const kindToTypeExtension: KindToAstMap<GQL.TypeExtensionNode> = {
+  ObjectTypeExtension: objectTypeExtensionNode,
+  InterfaceTypeExtension: interfaceTypeExtensionNode,
+  ScalarTypeExtension: scalarTypeExtensionNode,
+  UnionTypeExtension: unionTypeExtensionNode,
+  EnumTypeExtension: enumTypeExtensionNode,
+  InputObjectTypeExtension: inputObjectTypeExtensionNode,
+}
+
+export function typeExtensionNode({ kind, ...props }: TypeExtensionNodeProps): GQL.TypeExtensionNode {
+  return kindToTypeExtension[kind](props)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+export type TypeSystemDefinitionNodeProps =
+  | WithKind<SchemaDefinitionNodeProps, 'SchemaDefinition'>
+  | WithKind<DirectiveDefinitionNodeProps, 'DirectiveDefinition'>
+  | TypeDefinitionNodeProps
+
+export const kindToTypeSystemDefinition: KindToAstMap<GQL.TypeSystemDefinitionNode> = {
+  ...kindToTypeDefinition,
+  SchemaDefinition: schemaDefinitionNode,
+  DirectiveDefinition: directiveDefinitionNode,
+}
+
+export function typeSystemDefinitionNode(
+  { kind, ...props }: TypeSystemDefinitionNodeProps,
+): GQL.TypeSystemDefinitionNode {
+  return kindToTypeSystemDefinition[kind](props)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+
+export type TypeSystemExtensionNodeProps =
+  | WithKind<SchemaExtensionNodeProps, 'SchemaExtension'>
+  | TypeExtensionNodeProps
+
+export const kindToTypeSystemExtension: KindToAstMap<GQL.TypeSystemExtensionNode> = {
+  ...kindToTypeExtension,
+  SchemaExtension: schemaExtensionNode,
+}
+
+export function typeSystemExtensionNode(
+  { kind, ...props }: TypeSystemExtensionNodeProps,
+): GQL.TypeSystemExtensionNode {
+  return kindToTypeSystemExtension[kind](props)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+
+export type ExecutableDefinitionNodeProps =
+  | WithKind<OperationDefinitionNodeProps, 'OperationDefinition'>
+  | WithKind<FragmentDefinitionNodeProps, 'FragmentDefinition'>
+
+export const kindToTypeExecutableDefinition: KindToAstMap<GQL.ExecutableDefinitionNode> = {
+  OperationDefinition: operationDefinitionNode,
+  FragmentDefinition: fragmentDefinitionNode,
+}
+
+export function executableDefinitionNode(
+  { kind, ...props }: ExecutableDefinitionNodeProps,
+): GQL.ExecutableDefinitionNode {
+  return kindToTypeExecutableDefinition[kind](props)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+export type DefinitionNodeProps =
+  | TypeSystemDefinitionNodeProps
+  | TypeSystemExtensionNodeProps
+  | ExecutableDefinitionNodeProps
+
+export const kindToDefinition: KindToAstMap<GQL.DefinitionNode> = {
+  ...kindToTypeSystemDefinition,
+  ...kindToTypeSystemExtension,
+  ...kindToTypeExecutableDefinition,
+}
+
+export function definitionNode(
+  { kind, ...props }: DefinitionNodeProps,
+): GQL.DefinitionNode {
+  return kindToDefinition[kind](props)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+
+export type SelectionNodeProps =
+  // default!
+  | FieldNodeProps
+  | WithKind<FieldNodeObjProps, 'Field'>
+  | WithKind<FragmentSpreadNodeObjProps, 'FragmentSpread'>
+  | WithKind<InlineFragmentNodeProps, 'InlineFragment'>
+
+export const kindToSelection: KindToAstMap<GQL.SelectionNode> = {
+  Field: fieldNode,
+  FragmentSpread: fragmentSpreadNode,
+  InlineFragment: inlineFragmentNode,
+}
+
+export function selectionNode(
+  props: SelectionNodeProps,
+): GQL.SelectionNode {
+  if (typeof props === 'string') {
+    return fieldNode(props)
+  }
+
+  const { kind = 'Field', ...rest } = props as Exclude<SelectionNodeProps, FieldNodeProps >
+
+  return kindToSelection[kind](rest)
 }

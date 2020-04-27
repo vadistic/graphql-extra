@@ -35,7 +35,7 @@ describe('AST alias', () => {
             },
           ],
           // props type
-          type: { name: 'ID' },
+          type: { named: 'ID' },
         },
         // ast node
         t.fieldDef({
@@ -153,7 +153,7 @@ describe('AST alias', () => {
         {
           name: 'id',
           description: 'field description',
-          type: { name: 'ID', nonNull: true },
+          type: { named: 'ID', nonNull: true },
         },
       ],
     })

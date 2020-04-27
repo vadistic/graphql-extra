@@ -1,4 +1,4 @@
-import { KindEnum, ASTKindToNode } from 'graphql'
+import { KindEnum, ASTKindToNode, Kind } from 'graphql'
 
 import { Ast } from '../src/internal'
 
@@ -6,7 +6,15 @@ import { Ast } from '../src/internal'
 const Name = Ast.nameNode('MyName')
 
 // Document
-const Document = Ast.documentNode([])
+const Document = Ast.documentNode({
+  definitions: [
+    {
+      kind: Kind.OBJECT_TYPE_DEFINITION,
+      name: 'MyObject',
+      fields: [{ name: 'myField', type: 'Int!' }],
+    },
+  ],
+})
 
 const OperationDefinition = Ast.operationDefinitionNode({
   operation: 'query',
@@ -17,21 +25,23 @@ const OperationDefinition = Ast.operationDefinitionNode({
 
 const VariableDefinition = Ast.variableDefinitionNode({
   variable: 'myVar',
-  type: { list: true, name: 'String' },
+  type: { list: true, named: 'String' },
 })
 
 const Variable = Ast.variableNode('age')
 
-const SelectionSet = Ast.selectionSetNode([
-  'myField',
-  { name: 'myPropsField' },
-  Ast.fieldNode('myAstField'),
-  Ast.fragmentSpreadNode('MyFramgentSpread'),
-  Ast.inlineFragmentNode({
-    selections: ['myInlineFragmentField'],
-    typeCondition: 'SomeType',
-  }),
-])
+const SelectionSet = Ast.selectionSetNode({
+  selections: [
+    'myField',
+    { name: 'myPropsField' },
+    Ast.fieldNode('myAstField'),
+    Ast.fragmentSpreadNode('MyFramgentSpread'),
+    Ast.inlineFragmentNode({
+      selections: ['myInlineFragmentField'],
+      typeCondition: 'SomeType',
+    }),
+  ],
+})
 
 const Field = Ast.fieldNode({
   name: 'myField',
@@ -76,11 +86,11 @@ const NullValue = Ast.nullValueNode()
 
 const EnumValue = Ast.enumValueNode('TEST')
 
-const ListValue = Ast.listValueNode([IntValue])
+const ListValue = Ast.listValueNode({ values: [IntValue] })
 
 const ObjectField = Ast.objectFieldNode({ name: 'field', value: IntValue })
 
-const ObjectValue = Ast.objectValueNode([ObjectField])
+const ObjectValue = Ast.objectValueNode({ fields: [ObjectField] })
 
 // Directives
 

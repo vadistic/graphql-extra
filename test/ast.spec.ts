@@ -3,15 +3,17 @@ import { print, Kind } from 'graphql'
 import type * as GQL from 'graphql'
 
 import { Ast } from '../src'
+import { applyPropsPartial } from '../src/utils'
 import { nodes } from './nodes'
 
-describe('AST node', () => {
+describe('Ast node', () => {
   //
   // ─── NAME ───────────────────────────────────────────────────────────────────────
   //
 
   test(Ast.nameNode.name, () => {
     expect(print(nodes.Name)).toMatchInlineSnapshot(`"MyName"`)
+    expect(applyPropsPartial(Ast.nameNode, {})).toMatchObject({ kind: Kind.NAME })
   })
 
   //
@@ -19,7 +21,7 @@ describe('AST node', () => {
   //
 
   test(Ast.documentNode.name, () => {
-    expect(nodes.Document).toEqual({ kind: Kind.DOCUMENT, definitions: [] })
+    expect(print(nodes.Name)).toMatchInlineSnapshot(`"MyName"`)
   })
 
   test(Ast.operationDefinitionNode.name, () => {
@@ -130,19 +132,13 @@ describe('AST node', () => {
 
   test(Ast.booleanValueNode.name, () => {
     const nodeStringBoolean = Ast.booleanValueNode('true')
-    const nodeObject = Ast.booleanValueNode({})
-
     const nodeBoolean = Ast.booleanValueNode(false)
-    const nodeNull = Ast.booleanValueNode(null)
 
     const fixTrue: GQL.BooleanValueNode = { kind: Kind.BOOLEAN, value: true }
     const fixFalse: GQL.BooleanValueNode = { kind: Kind.BOOLEAN, value: false }
 
     expect(nodeStringBoolean).toEqual(fixTrue)
-    expect(nodeObject).toEqual(fixTrue)
-
     expect(nodeBoolean).toEqual(fixFalse)
-    expect(nodeNull).toEqual(fixFalse)
   })
 
   test(Ast.nullValueNode.name, () => {
@@ -165,7 +161,7 @@ describe('AST node', () => {
   })
 
   test(Ast.listValueNode.name, () => {
-    const node = Ast.listValueNode([Ast.intValueNode(123)])
+    const node = Ast.listValueNode({ values: [Ast.intValueNode(123)] })
 
     const fix: GQL.ListValueNode = {
       kind: Kind.LIST,
@@ -177,7 +173,7 @@ describe('AST node', () => {
 
   test(Ast.objectValueNode.name, () => {
     const field = Ast.objectFieldNode({ name: 'field', value: Ast.intValueNode(123) })
-    const node = Ast.objectValueNode([field])
+    const node = Ast.objectValueNode({ fields: [field] })
 
     const fix: GQL.ObjectValueNode = {
       kind: Kind.OBJECT,
@@ -231,7 +227,7 @@ describe('AST node', () => {
 
   test(Ast.listTypeNode.name, () => {
     const nodeString = Ast.listTypeNode('String')
-    const nodeProps = Ast.listTypeNode({ name: 'String' })
+    const nodeProps = Ast.listTypeNode({ named: 'String' })
     const nodeAST = Ast.listTypeNode(Ast.namedTypeNode('String'))
 
     expect(print(nodeString)).toBe(`[String]`)
@@ -241,7 +237,7 @@ describe('AST node', () => {
 
   test(Ast.nonNullTypeNode.name, () => {
     const nodeString = Ast.nonNullTypeNode('String')
-    const nodeProps = Ast.nonNullTypeNode({ name: 'String' })
+    const nodeProps = Ast.nonNullTypeNode({ named: 'String' })
     const nodeAST = Ast.nonNullTypeNode(Ast.namedTypeNode('String'))
 
     expect(print(nodeString)).toBe(`String!`)
@@ -251,9 +247,10 @@ describe('AST node', () => {
 
   test(Ast.typeNode.name, () => {
     const nodeString = Ast.typeNode('[String!]!')
-    const nodeProps = Ast.typeNode({ name: 'String', list: true, nonNull: true })
+    const nodeProps = Ast.typeNode({ named: 'String', list: true, nonNull: true })
 
     expect(nodeString.kind).toBe(Kind.NON_NULL_TYPE)
+    expect(nodeProps.kind).toBe(Kind.NON_NULL_TYPE)
 
     expect(print(nodeString)).toBe(`[String!]!`)
     expect(print(nodeProps)).toBe(`[String!]!`)
