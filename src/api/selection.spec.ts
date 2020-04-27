@@ -1,4 +1,4 @@
-import { Api, Hooks, Ast } from '../internal'
+import { Api, Ast } from '../internal'
 
 describe(Api.FieldApi.name, () => {
   const node = Ast.fieldNode({
@@ -38,12 +38,12 @@ describe(Api.FragmentSpreadApi.name, () => {
   const api = Api.fragmentSpreadApi(node)
 
   describe('hooks', () => {
-    test(Hooks.nameMixin.name, () => {
+    test('name', () => {
       expect(api.name.get()).toBe('MyFragment')
     })
 
 
-    test(Hooks.directivesMixin.name, () => {
+    test('directives', () => {
       expect(api.directives.has('Client')).toBe(true)
     })
   })
@@ -60,15 +60,15 @@ describe(Api.InlineFragmentApi.name, () => {
   const api = Api.inlineFragmentApi(node)
 
   describe('hooks', () => {
-    test(Hooks.typeConditionMixin.name, () => {
+    test('typeCondition', () => {
       expect(api.typeCondition.get()).toBe('MyType')
     })
 
-    test(Hooks.directivesMixin.name, () => {
+    test('directives', () => {
       expect(api.directives.has('Client')).toBe(true)
     })
 
-    test(Hooks.selectionSetMixin.name, () => {
+    test('selections', () => {
       expect(api.selections.has('myField')).toBe(true)
     })
   })

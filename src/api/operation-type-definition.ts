@@ -27,9 +27,9 @@ export class OperationTypeDefinitionApi extends Mix(
   //   readonly type: NamedTypeNode;
   // }
 
-  readonly operation = Hooks.operationMixin(this.node)
+  readonly operation = Hooks.operationHook(this.node)
 
-  readonly type = Hooks.namedTypeMixin(this.node)
+  readonly type = Hooks.namedTypeHook(this.node)
 }
 
 

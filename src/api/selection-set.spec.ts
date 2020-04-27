@@ -14,7 +14,9 @@ describe(Api.SelectionSetApi.name, () => {
 
   const api = Api.selectionSetApi(node)
 
-  test('selections', () => {
-    expect(api.selections.has('MyFragment')).toBe(true)
+  describe('hooks', () => {
+    test('selections', () => {
+      expect(api.selections.has('MyFragment')).toBe(true)
+    })
   })
 })

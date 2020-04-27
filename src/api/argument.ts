@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin, Hooks } from '../internal'
+import { Argname } from '../types'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -20,9 +21,9 @@ export class ArgumentApi extends Mix(
     validateNodeKind(Kind.ARGUMENT, node)
   }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.ArgumentNode, Argname>(this.node)
 
-  readonly value = Hooks.valueMixin(this.node)
+  readonly value = Hooks.valueHook(this.node)
 }
 
 /**

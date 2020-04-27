@@ -20,9 +20,9 @@ export class DirectiveApi extends Mix(Mixin.KindAssertionApiMixin) {
     validateNodeKind(Kind.DIRECTIVE, node)
   }
 
-  readonly name = Hooks.nameMixin<Directivename>(this.node)
+  readonly name = Hooks.nameHook<GQL.DirectiveNode, Directivename>(this.node)
 
-  readonly arguments = Hooks.argumentsMixin(this.node)
+  readonly arguments = Hooks.argumentsHook(this.node)
 }
 
 /**

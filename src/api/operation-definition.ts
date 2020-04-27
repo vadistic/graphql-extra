@@ -30,15 +30,15 @@ export class OperationDefinitionApi extends Mix(
   //   readonly selectionSet: SelectionSetNode;
   // }
 
-  readonly operation = Hooks.operationMixin(this.node)
+  readonly operation = Hooks.operationHook(this.node)
 
-  readonly name = Hooks.nameOptionalMixin(this.node)
+  readonly name = Hooks.nameOptionalHook(this.node)
 
-  readonly variables = Hooks.variableDefinitionsMixin(this.node)
+  readonly variables = Hooks.variableDefinitionsHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly selections = Hooks.selectionSetMixin(this.node)
+  readonly selections = Hooks.selectionSetHook(this.node)
 }
 /**
  * `OperationDefinitionApi` constructor fn

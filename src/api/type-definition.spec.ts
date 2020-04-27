@@ -1,6 +1,6 @@
 import { Ast, Api } from '../internal'
 
-describe('type-definition', () => {
+describe(Api.ObjectTypeApi.name, () => {
   const node = Ast.objectTypeDefinitionNode({
     name: 'MyObject',
     fields: [{ name: 'Myfield', type: 'Int!' }],
@@ -9,8 +9,7 @@ describe('type-definition', () => {
   const api = Api.objectTypeApi(node)
 
   test('chain apis', () => {
-    api
-      .fields
+    api.fields
       .create({ name: 'asd1', type: 'Int!' })
       .create({ name: 'asd2', type: 'String!' })
 

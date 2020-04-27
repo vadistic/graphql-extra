@@ -8,15 +8,15 @@ import { ContstructorType } from './types'
  */
 export const kindToApiMap = {
   // NAME
-  // Name
+  Name: Api.nameApi,
 
   // DOCUMENT
   // Document:
   OperationDefinition: Api.OperationDefinitionApi,
   // VariableDefinition:
   SelectionSet: Api.SelectionSetApi,
-  // Field:
-  // Argument:
+  Field: Api.fieldApi,
+  Argument: Api.argumentApi,
 
   // FRAGMENTS
   FragmentSpread: Api.FragmentSpreadApi,

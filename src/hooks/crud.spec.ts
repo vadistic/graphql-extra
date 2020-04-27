@@ -16,7 +16,7 @@ describe('crud', () => {
     arguments: args,
   })
 
-  const hook = Hooks.argumentsMixin(node)
+  const hook = Hooks.argumentsHook(node)
 
   // ────────────────────────────────────────────────────────────────────────────────
 

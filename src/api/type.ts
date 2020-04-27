@@ -17,7 +17,6 @@ import {
  *
  * @category API Public
  */
-
 export class TypeApi extends Mix(Mixin.KindAssertionApiMixin) {
   constructor(readonly node: GQL.TypeNode) {
     super([node])
@@ -136,7 +135,7 @@ export class NamedTypeApi extends Mix(Mixin.KindAssertionApiMixin) {
   // }
 
 
-  name = Hooks.nameMixin(this.node)
+  name = Hooks.nameHook<GQL.NamedTypeNode, Typename>(this.node)
 }
 
 /**

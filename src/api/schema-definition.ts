@@ -28,11 +28,11 @@ export class SchemaDefinitionApi extends Mix(
   //   readonly operationTypes: ReadonlyArray<OperationTypeDefinitionNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly operationTypes = Hooks.operationsTypeMixin(this.node)
+  readonly operationTypes = Hooks.operationsTypeHook(this.node)
 }
 
 
@@ -68,9 +68,9 @@ export class SchemaExtensionApi extends Mix(
   //   readonly operationTypes?: ReadonlyArray<OperationTypeDefinitionNode>;
   // };
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly operationTypes = Hooks.operationsTypeMixin(this.node)
+  readonly operationTypes = Hooks.operationsTypeHook(this.node)
 }
 
 /**

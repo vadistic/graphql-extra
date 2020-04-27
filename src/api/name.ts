@@ -15,7 +15,7 @@ export class NameApi {
     validateNodeKind(Kind.NAME, node)
   }
 
-  readonly value = Hooks.nameValueMixin(this.node)
+  readonly value = Hooks.nameValueHook(this.node)
 }
 
 /**

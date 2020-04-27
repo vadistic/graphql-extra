@@ -9,7 +9,7 @@
 // also allows for consistent namespacing and simplifies imports
 
 import * as Mixin from './mixin'
-import * as Hooks from './mixins'
+import * as Hooks from './hooks'
 
 import * as Api from './api'
 import * as Ast from './ast'

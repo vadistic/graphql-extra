@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin, Hooks } from '../internal'
+import { Directivename } from '../types'
 import { validateNodeKind } from '../utils'
 
 
@@ -19,11 +20,11 @@ export class DirectiveDefinitionApi extends Mix(
     validateNodeKind(Kind.DIRECTIVE_DEFINITION, node)
   }
 
-  name = Hooks.nameMixin(this.node)
+  name = Hooks.nameHook<GQL.DirectiveDefinitionNode, Directivename>(this.node)
 
-  repeatable = Hooks.repeatableMixin(this.node)
+  repeatable = Hooks.repeatableHook(this.node)
 
-  locations = Hooks.locationsMixin(this.node)
+  locations = Hooks.locationsHook(this.node)
 }
 
 

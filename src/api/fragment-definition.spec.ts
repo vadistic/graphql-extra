@@ -3,15 +3,33 @@ import { Api, Ast } from '../internal'
 describe(Api.FragmentDefinitionApi.name, () => {
   const node = Ast.fragmentDefinitionNode({
     name: 'MyFragment',
-    selections: ['myField'],
+    variableDefinitions: [{ variable: 'age', type: 'Int!' }],
     typeCondition: 'MyType',
     directives: ['Client'],
-    variableDefinitions: [{ variable: 'age', type: 'Int!' }],
+    selections: ['myField'],
   })
 
   const api = Api.fragmentDefinitionApi(node)
 
-  test('works', () => {
-    expect(api.name.get()).toBe('MyFragment')
+  describe('hooks', () => {
+    test('name', () => {
+      expect(api.name.get()).toBe('MyFragment')
+    })
+
+    test('variables', () => {
+      expect(api.variables.has('age')).toBe(true)
+    })
+
+    test('typeCondition', () => {
+      expect(api.typeCondition.get()).toBe('MyType')
+    })
+
+    test('directives', () => {
+      expect(api.directives.has('Client')).toBe(true)
+    })
+
+    test('selections', () => {
+      expect(api.selections.has('myField')).toBe(true)
+    })
   })
 })

@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Api, Mixin, Hooks } from '../internal'
+import { Fieldname } from '../types'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -30,15 +31,15 @@ export class FieldDefinitionApi extends Mix(
   //   readonly directives?: ReadonlyArray<DirectiveNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.FieldDefinitionNode, Fieldname>(this.node)
 
-  readonly arguments = Hooks.inputValuesAsArgumentsMixin(this.node)
+  readonly arguments = Hooks.inputValuesAsArgumentsHook(this.node)
 
-  readonly type = Hooks.typeMixin(this.node)
+  readonly type = Hooks.typeHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
 
   toInputValue(): Api.InputValueDefinitionApi {

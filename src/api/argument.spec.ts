@@ -5,21 +5,13 @@ describe(Api.ArgumentApi.name, () => {
   const node = Ast.argumentNode({ name: 'age', value })
   const api = Api.argumentApi(node)
 
-
-  test('works', () => {
-    expect(api.name.get()).toEqual('age')
-  })
-
-  describe('value', () => {
-    test('get', () => {
-      expect(api.value.node).toEqual(value)
+  describe('hooks', () => {
+    test('name', () => {
+      expect(api.name.get()).toEqual('age')
     })
 
-    test('set', () => {
-      const next = Ast.intValueNode(1)
-
-      api.value.set(next)
-      expect(api.value.node).toEqual(next)
+    test('value', () => {
+      expect(api.value.is(value)).toBe(true)
     })
   })
 })

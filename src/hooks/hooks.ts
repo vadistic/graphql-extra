@@ -2,21 +2,22 @@
 import type * as GQL from 'graphql'
 
 // eslint-disable-next-line import/no-cycle
-import { Api, Ast } from './internal'
+import { Api, Ast } from '../internal'
 import {
-  Fieldname, Argname, Fragmentname, Typename,
-} from './types'
+  Fieldname, Argname, Fragmentname, Typename, Directivename,
+} from '../types'
+import { Mutable } from '../utils'
+import { Crud } from './crud'
 import {
-  Crud, Setter, Mutable, OptionalSetter,
-} from './utils'
+  Setter, OptionalSetter, SimpleSetter,
+} from './setter'
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type NameMixinNode =
+export type NameHookNode =
 | GQL.ArgumentNode
 | GQL.DirectiveDefinitionNode
 | GQL.DirectiveNode
@@ -31,24 +32,27 @@ export type NameMixinNode =
 | GQL.NamedTypeNode
 
 /**
-* @category API Mixins
-*/
-export const nameMixin = <Name extends string>(node: NameMixinNode) =>
+ * @category API Hooks
+ */
+export const nameHook = <Node extends NameHookNode, Brand extends string>(node: Node) =>
   new Setter({
     parent: node,
     key: 'name',
     factory: Ast.nameNode,
-    api: (name: GQL.NameNode): Name => name.value as Name,
+    api: (name: GQL.NameNode): Brand => name.value as Brand,
   })
 
-
-export type NameOptionalMixinNode = GQL.OperationDefinitionNode
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
-* @category API Mixins
+ * @category API Hooks
+ */
+export type NameOptionalHookNode = GQL.OperationDefinitionNode
+
+/**
+* @category API Hooks
 */
-// TODO: make it
-export const nameOptionalMixin = <Node extends NameOptionalMixinNode>(node: Node) =>
+export const nameOptionalHook = <Node extends NameOptionalHookNode>(node: Node) =>
   new OptionalSetter({
     parent: node,
     key: 'name',
@@ -59,9 +63,9 @@ export const nameOptionalMixin = <Node extends NameOptionalMixinNode>(node: Node
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type DescriptionApiMixinNode =
+export type DescriptionHookNode =
 | GQL.DirectiveDefinitionNode
 | GQL.EnumValueDefinitionNode
 | GQL.FieldDefinitionNode
@@ -70,7 +74,10 @@ export type DescriptionApiMixinNode =
 | GQL.TypeDefinitionNode
 
 
-export const descriptionMixin = (node: DescriptionApiMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const descriptionHook = <Node extends DescriptionHookNode>(node: Node) =>
   new OptionalSetter({
     parent: node,
     key: 'description',
@@ -81,16 +88,17 @@ export const descriptionMixin = (node: DescriptionApiMixinNode) =>
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type VariableDefinitionsMixinNode =
+export type VariableDefinitionsHookNode =
   | GQL.OperationDefinitionNode
+  | GQL.FragmentDefinitionNode
 
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const variableDefinitionsMixin = <Node extends VariableDefinitionsMixinNode>(node: Node) =>
+export const variableDefinitionsHook = <Node extends VariableDefinitionsHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'variableDefinitions',
@@ -104,9 +112,9 @@ export const variableDefinitionsMixin = <Node extends VariableDefinitionsMixinNo
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type FieldDefinitionsMixinNode =
+export type FieldDefinitionsHookNode =
   | GQL.InterfaceTypeDefinitionNode
   | GQL.InterfaceTypeExtensionNode
   | GQL.ObjectTypeDefinitionNode
@@ -114,9 +122,9 @@ export type FieldDefinitionsMixinNode =
 
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const fieldDefinitionsMixin = <Node extends FieldDefinitionsMixinNode>(parent: Node) =>
+export const fieldDefinitionsHook = <Node extends FieldDefinitionsHookNode>(parent: Node) =>
   new Crud({
     parent,
     key: 'fields',
@@ -127,18 +135,19 @@ export const fieldDefinitionsMixin = <Node extends FieldDefinitionsMixinNode>(pa
   })
 
 // ────────────────────────────────────────────────────────────────────────────────
+
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type EnumValuesDefinitionsMixin =
+export type EnumValuesDefinitionsHook =
   | GQL.EnumTypeDefinitionNode
   | GQL.EnumTypeExtensionNode
 
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const enumValuesDefinitionsMixin = <Node extends EnumValuesDefinitionsMixin>(node: Node) =>
+export const enumValuesDefinitionsHook = <Node extends EnumValuesDefinitionsHook>(node: Node) =>
   new Crud({
     parent: node,
     key: 'values',
@@ -151,16 +160,16 @@ export const enumValuesDefinitionsMixin = <Node extends EnumValuesDefinitionsMix
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type UnionTypesMixinNode =
+export type UnionTypesHookNode =
 | GQL.UnionTypeDefinitionNode
 | GQL.UnionTypeExtensionNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const unionTypesMixin = <Node extends UnionTypesMixinNode>(node: Node) =>
+export const unionTypesHook = <Node extends UnionTypesHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'types',
@@ -171,9 +180,9 @@ export const unionTypesMixin = <Node extends UnionTypesMixinNode>(node: Node) =>
   })
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type InterfacesMixinNode =
+export type InterfacesHookNode =
 | GQL.ObjectTypeDefinitionNode
 | GQL.ObjectTypeExtensionNode
 | GQL.InterfaceTypeDefinitionNode
@@ -181,9 +190,9 @@ export type InterfacesMixinNode =
 
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const interfacesMixin = <Node extends InterfacesMixinNode>(node: Node) =>
+export const interfacesHook = <Node extends InterfacesHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'interfaces',
@@ -197,32 +206,38 @@ export const interfacesMixin = <Node extends InterfacesMixinNode>(node: Node) =>
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type ArgumentsApiMixinNode =
+export type ArgumentsHookNode =
   | GQL.DirectiveNode
   | GQL.FieldNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const argumentsMixin = (parent: ArgumentsApiMixinNode) =>
+export const argumentsHook = <Node extends ArgumentsHookNode>(node: Node) =>
   new Crud({
-    parent,
+    parent: node,
     key: 'arguments',
-    arr: parent.arguments,
+    arr: node.arguments,
     api: Api.argumentApi,
     factory: Ast.argumentNode,
-    matcher: (node): Argname => node.name.value,
+    matcher: (n): Argname => n.name.value,
   })
 
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export type ValueMixinNode =
+/**
+ * @category API Hooks
+ */
+export type ValueHookNode =
   | GQL.ArgumentNode
 
-export const valueMixin = (node: ValueMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const valueHook = <Node extends ValueHookNode>(node: Node) =>
   new Setter({
     parent: node,
     key: 'value',
@@ -230,26 +245,45 @@ export const valueMixin = (node: ValueMixinNode) =>
     api: Api.valueApi,
   })
 
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * @category API Hooks
+ */
+export type DefaultValueHookNode =
+  | GQL.InputValueDefinitionNode
+
+/**
+ * @category API Hooks
+ */
+export const defaultValueHook = <Node extends DefaultValueHookNode>(node: Node) =>
+  new Setter({
+    parent: node,
+    key: 'defaultValue',
+    factory: (val: GQL.ValueNode) => val,
+    api: Api.valueApi,
+  })
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export type NameValueMixinNode = GQL.NameNode
+/**
+ * @category API Hooks
+ */
+export type NameValueHookNode = GQL.NameNode
 
-export const nameValueMixin = (node: NameValueMixinNode) =>
-  new Setter({
-    parent: node,
-    key: 'value',
-    factory: (val: string) => val,
-    api: (val) => val,
-  })
+/**
+ * @category API Hooks
+ */
+export const nameValueHook = <Node extends NameValueHookNode>(node: Node) =>
+  SimpleSetter.fromKey(node, 'value')
 
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type DirectivesMixinNode =
+export type DirectivesHookNode =
   | GQL.EnumValueDefinitionNode
   | GQL.FieldDefinitionNode
   | GQL.FieldNode
@@ -263,23 +297,32 @@ export type DirectivesMixinNode =
   | GQL.TypeExtensionNode
   | GQL.InlineFragmentNode
 
-export const directivesMixin = (node: DirectivesMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const directivesHook = <Node extends DirectivesHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'directives',
     arr: node.directives,
     api: Api.directiveApi,
     factory: Ast.directiveNode,
-    matcher: (n): Fieldname => n.name.value,
+    matcher: (n): Directivename => n.name.value,
   })
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-export type TypeMixinNode =
+/**
+ * @category API Hooks
+ */
+export type TypeHookNode =
   | GQL.FieldDefinitionNode
   | GQL.InputValueDefinitionNode
 
-export const typeMixin = (node: TypeMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const typeHook = <Node extends TypeHookNode>(node: Node) =>
   new Setter({
     parent: node,
     key: 'type',
@@ -288,12 +331,19 @@ export const typeMixin = (node: TypeMixinNode) =>
     factory: Ast.typeNode,
   })
 
-export type TypeConditionMixinNode =
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * @category API Hooks
+ */
+export type TypeConditionHookNode =
   | GQL.FragmentDefinitionNode
   | GQL.InlineFragmentNode
 
-
-export const typeConditionMixin = (node: TypeConditionMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const typeConditionHook = <Node extends TypeConditionHookNode>(node: Node) =>
   new Setter({
     parent: node,
     key: 'typeCondition',
@@ -301,11 +351,18 @@ export const typeConditionMixin = (node: TypeConditionMixinNode) =>
     factory: Ast.namedTypeNode,
   })
 
-export type NamedTypeMixinNode =
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * @category API Hooks
+ */
+export type NamedTypeHookNode =
   | GQL.OperationTypeDefinitionNode
 
-
-export const namedTypeMixin = (node: NamedTypeMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const namedTypeHook = <Node extends NamedTypeHookNode>(node: Node) =>
   new Setter({
     parent: node,
     key: 'type',
@@ -318,13 +375,16 @@ export const namedTypeMixin = (node: NamedTypeMixinNode) =>
 
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type InputValuesAsArgumentsApiMixinNode =
+export type InputValuesAsArgumentsHookNode =
   | GQL.FieldDefinitionNode
   | GQL.DirectiveDefinitionNode
 
-export const inputValuesAsArgumentsMixin = (node: InputValuesAsArgumentsApiMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const inputValuesAsArgumentsHook = <Node extends InputValuesAsArgumentsHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'arguments',
@@ -334,15 +394,19 @@ export const inputValuesAsArgumentsMixin = (node: InputValuesAsArgumentsApiMixin
     matcher: (n): Fieldname => n.name.value,
   })
 
+// ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type InputValuesAsFieldsMixinNode =
+export type InputValuesAsFieldsHookNode =
 | GQL.InputObjectTypeDefinitionNode
 | GQL.InputObjectTypeExtensionNode
 
-export const inputValuesAsFieldsMixin = (node: InputValuesAsFieldsMixinNode) =>
+/**
+ * @category API Hooks
+ */
+export const inputValuesAsFieldsHook = <Node extends InputValuesAsFieldsHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'fields',
@@ -352,26 +416,25 @@ export const inputValuesAsFieldsMixin = (node: InputValuesAsFieldsMixinNode) =>
     matcher: (n): Fieldname => n.name.value,
   })
 
-
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type SelectionSetMixinNode =
+export type SelectionSetHookNode =
   | GQL.FieldNode
   | GQL.FragmentDefinitionNode
   | GQL.InlineFragmentNode
   | GQL.OperationDefinitionNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const selectionSetMixin = (node: SelectionSetMixinNode) => {
+export const selectionSetHook = <Node extends SelectionSetHookNode>(node: Node) => {
   // TODO: maybe handle more nicely
   if (!node.selectionSet) {
     // eslint-disable-next-line no-param-reassign
-    (node as Mutable<SelectionSetMixinNode>).selectionSet = Ast.selectionSetNode({ selections: [] })
+    (node as Mutable<SelectionSetHookNode>).selectionSet = Ast.selectionSetNode({ selections: [] })
   }
 
   return new Crud({
@@ -386,16 +449,18 @@ export const selectionSetMixin = (node: SelectionSetMixinNode) => {
   })
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
+
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type SelectionsApiMixinNode =
+export type SelectionsHookNode =
   | GQL.SelectionSetNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const selectionsMixin = (node: SelectionsApiMixinNode) => new Crud({
+export const selectionsHook = <Node extends SelectionsHookNode>(node: Node) => new Crud({
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   parent: node,
   key: 'selections',
@@ -409,16 +474,16 @@ export const selectionsMixin = (node: SelectionsApiMixinNode) => new Crud({
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type OperationTypeDefinitionApiMixinNode =
+export type OperationTypeDefinitionHookNode =
 | GQL.SchemaDefinitionNode
 | GQL.SchemaExtensionNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const operationsTypeMixin = (node: OperationTypeDefinitionApiMixinNode) =>
+export const operationsTypeHook = <Node extends OperationTypeDefinitionHookNode>(node: Node) =>
   new Crud({
     parent: node,
     key: 'operationTypes',
@@ -428,54 +493,43 @@ export const operationsTypeMixin = (node: OperationTypeDefinitionApiMixinNode) =
     matcher: (el) => el.operation,
   })
 
-
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type OperationMixinNode =
+export type OperationHookNode =
 | GQL.OperationTypeDefinitionNode
 | GQL.OperationDefinitionNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const operationMixin = (node: OperationMixinNode) =>
-  new Setter({
-    parent: node,
-    key: 'operation',
-    factory: (val: GQL.OperationTypeNode) => val,
-    api: (val) => val,
-  })
-
+export const operationHook = <Node extends OperationHookNode>(node: Node) =>
+  SimpleSetter.fromKey(node, 'operation')
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type RepeatableMixinNode = GQL.DirectiveDefinitionNode
+export type RepeatableHookNode = GQL.DirectiveDefinitionNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const repeatableMixin = (node: GQL.DirectiveDefinitionNode) => new Setter({
-  parent: node,
-  key: 'repeatable',
-  factory: (input: boolean): boolean => input,
-  api: (n): boolean => n,
-})
+export const repeatableHook = <Node extends RepeatableHookNode>(node: Node) =>
+  SimpleSetter.fromKey(node, 'repeatable')
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export type LocationsMixinNode = GQL.DirectiveDefinitionNode
+export type LocationsHookNode = GQL.DirectiveDefinitionNode
 
 /**
- * @category API Mixins
+ * @category API Hooks
  */
-export const locationsMixin = (node: LocationsMixinNode) => new Crud({
+export const locationsHook = <Node extends LocationsHookNode>(node: Node) => new Crud({
   parent: node,
   key: 'locations',
   arr: node.locations,

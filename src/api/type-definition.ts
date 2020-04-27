@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Hooks, Mixin } from '../internal'
+import { Typename } from '../types'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -59,15 +60,15 @@ export class ObjectTypeApi extends Mix(
   //   readonly fields?: ReadonlyArray<FieldDefinitionNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.ObjectTypeDefinitionNode, Typename>(this.node)
 
-  readonly interfaces = Hooks.interfacesMixin(this.node)
+  readonly interfaces = Hooks.interfacesHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly fields = Hooks.fieldDefinitionsMixin(this.node)
+  readonly fields = Hooks.fieldDefinitionsHook(this.node)
 }
 
 /**
@@ -104,13 +105,13 @@ export class ObjectExtApi extends Mix(
   //   readonly fields?: ReadonlyArray<FieldDefinitionNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.ObjectTypeExtensionNode, Typename>(this.node)
 
-  readonly interfaces = Hooks.interfacesMixin(this.node)
+  readonly interfaces = Hooks.interfacesHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly fields = Hooks.fieldDefinitionsMixin(this.node)
+  readonly fields = Hooks.fieldDefinitionsHook(this.node)
 }
 
 /**
@@ -149,15 +150,15 @@ export class InterfaceTypeApi extends Mix(
   //   readonly fields?: ReadonlyArray<FieldDefinitionNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.InterfaceTypeDefinitionNode, Typename>(this.node)
 
-  readonly interfaces = Hooks.interfacesMixin(this.node)
+  readonly interfaces = Hooks.interfacesHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly field = Hooks.fieldDefinitionsMixin(this.node)
+  readonly field = Hooks.fieldDefinitionsHook(this.node)
 }
 
 /**
@@ -194,13 +195,13 @@ export class InterfaceExtApi extends Mix(
   //   readonly fields?: ReadonlyArray<FieldDefinitionNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.InterfaceTypeExtensionNode, Typename>(this.node)
 
-  readonly interfaces = Hooks.interfacesMixin(this.node)
+  readonly interfaces = Hooks.interfacesHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly field = Hooks.fieldDefinitionsMixin(this.node)
+  readonly field = Hooks.fieldDefinitionsHook(this.node)
 }
 
 /**
@@ -238,13 +239,13 @@ export class UnionTypeApi extends Mix(
   //   readonly types?: ReadonlyArray<NamedTypeNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.UnionTypeDefinitionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly types = Hooks.unionTypesMixin(this.node)
+  readonly types = Hooks.unionTypesHook(this.node)
 }
 
 /**
@@ -280,11 +281,11 @@ export class UnionExtApi extends Mix(
   //   readonly types?: ReadonlyArray<NamedTypeNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.UnionTypeExtensionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly types = Hooks.unionTypesMixin(this.node)
+  readonly types = Hooks.unionTypesHook(this.node)
 }
 
 /**
@@ -321,11 +322,11 @@ export class ScalarTypeApi extends Mix(
   //   readonly directives?: ReadonlyArray<DirectiveNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.ScalarTypeDefinitionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 }
 
 /**
@@ -360,9 +361,9 @@ export class ScalarExtApi extends Mix(
   //   readonly directives?: ReadonlyArray<DirectiveNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.ScalarTypeExtensionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 }
 
 /**
@@ -400,13 +401,13 @@ export class EnumTypeApi extends Mix(
   //   readonly values?: ReadonlyArray<EnumValueDefinitionNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.EnumTypeDefinitionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly values = Hooks.enumValuesDefinitionsMixin(this.node)
+  readonly values = Hooks.enumValuesDefinitionsHook(this.node)
 }
 
 /**
@@ -442,11 +443,11 @@ export class EnumExtApi extends Mix(
   //   readonly values?: ReadonlyArray<EnumValueDefinitionNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.EnumTypeExtensionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly values = Hooks.enumValuesDefinitionsMixin(this.node)
+  readonly values = Hooks.enumValuesDefinitionsHook(this.node)
 }
 
 /**
@@ -484,13 +485,13 @@ export class InputTypeApi extends Mix(
   //   readonly fields?: ReadonlyArray<InputValueDefinitionNode>;
   // }
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.InputObjectTypeDefinitionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly field = Hooks.inputValuesAsFieldsMixin(this.node)
+  readonly field = Hooks.inputValuesAsFieldsHook(this.node)
 }
 
 /**
@@ -526,11 +527,11 @@ export class InputExtApi extends Mix(
   //   readonly fields?: ReadonlyArray<InputValueDefinitionNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.InputObjectTypeExtensionNode, Typename>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly field = Hooks.inputValuesAsFieldsMixin(this.node)
+  readonly field = Hooks.inputValuesAsFieldsHook(this.node)
 }
 
 /**

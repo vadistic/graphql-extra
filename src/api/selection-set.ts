@@ -25,7 +25,7 @@ export class SelectionSetApi extends Mix(Mixin.KindAssertionApiMixin) {
   //   selections: ReadonlyArray<SelectionNode>;
   // }
 
-  readonly selections = Hooks.selectionsMixin(this.node)
+  readonly selections = Hooks.selectionsHook(this.node)
 }
 /**
  * `SelectionSetApi` constructor fn

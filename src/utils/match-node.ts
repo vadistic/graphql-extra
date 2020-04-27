@@ -2,19 +2,22 @@
  * deep equality of subset
  *
  * works like jest.matchObject()
- *
- * TODO: rename to matchNode and ignore locations and stuff
  */
-export function matchObject(main: any, subset: any): boolean {
+export function matchNode(main: any, subset: any): boolean {
   if (main === subset) {
     return true
   }
 
   if ((typeof main === 'object' && main != null) && (typeof subset === 'object' && subset != null)) {
     for (const prop of Object.keys(subset)) {
+      // skip loc props
+      if (prop === 'loc') {
+        continue
+      }
+
       // main has this prop they should match
       if (Object.prototype.hasOwnProperty.call(main, prop)) {
-        if (!matchObject(main[prop], subset[prop])) {
+        if (!matchNode(main[prop], subset[prop])) {
           return false
         }
       }

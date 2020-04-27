@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Hooks, Api, Mixin } from '../internal'
+import { Fieldname, Fragmentname } from '../types'
 import { validateNodeKind, validationError } from '../utils'
 
 
@@ -62,13 +63,13 @@ export class FieldApi extends Mix(
 
   // readonly alias = // TODO:
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.FieldNode, Fieldname>(this.node)
 
-  readonly arguments = Hooks.argumentsMixin(this.node)
+  readonly arguments = Hooks.argumentsHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly selections = Hooks.selectionSetMixin(this.node)
+  readonly selections = Hooks.selectionSetHook(this.node)
 }
 /**
  * `FieldApi` constructor fn
@@ -103,9 +104,9 @@ export class FragmentSpreadApi extends Mix(
   //   readonly directives?: ReadonlyArray<DirectiveNode>;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.FragmentSpreadNode, Fragmentname>(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 }
 
 /**
@@ -124,7 +125,6 @@ export function fragmentSpreadApi(node: GQL.FragmentSpreadNode): FragmentSpreadA
  *
  * @category API Public
  */
-// TODO: add typecondition api mixin
 export class InlineFragmentApi extends Mix(
   Mixin.SelectionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
@@ -143,11 +143,11 @@ export class InlineFragmentApi extends Mix(
   //   readonly selectionSet: SelectionSetNode;
   // }
 
-  readonly typeCondition = Hooks.typeConditionMixin(this.node)
+  readonly typeCondition = Hooks.typeConditionHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly selections = Hooks.selectionSetMixin(this.node)
+  readonly selections = Hooks.selectionSetHook(this.node)
 }
 
 /**

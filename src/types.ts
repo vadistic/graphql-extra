@@ -3,6 +3,7 @@ export type Fieldname = string & {_brand?: 'fieldname'}
 export type Argname = string & {_brand?: 'argname'}
 export type Directivename = string & {_brand?: 'directivename'}
 export type Fragmentname = string & {_brand?: 'fragmentname'}
+export type EnumValueName = string & {_brand?: 'enumValue'}
 
 export type GuardType<T> = T extends (o: any) => o is infer U ? U : never
 export type ContstructorType<T> = T extends new (...args: any) => infer U ? U : never

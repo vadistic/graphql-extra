@@ -9,7 +9,17 @@ describe(Api.EnumValueDefinitionApi.name, () => {
 
   const api = Api.enumValueDefinitionApi(node)
 
-  test('works', () => {
-    expect(api.name.get()).toBe('TEST')
+  describe('hooks', () => {
+    test('name', () => {
+      expect(api.name.get()).toBe('TEST')
+    })
+
+    test('description', () => {
+      expect(api.description.get()).toBe('this is a test case')
+    })
+
+    test('directives', () => {
+      expect(api.directives.has('Client')).toBe(true)
+    })
   })
 })

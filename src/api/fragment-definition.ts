@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Hooks, Mixin } from '../internal'
+import { Fragmentname } from '../types'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -32,15 +33,15 @@ export class FragmentDefinitionApi extends Mix(
   //   readonly selectionSet: SelectionSetNode;
   // }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.FragmentDefinitionNode, Fragmentname>(this.node)
 
-  // readonly variableDefinitions =
+  readonly variables = Hooks.variableDefinitionsHook(this.node)
 
-  readonly typeCondition = Hooks.typeConditionMixin(this.node)
+  readonly typeCondition = Hooks.typeConditionHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 
-  readonly selectionSet = Hooks.selectionSetMixin(this.node)
+  readonly selections = Hooks.selectionSetHook(this.node)
 }
 
 /**

@@ -4,6 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin, Hooks } from '../internal'
+import { EnumValueName } from '../types'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -20,11 +21,11 @@ export class EnumValueDefinitionApi extends Mix(
     validateNodeKind(Kind.ENUM_VALUE_DEFINITION, node)
   }
 
-  readonly name = Hooks.nameMixin(this.node)
+  readonly name = Hooks.nameHook<GQL.EnumValueDefinitionNode, EnumValueName>(this.node)
 
-  readonly description = Hooks.descriptionMixin(this.node)
+  readonly description = Hooks.descriptionHook(this.node)
 
-  readonly directives = Hooks.directivesMixin(this.node)
+  readonly directives = Hooks.directivesHook(this.node)
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Api, Hooks, Ast } from '../internal'
+import { Api, Ast } from '../internal'
 
 describe(Api.OperationDefinitionApi.name, () => {
   const node = Ast.operationDefinitionNode({
@@ -11,16 +11,21 @@ describe(Api.OperationDefinitionApi.name, () => {
 
 
   describe('hooks', () => {
-    test(Hooks.operationMixin.name, () => {
-      expect(api.operation.get()).toBe('query')
+    test('operation', () => {
+      expect(api.operation.is('query')).toBe(true)
     })
 
-    test(Hooks.nameOptionalMixin.name, () => {
-      expect(api.operation.get()).toBe('query')
+    test('name optional', () => {
+      expect(api.name.is()).toBe(false)
+      api.name.set('MyQuery')
+      expect(api.name.is()).toBe(true)
+      expect(api.name.get()).toBe('MyQuery')
+      api.name.unset()
+      expect(api.name.is()).toBe(false)
     })
 
     test('variables', () => {
-      expect(api.variables.findMany({})).toEqual([])
+      expect(api.variables.findManyNames()).toEqual([])
     })
 
     test('directives', () => {
@@ -29,6 +34,7 @@ describe(Api.OperationDefinitionApi.name, () => {
 
     test('selections', () => {
       expect(api.selections.has('myField')).toBe(true)
+      expect(api.selections.findManyNames()).toEqual(['myField'])
     })
   })
 })
