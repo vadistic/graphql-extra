@@ -2,7 +2,6 @@ import type { ASTNode } from 'graphql'
 
 import { cloneDeep } from './clone-deep'
 
-
 export function isAstNode<Node = ASTNode>(input: any): input is Node {
   return typeof input === 'object' && 'kind' in input && typeof input.kind === 'string'
 }
@@ -20,8 +19,7 @@ export function isPrimitive(value: any): value is Primitive {
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-/** transform fn to nullable version: no input => no return */
-export const applyNullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
+const nullableFn = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefined => {
   if (arg) {
     return fn(arg)
   }
@@ -29,35 +27,80 @@ export const applyNullable = <A, R>(fn: (arg: A) => R) => (arg?: A): R | undefin
   return undefined
 }
 
-/** transform fn to map over array of inputs */
-export const applyArr = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
+const nullableImplicitFn = <A, R>(fn: (arg: A) => R) => (arg: A): R => {
+  if (arg !== undefined) {
+    return fn(arg)
+  }
+
+  return undefined as any
+}
+
+const arrayableFn = <A, R>(fn: (arg: A) => R) => (arr: ReadonlyArray<A>): ReadonlyArray<R> =>
   arr.map(fn)
 
-export const propsOrNode = <P, N>(fn: (props: P) => N) => (props: P | N): N =>
-  (isAstNode<N>(props) ? props : fn(props))
+const propsOrNodeFn = <P, N>(fn: (props: P) => N) => (props: P | N): N =>
+  // test for undef to implicitly support partials
+  // eslint-disable-next-line no-nested-ternary
+  (isAstNode<N>(props) ? props : (props ? fn(props) : undefined as any))
 
-/** accept node factory and node or props for factory */
-export const applyProps = <P, N>(fn: (props: P) => N, props: P | N): N => propsOrNode(fn)(props)
+const partialFn = <P, N>(fn: (props: P) => N) => (props: P | Partial<P | N>): Partial<N> => {
+  const partial = fn(props as any)
 
-/** accept node factory and array of nodes or props for factory */
-export const applyPropsArr = <P, N>(
-  fn: (props: P) => N,
-  props: ReadonlyArray<P | N>,
-): readonly N[] => applyArr(propsOrNode(fn))(props)
+  Object.keys(partial).forEach((key) => {
+    if (partial[key as keyof N] === undefined) {
+      delete partial[key as keyof N]
+    }
+  })
 
-/** accept undef or node/props */
-export const applyPropsNullable = <P, N>(fn: (props: P) => N, props?: P | N): N | undefined =>
-  applyNullable(propsOrNode(fn))(props)
+  return partial
+}
 
-/** accept undef or array of nodes/props */
-export const applyPropsNullableArr = <P, N>(
-  fn: (props: P) => N,
-  props?: ReadonlyArray<P | N>,
-): readonly N[] | undefined => applyNullable(applyArr(propsOrNode(fn)))(props)
+const clonedFn = <P, N>(fn: (props: P) => N) => (props: P): N => fn(cloneDeep(props))
 
-/* same as nodeFn but clones props to avoid mutablity magic */
-export const applyPropsCloned = <P, N>(fn: (props: P) => N, props: N | P): N => {
-  const cloned = cloneDeep(props)
+// ────────────────────────────────────────────────────────────────────────────────
 
-  return isAstNode<N>(cloned) ? cloned : fn(cloned)
+/** just nullable */
+export function applyNullable<P, N>(fn: (props: P) => N, props?: P): N | undefined {
+  return nullableFn(fn)(props)
+}
+
+/** just implicitly nullable */
+export function applyNullableImplicit<P, N>(fn: (props: P) => N, props: P): N {
+  return nullableImplicitFn(fn)(props)
+}
+
+/** implicitly nullable + props or node */
+export function applyProps <P, N>(fn: (props: P) => N, props: P | N): N {
+  return nullableImplicitFn(propsOrNodeFn(fn))(props)
+}
+
+/** implicitly nullable + on array + props or node */
+export function applyPropsArr <P, N>(fn: (props: P) => N, props: ReadonlyArray<P | N>): readonly N[] {
+  return nullableImplicitFn(arrayableFn(propsOrNodeFn(fn)))(props)
+}
+
+/** nullable + props or node */
+export function applyPropsNullable <P, N>(fn: (props: P) => N, props?: P | N): N | undefined {
+  return nullableFn(propsOrNodeFn(fn))(props)
+}
+
+/** nullable + on array + props or node */
+export function applyPropsNullableArr <P, N>(fn: (props: P) => N, props?: ReadonlyArray<P | N>):
+readonly N[] | undefined {
+  return nullableFn(arrayableFn(propsOrNodeFn(fn)))(props)
+}
+
+/** implicitly nullable + cloned input + props or node */
+export function applyPropsCloned <P, N>(fn: (props: P) => N, props: N | P): N {
+  return nullableImplicitFn(clonedFn(propsOrNodeFn(fn)))(props)
+}
+
+/** implicitly nullable + props or node + partial */
+export function applyPropsPartial <P, N>(fn: (props: P) => N, props: P | Partial<P | N>): Partial<N> {
+  return nullableImplicitFn(propsOrNodeFn(partialFn(fn)))(props)
+}
+
+/** implicitly nullable + cloned input + props or node + partial */
+export function applyPropsClonedPartial <P, N>(fn: (props: P) => N, props: P | Partial<N | P>): Partial<N> {
+  return nullableImplicitFn(clonedFn(propsOrNodeFn(partialFn(fn))))(props)
 }
