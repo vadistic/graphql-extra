@@ -3,8 +3,8 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Mixin } from '../internal'
-import { mutable, validateNodeKind } from '../utils'
+import { Mixin, Hooks } from '../internal'
+import { validateNodeKind } from '../utils'
 
 /**
  *  API for GraphQL `OperationDefinitionNode`
@@ -12,26 +12,33 @@ import { mutable, validateNodeKind } from '../utils'
  * @category API Public
  */
 export class OperationDefinitionApi extends Mix(
-  Mixin.NameOptionalApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.OperationDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node])
 
     validateNodeKind(Kind.OPERATION_DEFINITION, node)
   }
 
-  getOperationType(): GQL.OperationTypeNode {
-    return this.node.operation
-  }
+  // export interface OperationDefinitionNode {
+  //   readonly kind: 'OperationDefinition';
+  //   readonly loc?: Location;
+  //   readonly operation: OperationTypeNode;
+  //   readonly name?: NameNode;
+  //   readonly variableDefinitions?: ReadonlyArray<VariableDefinitionNode>;
+  //   readonly directives?: ReadonlyArray<DirectiveNode>;
+  //   readonly selectionSet: SelectionSetNode;
+  // }
 
-  setOperationType(operation: GQL.OperationTypeNode): this {
-    mutable(this.node).operation = operation
+  readonly operation = Hooks.operationMixin(this.node)
 
-    return this
-  }
+  readonly name = Hooks.nameOptionalMixin(this.node)
+
+  readonly variables = Hooks.variableDefinitionsMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
+
+  readonly selections = Hooks.selectionSetMixin(this.node)
 }
 /**
  * `OperationDefinitionApi` constructor fn

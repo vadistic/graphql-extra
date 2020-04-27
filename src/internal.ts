@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 /* eslint-disable import/order */
 /* eslint-disable import/no-cycle */
 
@@ -8,11 +9,13 @@
 // also allows for consistent namespacing and simplifies imports
 
 import * as Mixin from './mixin'
-import * as Api from './api'
+import * as Hooks from './mixins'
 
+import * as Api from './api'
 import * as Ast from './ast'
 import * as Guard from './guards'
 
+
 export {
-  Api, Mixin, Ast, Guard,
+  Api, Ast, Guard, Hooks, Mixin,
 }

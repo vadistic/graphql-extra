@@ -8,16 +8,16 @@ describe('Api e2e', () => {
 
   test('top import', () => {
     const api = Api.objectTypeApi(node)
-    expect(api.assertObjectType().getName()).toBe('MyType')
+    expect(api.assertObjectType().name.get()).toBe('MyType')
   })
 
   test('submodule import', () => {
     const api = objectTypeApi(node)
-    expect(api.assertObjectType().getName()).toBe('MyType')
+    expect(api.assertObjectType().name.get()).toBe('MyType')
   })
 
   test('astNodeToApi', () => {
     const api = nodeToApi(node)
-    expect(api.assertObjectType().getName()).toBe('MyType')
+    expect(api.assertObjectType().name.get()).toBe('MyType')
   })
 })

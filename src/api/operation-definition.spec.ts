@@ -1,8 +1,6 @@
-import { Api, Mixin, Ast } from '../internal'
+import { Api, Hooks, Ast } from '../internal'
 
 describe(Api.OperationDefinitionApi.name, () => {
-  const p = Api.OperationDefinitionApi.prototype
-
   const node = Ast.operationDefinitionNode({
     operation: 'query',
     directives: ['Client'],
@@ -11,38 +9,26 @@ describe(Api.OperationDefinitionApi.name, () => {
 
   const api = Api.operationDefinitionApi(node)
 
-  describe('methods', () => {
-    test(p.getOperationType.name, () => {
-      expect(api.getOperationType()).toBe(node.operation)
+
+  describe('hooks', () => {
+    test(Hooks.operationMixin.name, () => {
+      expect(api.operation.get()).toBe('query')
     })
 
-    test(p.setOperationType.name, () => {
-      api.setOperationType('subscription')
-      expect(node.operation).toBe('subscription')
-    })
-  })
-
-  describe('mixins', () => {
-    test(Mixin.NameOptionalApiMixin.name, () => {
-      expect(api.getName()).toBeUndefined()
-
-      api.setName('MyQuery')
-
-      expect(api.getName()).toBe('MyQuery')
+    test(Hooks.nameOptionalMixin.name, () => {
+      expect(api.operation.get()).toBe('query')
     })
 
-    test(Mixin.DirectivesApiMixin.name, () => {
-      expect(api.hasDirective('Client')).toBeTruthy()
+    test('variables', () => {
+      expect(api.variables.findMany({})).toEqual([])
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
-      expect(api.hasSelectionSet()).toBeTruthy()
-
-      expect(api.getSelectionSet()).toBeTruthy()
+    test('directives', () => {
+      expect(api.directives.test({ name: 'Client' })).toBe(true)
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('OperationDefinition')).toBe(true)
+    test('selections', () => {
+      expect(api.selections.has('myField')).toBe(true)
     })
   })
 })

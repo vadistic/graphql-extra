@@ -3,7 +3,7 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Api, Mixin } from '../internal'
+import { Api, Mixin, Hooks } from '../internal'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -12,18 +12,34 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class FieldDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.InputValuesAsArgumentsApiMixin,
-  Mixin.TypeApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FieldDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super([node])
 
     validateNodeKind(Kind.FIELD_DEFINITION, node)
   }
+
+  // export interface FieldDefinitionNode {
+  //   readonly kind: 'FieldDefinition';
+  //   readonly loc?: Location;
+  //   readonly description?: StringValueNode;
+  //   readonly name: NameNode;
+  //   readonly arguments?: ReadonlyArray<InputValueDefinitionNode>;
+  //   readonly type: TypeNode;
+  //   readonly directives?: ReadonlyArray<DirectiveNode>;
+  // }
+
+  readonly description = Hooks.descriptionMixin(this.node)
+
+  readonly name = Hooks.nameMixin(this.node)
+
+  readonly arguments = Hooks.inputValuesAsArgumentsMixin(this.node)
+
+  readonly type = Hooks.typeMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
+
 
   toInputValue(): Api.InputValueDefinitionApi {
     const {

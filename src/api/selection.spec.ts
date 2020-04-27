@@ -1,4 +1,4 @@
-import { Api, Mixin, Ast } from '../internal'
+import { Api, Hooks, Ast } from '../internal'
 
 describe(Api.FieldApi.name, () => {
   const node = Ast.fieldNode({
@@ -10,29 +10,21 @@ describe(Api.FieldApi.name, () => {
 
   const api = Api.fieldApi(node)
 
-  describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
-      expect(api.getName()).toBe('myField')
+  describe('hooks', () => {
+    test('name', () => {
+      expect(api.name.get()).toBe('myField')
     })
 
-    test(Mixin.ArgumentsApiMixin.name, () => {
-      expect(api.getArgumentNames()).toMatchObject(['age'])
+    test('argument', () => {
+      expect(api.arguments.has('age')).toBe(true)
     })
 
-    test(Mixin.DirectivesApiMixin.name, () => {
-      expect(api.getDirectiveNames()).toMatchObject(['Client'])
+    test('directives', () => {
+      expect(api.directives.has('Client')).toBe(true)
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
-      expect(api.hasSelectionSet()).toBeTruthy()
-    })
-
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
-      expect(api.isField()).toBeTruthy()
-    })
-
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('Field')).toBe(true)
+    test('selections', () => {
+      expect(api.selections.has('myNestedfield')).toBe(true)
     })
   })
 })
@@ -45,22 +37,14 @@ describe(Api.FragmentSpreadApi.name, () => {
 
   const api = Api.fragmentSpreadApi(node)
 
-  describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
-      expect(api.getName()).toBe('MyFragment')
+  describe('hooks', () => {
+    test(Hooks.nameMixin.name, () => {
+      expect(api.name.get()).toBe('MyFragment')
     })
 
 
-    test(Mixin.DirectivesApiMixin.name, () => {
-      expect(api.hasDirective('Client')).toBeTruthy()
-    })
-
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
-      expect(api.isFragmentSpread()).toBeTruthy()
-    })
-
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('FragmentSpread')).toBe(true)
+    test(Hooks.directivesMixin.name, () => {
+      expect(api.directives.has('Client')).toBe(true)
     })
   })
 })
@@ -75,21 +59,17 @@ describe(Api.InlineFragmentApi.name, () => {
 
   const api = Api.inlineFragmentApi(node)
 
-  describe('mixins', () => {
-    test(Mixin.DirectivesApiMixin.name, () => {
-      expect(api.hasDirective('Client')).toBeTruthy()
+  describe('hooks', () => {
+    test(Hooks.typeConditionMixin.name, () => {
+      expect(api.typeCondition.get()).toBe('MyType')
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
-      expect(api.hasSelectionSet()).toBeTruthy()
+    test(Hooks.directivesMixin.name, () => {
+      expect(api.directives.has('Client')).toBe(true)
     })
 
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
-      expect(api.hasSelectionSet()).toBeTruthy()
-    })
-
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('InlineFragment')).toBe(true)
+    test(Hooks.selectionSetMixin.name, () => {
+      expect(api.selections.has('myField')).toBe(true)
     })
   })
 })

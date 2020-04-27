@@ -3,8 +3,8 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Api, Ast, Mixin } from '../internal'
-import { validateNodeKind, mutable, applyProps } from '../utils'
+import { Hooks, Mixin } from '../internal'
+import { validateNodeKind } from '../utils'
 
 /**
  *  API for GraphQL `SchemaDefinitionNode`
@@ -12,34 +12,24 @@ import { validateNodeKind, mutable, applyProps } from '../utils'
  * @category API Public
  */
 export class OperationTypeDefinitionApi extends Mix(
-  Mixin.NamedTypeApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.OperationTypeDefinitionNode) {
-    super([node], [node])
+    super([node])
 
     validateNodeKind(Kind.OPERATION_TYPE_DEFINITION, node)
   }
 
-  getOperation(): GQL.OperationTypeNode {
-    return this.node.operation
-  }
+  // export interface OperationTypeDefinitionNode {
+  //   readonly kind: 'OperationTypeDefinition';
+  //   readonly loc?: Location;
+  //   readonly operation: OperationTypeNode;
+  //   readonly type: NamedTypeNode;
+  // }
 
-  setOperation(operation: GQL.OperationTypeNode): this {
-    mutable(this.node).operation = operation
+  readonly operation = Hooks.operationMixin(this.node)
 
-    return this
-  }
-
-  getType(): Api.NamedTypeApi {
-    return Api.namedTypeApi(this.node.type)
-  }
-
-  setType(type: Ast.NamedTypeNodeProps | GQL.NamedTypeNode): this {
-    mutable(this.node).type = applyProps(Ast.namedTypeNode, type)
-
-    return this
-  }
+  readonly type = Hooks.namedTypeMixin(this.node)
 }
 
 

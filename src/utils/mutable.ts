@@ -14,10 +14,15 @@ export const mutable = <T>(node: T): Mutable<T> => node
 /** assert input as `DeepMutable<T>` */
 export const deepMutable = <T>(node: T): DeepMutable<T> => node
 
-/** helper to concat readonly array - they are frozen or smth in graphql */
-export const concat = <T>(arr: readonly T[], el: T): readonly T[] => {
-  // eslint-disable-next-line no-param-reassign
-  (arr as any)[arr.length] = el
+/** helper to concat readonly array
+ * - they are frozen or smth in graphql
+ * - Array.prototype.concat.apply() also does not work...
+ */
+export const concat = <T>(arr: readonly T[], ...els: T[]): readonly T[] => {
+  els.forEach((el) => {
+    // eslint-disable-next-line no-param-reassign
+    (arr as any)[arr.length] = el
+  })
 
   return arr
 }

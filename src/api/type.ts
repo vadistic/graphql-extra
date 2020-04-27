@@ -3,7 +3,7 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Ast, Mixin } from '../internal'
+import { Ast, Mixin, Hooks } from '../internal'
 import { Typename } from '../types'
 import {
   applyPropsCloned,
@@ -129,15 +129,14 @@ export class NamedTypeApi extends Mix(Mixin.KindAssertionApiMixin) {
     validateNodeKind(Kind.NAMED_TYPE, node)
   }
 
-  getTypename(): Typename {
-    return this.node.name.value
-  }
+  // export interface NamedTypeNode {
+  //   readonly kind: 'NamedType';
+  //   readonly loc?: Location;
+  //   readonly name: NameNode;
+  // }
 
-  setTypename(value: Typename): this {
-    mutable(this.node).name = Ast.nameNode(value)
 
-    return this
-  }
+  name = Hooks.nameMixin(this.node)
 }
 
 /**

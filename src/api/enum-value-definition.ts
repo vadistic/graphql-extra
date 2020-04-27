@@ -3,7 +3,7 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Mixin } from '../internal'
+import { Mixin, Hooks } from '../internal'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -12,16 +12,19 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class EnumValueDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.EnumValueDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node])
 
     validateNodeKind(Kind.ENUM_VALUE_DEFINITION, node)
   }
+
+  readonly name = Hooks.nameMixin(this.node)
+
+  readonly description = Hooks.descriptionMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
 }
 
 /**

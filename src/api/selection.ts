@@ -3,7 +3,7 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Mixin, Api } from '../internal'
+import { Hooks, Api, Mixin } from '../internal'
 import { validateNodeKind, validationError } from '../utils'
 
 
@@ -41,18 +41,34 @@ export function selectionApi(node: GQL.SelectionNode): SelectionApi {
 
 // TODO: add alias
 export class FieldApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.ArgumentsApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
   Mixin.SelectionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FieldNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super([node], [node])
 
     validateNodeKind(Kind.FIELD, node)
   }
+
+  // export interface FieldNode {
+  //   readonly kind: 'Field';
+  //   readonly loc?: Location;
+  //   readonly alias?: NameNode;
+  //   readonly name: NameNode;
+  //   readonly arguments?: ReadonlyArray<ArgumentNode>;
+  //   readonly directives?: ReadonlyArray<DirectiveNode>;
+  //   readonly selectionSet?: SelectionSetNode;
+  // }
+
+  // readonly alias = // TODO:
+
+  readonly name = Hooks.nameMixin(this.node)
+
+  readonly arguments = Hooks.argumentsMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
+
+  readonly selections = Hooks.selectionSetMixin(this.node)
 }
 /**
  * `FieldApi` constructor fn
@@ -71,16 +87,25 @@ export function fieldApi(node: GQL.FieldNode): FieldApi {
  * @category API Public
  */
 export class FragmentSpreadApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DirectivesApiMixin,
   Mixin.SelectionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FragmentSpreadNode) {
-    super([node], [node], [node], [node])
+    super([node], [node])
 
     validateNodeKind(Kind.FRAGMENT_SPREAD, node)
   }
+
+  // export interface FragmentSpreadNode {
+  //   readonly kind: 'FragmentSpread';
+  //   readonly loc?: Location;
+  //   readonly name: NameNode;
+  //   readonly directives?: ReadonlyArray<DirectiveNode>;
+  // }
+
+  readonly name = Hooks.nameMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
 }
 
 /**
@@ -101,16 +126,28 @@ export function fragmentSpreadApi(node: GQL.FragmentSpreadNode): FragmentSpreadA
  */
 // TODO: add typecondition api mixin
 export class InlineFragmentApi extends Mix(
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
   Mixin.SelectionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.InlineFragmentNode) {
-    super([node], [node], [node])
+    super([node], [node])
 
     validateNodeKind(Kind.INLINE_FRAGMENT, node)
   }
+
+  // export interface InlineFragmentNode {
+  //   readonly kind: 'InlineFragment';
+  //   readonly loc?: Location;
+  //   readonly typeCondition?: NamedTypeNode;
+  //   readonly directives?: ReadonlyArray<DirectiveNode>;
+  //   readonly selectionSet: SelectionSetNode;
+  // }
+
+  readonly typeCondition = Hooks.typeConditionMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
+
+  readonly selections = Hooks.selectionSetMixin(this.node)
 }
 
 /**

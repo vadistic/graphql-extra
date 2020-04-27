@@ -3,7 +3,7 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Mixin } from '../internal'
+import { Hooks, Mixin } from '../internal'
 import { validateNodeKind } from '../utils'
 
 /**
@@ -12,16 +12,35 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class FragmentDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.FragmentDefinitionNode) {
-    super([node], [node], [node], [node])
+    super([node])
 
     validateNodeKind(Kind.FRAGMENT_DEFINITION, node)
   }
+
+  // export interface FragmentDefinitionNode {
+  //   readonly kind: 'FragmentDefinition';
+  //   readonly loc?: Location;
+  //   readonly name: NameNode;
+  //   // Note: fragment variable definitions are experimental and may be changed
+  //   // or removed in the future.
+  //   readonly variableDefinitions?: ReadonlyArray<VariableDefinitionNode>;
+  //   readonly typeCondition: NamedTypeNode;
+  //   readonly directives?: ReadonlyArray<DirectiveNode>;
+  //   readonly selectionSet: SelectionSetNode;
+  // }
+
+  readonly name = Hooks.nameMixin(this.node)
+
+  // readonly variableDefinitions =
+
+  readonly typeCondition = Hooks.typeConditionMixin(this.node)
+
+  readonly directives = Hooks.directivesMixin(this.node)
+
+  readonly selectionSet = Hooks.selectionSetMixin(this.node)
 }
 
 /**

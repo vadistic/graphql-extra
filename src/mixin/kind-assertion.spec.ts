@@ -1,6 +1,6 @@
 import { Kind } from 'graphql'
 
-import { Mixin, Ast } from '../internal'
+import { Ast, Mixin } from '../internal'
 
 describe(Mixin.KindAssertionApiMixin, () => {
   const p = Mixin.KindAssertionApiMixin.prototype

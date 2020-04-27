@@ -1,8 +1,6 @@
-import { Api, Mixin, Ast } from '../internal'
+import { Api, Ast } from '../internal'
 
 describe(Api.DirectiveDefinitionApi.name, () => {
-  const p = Api.DirectiveDefinitionApi.prototype
-
   const node = Ast.directiveDefinitionNode({
     name: 'Client',
     locations: ['ARGUMENT_DEFINITION'],
@@ -12,66 +10,39 @@ describe(Api.DirectiveDefinitionApi.name, () => {
 
   const api = Api.directiveDefinitionApi(node)
 
-  describe('methods', () => {
-    test(p.isRepeatable.name, () => {
-      expect(api.isRepeatable()).toBe(false)
+  describe('name', () => {
+    test('get', () => {
+      expect(api.name.get()).toBe('Client')
     })
 
-    test(p.setRepeatable.name, () => {
-      api.setRepeatable(true)
-      expect(api.isRepeatable()).toBe(true)
-    })
-  })
-
-  describe('locations crud', () => {
-    test(p.hasLocation.name, () => {
-      expect(api.hasLocation('ARGUMENT_DEFINITION')).toBe(true)
-    })
-
-    test(p.getLocations.name, () => {
-      expect(api.getLocations()).toEqual(['ARGUMENT_DEFINITION'])
-    })
-
-    test(p.setLocations.name, () => {
-      api.setLocations([])
-      expect(api.getLocations()).toEqual([])
-    })
-
-    test(p.createLocation.name + ' ok', () => {
-      api.createLocation('ENUM')
-      expect(api.hasLocation('ENUM')).toBe(true)
-    })
-
-    test(p.createLocation.name + ' fail', () => {
-      expect(() => api.createLocation('ENUM')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot create 'ENUM' in locations of DirectiveDefinition 'Client' because it already exists\"",
-      )
-    })
-
-    test(p.removeLocation.name + ' ok', () => {
-      api.removeLocation('ENUM')
-      expect(api.hasLocation('ENUM')).toBe(false)
-    })
-
-    test(p.removeLocation.name + ' fail', () => {
-      expect(() => api.removeLocation('ENUM')).toThrowErrorMatchingInlineSnapshot(
-        '"cannot remove \'ENUM\' in locations of DirectiveDefinition \'Client\' because it does not exist"',
-      )
+    test('set', () => {
+      api.name.set({ name: 'Cache' })
+      expect(api.name.get()).toBe('Cache')
     })
   })
 
-  describe('mixins', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.NameApiMixin.name, () => {})
+  describe('repeatable', () => {
+    test('get', () => {
+      expect(api.repeatable.get()).toBe(false)
+    })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.DescriptionApiMixin.name, () => {})
+    test('set', () => {
+      api.repeatable.set(true)
+      expect(api.repeatable.get()).toBe(true)
+    })
+  })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.InputValuesAsArgumentsApiMixin.name, () => {})
+  describe('locations', () => {
+    test('has & test ok', () => {
+      expect(api.locations.has('ARGUMENT_DEFINITION')).toBe(true)
+      expect(api.locations.has('QUERY')).toBe(false)
+      expect(api.locations.test({ name: 'ARGUMENT_DEFINITION' })).toBe(true)
+    })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('DirectiveDefinition')).toBe(true)
+    test('create ok', () => {
+      expect(api.locations.has('ENUM')).toBe(false)
+      api.locations.create('ENUM')
+      expect(api.locations.has('ENUM')).toBe(true)
     })
   })
 })

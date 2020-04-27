@@ -1,4 +1,4 @@
-import { Api, Mixin, Ast } from '../internal'
+import { Api, Ast } from '../internal'
 
 describe(Api.FragmentDefinitionApi.name, () => {
   const node = Ast.fragmentDefinitionNode({
@@ -11,26 +11,7 @@ describe(Api.FragmentDefinitionApi.name, () => {
 
   const api = Api.fragmentDefinitionApi(node)
 
-
-  describe('methods', () => {
-    //
-  })
-
-  describe('mixins', () => {
-    test(Mixin.NameOptionalApiMixin.name, () => {
-      expect(api.getName()).toBe('MyFragment')
-    })
-
-    test(Mixin.NameApiMixin.name, () => {
-      expect(api.getName()).toBe('MyFragment')
-    })
-
-    test(Mixin.SelectionSetApiMixin.name, () => {
-      expect(api.hasSelectionSet()).toBeTruthy()
-    })
-
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('FragmentDefinition')).toBe(true)
-    })
+  test('works', () => {
+    expect(api.name.get()).toBe('MyFragment')
   })
 })

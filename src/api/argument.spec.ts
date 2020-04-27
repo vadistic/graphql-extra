@@ -1,33 +1,25 @@
-import { Api, Mixin, Ast } from '../internal'
+import { Api, Ast } from '../internal'
 
 describe(Api.ArgumentApi.name, () => {
-  const p = Api.ArgumentApi.prototype
-
   const value = Ast.intValueNode(123)
-
   const node = Ast.argumentNode({ name: 'age', value })
-
   const api = Api.argumentApi(node)
 
-  describe('methods', () => {
-    test(p.getValue.name, () => {
-      expect(api.getValue()).toEqual(value)
-    })
 
-    test(p.setValue.name, () => {
-      const nextValue = Ast.stringValueNode('hello')
-      api.setValue(nextValue)
-      expect(api.getValue()).toEqual(nextValue)
-    })
+  test('works', () => {
+    expect(api.name.get()).toEqual('age')
   })
 
-  describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
-      expect(api.getName()).toBe('age')
+  describe('value', () => {
+    test('get', () => {
+      expect(api.value.node).toEqual(value)
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(api.isKind('Argument')).toBe(true)
+    test('set', () => {
+      const next = Ast.intValueNode(1)
+
+      api.value.set(next)
+      expect(api.value.node).toEqual(next)
     })
   })
 })

@@ -1,78 +1,115 @@
-import { Mixin, Ast } from '../internal'
+import { Kind } from 'graphql'
 
-describe('crud util', () => {
-  const args = [{ name: 'maxAge', value: Ast.intValueNode(123) }]
+import { Ast, Hooks, Api } from '../internal'
+import { Crud } from './crud'
+
+describe('crud', () => {
+  const args: Ast.ArgumentNodeProps[] = [
+    { name: 'maxAge', value: Ast.intValueNode(1000) },
+    { name: 'minAge', value: Ast.intValueNode(100) },
+    { name: 'transform', value: Ast.booleanValueNode(true) },
+    { name: 'offline', value: Ast.booleanValueNode(true) },
+  ]
 
   const node = Ast.directiveNode({
     name: 'Cache',
     arguments: args,
   })
 
-  const api = Mixin.argumentsApiMixin(node)
+  const hook = Hooks.argumentsMixin(node)
 
-  describe('create', () => {
-    const argname = 'hello'
-    const value = Ast.booleanValueNode(true)
+  // ────────────────────────────────────────────────────────────────────────────────
 
-    test('create ok', () => {
-      api.createArgument({ name: argname, value })
-
-      expect(api.getArgument(argname).getName()).toEqual(argname)
-      expect(api.getArgument(argname).getValue()).toEqual(value)
-    })
-
-    test('create fail', () => {
-      expect(() => api.createArgument({ name: argname, value })).toThrowErrorMatchingInlineSnapshot(
-        '"cannot create \'hello\' in arguments of Directive \'Cache\' because it already exists"',
-      )
-    })
+  test(Crud.prototype.has.name, () => {
+    expect(hook.has('maxAge')).toBe(true)
+    expect(hook.has('minAge')).toBe(true)
   })
 
-  describe('update', () => {
-    const value = Ast.nullValueNode()
-
-    test('update partial ok', () => {
-      api.updateArgument('hello', { value })
-      expect(api.getArgument('hello').getValue()).toEqual(value)
-    })
-
-    test('rename ok', () => {
-      api.updateArgument('hello', { value, name: 'bye' })
-      expect(api.hasArgument('bye')).toBe(true)
-      expect(api.hasArgument('hello')).toBe(false)
-    })
-
-    test('update fail', () => {
-      expect(() => api.updateArgument('something', {})).toThrowErrorMatchingInlineSnapshot(
-        '"cannot update \'something\' in arguments of Directive \'Cache\' because it does not exist"',
-      )
-    })
+  test(Crud.prototype.test.name, () => {
+    expect(hook.test({ name: 'maxAge' })).toBe(true)
+    expect(hook.test({ value: Ast.intValueNode(100) })).toBe(true)
+    expect(hook.test({ name: 'random' })).toBe(false)
   })
 
-  describe('upsert', () => {
-    const value = Ast.stringValueNode('hello')
+  // ────────────────────────────────────────────────────────────────────────────────
 
-    test('existing ok', () => {
-      api.upsertArgument({ name: 'maxAge', value })
-      expect(api.getArgument('maxAge').getValue()).toEqual(value)
-    })
+  test('findOneNode', () => {
+    const targetOk = 'maxAge'
+    const targetFail = 'random'
 
-    test('new ok', () => {
-      api.upsertArgument({ name: 'maxAge2', value })
-      expect(api.getArgument('maxAge2').getValue()).toEqual(value)
-    })
+    expect(hook.findOneNode(targetOk)).toMatchObject({ kind: Kind.ARGUMENT })
+    expect(hook.findOneNode(targetFail)).toBeUndefined()
   })
 
-  describe('remove', () => {
-    test('remove ok', () => {
-      api.removeArgument('maxAge2')
-      expect(api.hasArgument('maAge2')).toBe(false)
-    })
+  test(Crud.prototype.findOne.name + ' by Target', () => {
+    const targetOk = 'maxAge'
+    const targetFail = 'random'
 
-    test('remove fail', () => {
-      expect(() => api.removeArgument('something')).toThrowErrorMatchingInlineSnapshot(
-        '"cannot remove \'something\' in arguments of Directive \'Cache\' because it does not exist"',
-      )
-    })
+    expect(hook.findOne(targetOk)).toBeInstanceOf(Api.ArgumentApi)
+    expect(hook.findOne(targetFail)).toBeUndefined()
+  })
+
+  test(Crud.prototype.findOne.name + ' by Props', () => {
+    const propsOk = { name: 'maxAge', value: Ast.intValueNode(1000) }
+
+    const propsFailBecauseName = { name: 'random', value: Ast.intValueNode(1000) }
+    const propsFailBecauseValue = { name: 'maxAge', value: Ast.intValueNode(1001) }
+
+    expect(hook.findOne(propsOk)).toBeInstanceOf(Api.ArgumentApi)
+    expect(hook.findOne(propsFailBecauseName)).toBeUndefined()
+    expect(hook.findOne(propsFailBecauseValue)).toBeUndefined()
+  })
+
+  test(Crud.prototype.findOne.name + ' by partial Props/Element', () => {
+    const propsNameOk = { name: 'maxAge' }
+    const propsValueOk = { value: Ast.intValueNode(1000) }
+
+    const propsFailBecasueName = { name: 'random' }
+    const propsFailBecauseValue = { value: Ast.intValueNode(1) }
+
+    expect(hook.findOne(propsNameOk)).toBeInstanceOf(Api.ArgumentApi)
+    expect(hook.findOne(propsValueOk)).toBeInstanceOf(Api.ArgumentApi)
+
+    expect(hook.findOne(propsFailBecasueName)).toBeUndefined()
+    expect(hook.findOne(propsFailBecauseValue)).toBeUndefined()
+  })
+
+  test(Crud.prototype.findOne.name + ' by Element', () => {
+    const nodeOk = Ast.argumentNode(args[0])
+
+    const nodeFailBecauseName = Ast.argumentNode({ ...args[0], name: 'random' })
+    const nodeFailBecauseValue = Ast.argumentNode({ ...args[0], value: Ast.intValueNode(1001) })
+
+    expect(hook.findOne(nodeOk)).toBeInstanceOf(Api.ArgumentApi)
+    expect(hook.findOne(nodeFailBecauseName)).toBeUndefined()
+    expect(hook.findOne(nodeFailBecauseValue)).toBeUndefined()
+  })
+
+  test(Crud.prototype.findOneOrFail.name, () => {
+    expect(hook.findOneOrFail('maxAge')).toBeInstanceOf(Api.ArgumentApi)
+    expect(() => hook.findOneOrFail('random')).toThrowErrorMatchingInlineSnapshot(
+      '"cannot find \'random\' in arguments of Directive \\"Cache\\" because it does not exist"',
+    )
+  })
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  test(Crud.prototype.findManyNodeIndicies.name, () => {
+    expect(hook.findManyNodeIndicies('maxAge')).toEqual([0])
+  })
+
+  test(Crud.prototype.findManyNodes.name, () => {
+    const nodes = hook.findManyNodes({ value: Ast.booleanValueNode(true) })
+
+    expect(nodes.every((n) => n.kind === Kind.ARGUMENT)).toBe(true)
+    expect(nodes.every((n) => n.kind === Kind.ARGUMENT)).toBe(true)
+    expect(nodes.length).toBe(2)
+  })
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  test('create', () => {
+    hook.create({ name: 'sync', value: Ast.variableNode('sync') })
+    expect(hook.has('sync')).toBe(true)
   })
 })

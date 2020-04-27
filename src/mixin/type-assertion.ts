@@ -1,8 +1,7 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
 
-// eslint-disable-next-line import/no-cycle
-import { Api } from '../internal'
+import type { Api } from '../internal'
 import { assertionError } from '../utils'
 
 /**
