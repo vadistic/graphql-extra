@@ -19,6 +19,7 @@ export class DocumentSchemaApi extends DocumentSchemaApiBase {
     return new DocumentSchemaApi(cloneDeep(this.toDocument()))
   }
 
+
   // ─────────────────────────────────────────────────────────────────
   // roots api
 

@@ -54,7 +54,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
       expect(mixin.hasField('anotherField')).toBe(true)
 
       expect(() => mixin.createField('anotherField')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot create 'anotherField' in selectionSet of OperationDefinition 'MyQuery' because it already exists\"",
+        '"cannot create Field \'anotherField\' in selectionSet of OperationDefinition \'MyQuery\' because it already exists"',
       )
     })
 
@@ -64,7 +64,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
       expect(mixin.hasField('myField')).toBe(false)
 
       expect(() => mixin.updateField('notMyField', 'anything')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot update 'notMyField' in selectionSet of OperationDefinition 'MyQuery' because it does not exist\"",
+        '"cannot update Field \'notMyField\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
   })
@@ -84,7 +84,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
     test(p.getFragmentSpead.name, () => {
       expect(mixin.getFragmentSpead('MyFragment').getName()).toBe('MyFragment')
       expect(() => mixin.getFragmentSpead('NotMyFragment').getName()).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot find 'NotMyFragment' in selectionSet of OperationDefinition 'MyQuery' because it does not exist\"",
+        '"cannot find FragmentSpread \'NotMyFragment\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
 
@@ -95,11 +95,10 @@ describe(Mixin.SelectionSetMixin.name, () => {
 
     test(p.updateFragmentSpread.name, () => {
       mixin.updateFragmentSpread('MyFragment', 'MyRenamedFragment')
-
       expect(mixin.hasFragmentSpread('MyRenamedFragment')).toBe(true)
       expect(mixin.hasFragmentSpread('MyFragment')).toBe(false)
       expect(() => mixin.updateFragmentSpread('MyFragment', 'anything')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot update 'MyFragment' in selectionSet of OperationDefinition 'MyQuery' because it does not exist\"",
+        '"cannot update FragmentSpread \'MyFragment\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
 
@@ -108,14 +107,15 @@ describe(Mixin.SelectionSetMixin.name, () => {
       expect(mixin.hasFragmentSpread('MyFragment')).toBe(false)
 
       expect(() => mixin.removeFragmentSpread('MyFragment')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot remove 'MyFragment' in selectionSet of OperationDefinition 'MyQuery' because it does not exist\"",
+        '"cannot remove FragmentSpread \'MyFragment\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
   })
 
   describe('inline fragment', () => {
     test(p.hasInlineFragment.name, () => {
-      expect(mixin.hasInlineFragment()).toBe(true)
+      // would match inline fragment without type condition
+      expect(mixin.hasInlineFragment()).toBe(false)
       expect(mixin.hasInlineFragment('MyType')).toBe(true)
       expect(mixin.hasInlineFragment('NotMyType')).toBe(false)
     })
@@ -123,7 +123,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
     test(p.getInlineFragment.name, () => {
       expect(mixin.getInlineFragment('MyType').isInflineFragment()).toBe(true)
       expect(() => mixin.getInlineFragment('NotMyType').isInflineFragment()).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot find 'InlineFragment' in selectionSet of OperationDefinition 'MyQuery' because it does not exist\"",
+        '"cannot find InlineFragment \'NotMyType\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
 
@@ -139,7 +139,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
 
       expect(() =>
         mixin.createInlineFragment({ typeCondition: 'MyOtherType', selections: [] })).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot create 'InlineFragment' in selectionSet of OperationDefinition 'MyQuery' because it already exists\"",
+        '"cannot create InlineFragment \'{\\"typeCondition\\":\\"MyOtherType\\",\\"selections\\":[]}\' in selectionSet of OperationDefinition \'MyQuery\' because it already exists"',
       )
     })
 
@@ -149,7 +149,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
       expect(mixin.hasInlineFragment('MyOtherType')).toBe(true)
 
       expect(() => mixin.updateInlineFragment('MyType', {})).toThrowErrorMatchingInlineSnapshot(
-        '"cannot update \'InlineFragment\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
+        '"cannot update InlineFragment \'MyType\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
 
@@ -159,7 +159,7 @@ describe(Mixin.SelectionSetMixin.name, () => {
       expect(mixin.hasInlineFragment('MyType')).toBe(false)
 
       expect(() => mixin.removeInlineFragment('MyType')).toThrowErrorMatchingInlineSnapshot(
-        '"cannot remove \'InlineFragment\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
+        '"cannot remove InlineFragment \'MyType\' in selectionSet of OperationDefinition \'MyQuery\' because it does not exist"',
       )
     })
   })

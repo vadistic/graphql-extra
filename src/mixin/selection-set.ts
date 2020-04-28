@@ -3,7 +3,7 @@ import { Kind } from 'graphql'
 
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
-import { Fieldname, Fragmentname } from '../types'
+import { Fieldname, Fragmentname, Typename } from '../types'
 import { mutable, Crud, Mutable } from '../utils'
 
 /**
@@ -24,18 +24,12 @@ export class SelectionSetMixin {
   constructor(readonly node: SelectionSetMixinNode) {
   }
 
-  readonly _selections = new Crud({
-    parent: this.node,
-    key: this.node.kind === Kind.SELECTION_SET ? 'selections' : 'selectionSet',
-    api: Api.selectionApi,
-    factory: Ast.selectionNode,
-    matcher: (node): string =>
-      (node.kind !== Kind.INLINE_FRAGMENT ? node.name.value : node.typeCondition?.name.value) ?? '',
-    // this whole mess is to support both nodes with selectionSet and selectionSet itself with one mixin
-    // TODO: try to support cleaning empty selection sets
-    // TODO: try to run those evaluations only once, not on all access
-    // TODO: clean up code
-    ref: this.node.kind === Kind.SELECTION_SET ? undefined : (next): GQL.SelectionNode[] => {
+  // this whole mess is to support both nodes with selectionSet and selectionSet itself with one mixin
+  // TODO: try to support cleaning empty selection sets
+  // TODO: try to run those evaluations only once, not on all access
+  // TODO: clean up code
+  protected _selectionsRef = this.node.kind === Kind.SELECTION_SET ? undefined
+    : (next?: GQL.SelectionNode[]): GQL.SelectionNode[] => {
       const _node = this.node as Mutable<Exclude<SelectionSetMixinNode, GQL.SelectionSetNode>>
 
       if (!_node.selectionSet) {
@@ -51,7 +45,47 @@ export class SelectionSetMixin {
       }
 
       return _node.selectionSet.selections as GQL.SelectionNode[]
-    },
+    }
+
+  readonly _selections = new Crud({
+    parent: this.node,
+    key: this.node.kind === Kind.SELECTION_SET ? 'selections' : 'selectionSet',
+    api: Api.selectionApi,
+    factory: Ast.selectionNode,
+    matcher: (node): string =>
+      (node.kind !== Kind.INLINE_FRAGMENT ? node.name.value : node.typeCondition?.name.value) ?? '',
+
+    ref: this._selectionsRef,
+  })
+
+  readonly _fields = new Crud({
+    parent: this.node,
+    key: this.node.kind === Kind.SELECTION_SET ? 'selections' : 'selectionSet',
+    api: Api.fieldApi,
+    factory: Ast.fieldNode,
+    matcher: (node): Fieldname => node.name.value,
+    ref: this._selectionsRef,
+    kind: Kind.FIELD,
+  })
+
+  readonly _fragmentSpreads = new Crud({
+    parent: this.node,
+    key: this.node.kind === Kind.SELECTION_SET ? 'selections' : 'selectionSet',
+    api: Api.fragmentSpreadApi,
+    factory: Ast.fragmentSpreadNode,
+    matcher: (node): Fragmentname => node.name.value,
+    ref: this._selectionsRef,
+    kind: Kind.FRAGMENT_SPREAD,
+  })
+
+  readonly _inlineFragments = new Crud({
+    parent: this.node,
+    key: this.node.kind === Kind.SELECTION_SET ? 'selections' : 'selectionSet',
+    api: Api.inlineFragmentApi,
+    factory: Ast.inlineFragmentNode,
+    matcher: (node): Typename | undefined => node.typeCondition?.name.value,
+    ref: this._selectionsRef,
+    kind: Kind.INLINE_FRAGMENT,
   })
 
   // ────────────────────────────────────────────────────────────────────────────────
@@ -99,38 +133,37 @@ export class SelectionSetMixin {
   // ────────────────────────────────────────────────────────────────────────────────
 
   hasField(fieldname: Fieldname): boolean {
-    return this._selections.test({ kind: Kind.FIELD, name: fieldname })
+    return this._fields.has(fieldname)
   }
 
   getFields(): Api.FieldApi[] {
-    // TODO: test!
-    return this._selections.findMany({ kind: Kind.FIELD }) as Api.FieldApi[]
+    return this._fields.findMany()
   }
 
   getField(fieldname: Fieldname): Api.FieldApi {
-    return this._selections.findOneOrFail({ name: fieldname, kind: Kind.FIELD }) as Api.FieldApi
+    return this._fields.findOneOrFail(fieldname)
   }
 
   createField(props: Ast.FieldNodeProps | GQL.FieldNode): this {
-    this._selections.create(props)
+    this._fields.create(props)
 
     return this
   }
 
   updateField(fieldname: Fieldname, props: Ast.FieldNodeProps | GQL.FieldNode): this {
-    this._selections.update(fieldname, props)
+    this._fields.update(fieldname, props)
 
     return this
   }
 
   upsertField(props: Ast.FieldNodeProps | GQL.FieldNode): this {
-    this._selections.upsert(props)
+    this._fields.upsert(props)
 
     return this
   }
 
   removeField(fieldname: Fieldname): this {
-    this._selections.remove(fieldname)
+    this._fields.remove(fieldname)
 
     return this
   }
@@ -138,24 +171,19 @@ export class SelectionSetMixin {
   // ────────────────────────────────────────────────────────────────────────────────
 
   hasFragmentSpread(fragmentname: Fragmentname): boolean {
-    return this._selections.test({ kind: Kind.FRAGMENT_SPREAD, name: fragmentname })
+    return this._fragmentSpreads.has(fragmentname)
   }
 
   getFragmentSpreads(): Api.FragmentSpreadApi[] {
-    return this._selections.findMany({ kind: Kind.FRAGMENT_SPREAD }) as Api.FragmentSpreadApi[]
+    return this._fragmentSpreads.findMany()
   }
 
   getFragmentSpead(fragmentname: Fragmentname): Api.FragmentSpreadApi {
-    return this._selections.findOneOrFail({ name: fragmentname, kind: Kind.FRAGMENT_SPREAD }) as Api.FragmentSpreadApi
+    return this._fragmentSpreads.findOneOrFail(fragmentname)
   }
 
   createFragmentSpread(props: Ast.FragmentSpreadNodeProps | GQL.FragmentSpreadNode): this {
-    if (typeof props === 'string') {
-      this._selections.create({ name: props, kind: Kind.FRAGMENT_SPREAD })
-    }
-    else {
-      this._selections.create({ ...props, kind: Kind.FRAGMENT_SPREAD })
-    }
+    this._fragmentSpreads.create(props)
 
     return this
   }
@@ -164,87 +192,62 @@ export class SelectionSetMixin {
     fragmentname: Fragmentname,
     props: Ast.FragmentSpreadNodeProps | Partial<Ast.FragmentSpreadNodeProps> | GQL.FragmentSpreadNode,
   ): this {
-    if (typeof props === 'string') {
-      this._selections.update(
-        { name: fragmentname, kind: Kind.FRAGMENT_SPREAD },
-        { name: props, kind: Kind.FRAGMENT_SPREAD },
-      )
-    }
-    else {
-      this._selections.update(
-        { name: fragmentname, kind: Kind.FRAGMENT_SPREAD },
-        { ...props, kind: Kind.FRAGMENT_SPREAD },
-      )
-    }
+    this._fragmentSpreads.update(fragmentname, props)
 
     return this
   }
 
   upsertFragmentSpread(props: Ast.FragmentSpreadNodeProps | GQL.FragmentSpreadNode): this {
-    if (typeof props === 'string') {
-      this._selections.upsert({ name: props, kind: Kind.FRAGMENT_SPREAD })
-    }
-    else {
-      this._selections.upsert({ ...props, kind: Kind.FRAGMENT_SPREAD })
-    }
+    this._fragmentSpreads.upsert(props)
 
     return this
   }
 
   removeFragmentSpread(props: Ast.FragmentSpreadNodeProps | GQL.FragmentSpreadNode): this {
-    if (typeof props === 'string') {
-      this._selections.remove({ name: props, kind: Kind.FRAGMENT_SPREAD })
-    }
-    else {
-      this._selections.remove({ ...props, kind: Kind.FRAGMENT_SPREAD })
-    }
+    this._fragmentSpreads.remove(props)
 
     return this
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
 
-  // TODO: support searching without type condition??
-  hasInlineFragment(typeCondition?: Ast.NamedTypeNodeProps | GQL.NamedTypeNode): boolean {
-    return this._selections.test({ kind: Kind.INLINE_FRAGMENT, typeCondition })
+  // ! needs to search by string typeCondition - otherwise object matcher would match any type condition
+  hasInlineFragment(typeCondition?: Typename): boolean {
+    return this._inlineFragments.has(typeCondition)
   }
 
-  getInlineFragment(typeCondition?: Ast.NamedTypeNodeProps | GQL.NamedTypeNode): Api.InlineFragmentApi {
-    return this._selections.findOneOrFail({ typeCondition, kind: Kind.INLINE_FRAGMENT }) as Api.InlineFragmentApi
+  getInlineFragment(typeCondition?: Typename): Api.InlineFragmentApi {
+    return this._inlineFragments.findOneOrFail(typeCondition)
   }
 
   getInlineFragments(): Api.InlineFragmentApi[] {
-    return this._selections.findMany({ kind: Kind.INLINE_FRAGMENT }) as Api.InlineFragmentApi[]
+    return this._inlineFragments.findMany()
   }
 
 
   createInlineFragment(props: Ast.InlineFragmentNodeProps | GQL.InlineFragmentNode): this {
-    this._selections.create({ ...props, kind: Kind.INLINE_FRAGMENT })
+    this._inlineFragments.create(props)
 
     return this
   }
 
   updateInlineFragment(
-    typeCondition: Ast.NamedTypeNodeProps | GQL.NamedTypeNode | undefined,
+    typeCondition: Typename | undefined,
     props: Partial<Ast.InlineFragmentNodeProps | GQL.InlineFragmentNode>,
   ): this {
-    this._selections.update(
-      { typeCondition, kind: Kind.INLINE_FRAGMENT },
-      { typeCondition, ...props, kind: Kind.INLINE_FRAGMENT },
-    )
+    this._inlineFragments.update(typeCondition, props)
 
     return this
   }
 
   upsertInlineFragment(props: Ast.InlineFragmentNodeProps | GQL.InlineFragmentNode): this {
-    this._selections.upsert({ kind: Kind.INLINE_FRAGMENT, ...props })
+    this._inlineFragments.upsert(props)
 
     return this
   }
 
-  // TODO: with type condition undefined this will remove any first inline fragment => make it smarter!
-  removeInlineFragment(typeCondition: Ast.NamedTypeNodeProps | GQL.NamedTypeNode | undefined): this {
-    this._selections.remove({ kind: Kind.INLINE_FRAGMENT, typeCondition })
+  removeInlineFragment(typeCondition: Typename): this {
+    this._inlineFragments.remove(typeCondition)
 
     return this
   }

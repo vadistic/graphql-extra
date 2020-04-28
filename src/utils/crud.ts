@@ -34,7 +34,9 @@ export interface CrudConfig <
   /** compare function - usually pointing to name */
   matcher: (el: Value) => Target
   /** custom getter/ ref callback instead of parent[key] */
-  ref?: (next?: Value[]) => Value[]
+  ref?: (next?: any[]) => any[]
+  /** additional kind filter */
+  kind?: GQL.KindEnum
 }
 
 /**
@@ -68,19 +70,25 @@ export class Crud <
     }
   }
 
+  protected get arrOfKind(): Value[] {
+    if (!this.config.kind) return this.arr
+
+    return this.arr.filter((node) => node.kind === this.config.kind)
+  }
+
 
   // ────────────────────────────────────────────────────────────────────────────────
 
   has(filter: Target): boolean {
     const pred = this._filter(filter)
 
-    return this.arr.some(pred)
+    return this.arrOfKind.some(pred)
   }
 
   test(filter: Partial<Props | Value>): boolean {
     const pred = this._filter(filter)
 
-    return this.arr.some(pred)
+    return this.arrOfKind.some(pred)
   }
 
   set(props: (Props | Value)[]): this {
@@ -94,21 +102,22 @@ export class Crud <
   findOneNode(filter: Target | Partial<Props | Value>): Value | undefined {
     const pred = this._filter(filter)
 
-    return this.arr.find(pred)
+    return this.arrOfKind.find(pred)
   }
 
   findOneNodeIndex(filter: Target | Partial<Props | Value>): number {
     const pred = this._filter(filter)
 
-    return this.arr.findIndex(pred)
+    // ! index need to be searched on arr
+    return this.arr.findIndex((node) => (!this.config.kind || this.config.kind === node.kind) && pred(node))
   }
 
   findOneNodeOrFail(filter: Target | Partial<Props | Value>): Value {
     const pred = this._filter(filter)
-    const el = this.arr.find(pred)
+    const el = this.arrOfKind.find(pred)
 
     if (!el) {
-      const msg = `cannot find '${this._target(filter)}' in ${this._location()} because it does not exist`
+      const msg = `cannot find ${this._target(filter)} in ${this._location()} because it does not exist`
       throw new GraphQLError(msg, this.config.parent)
     }
 
@@ -122,7 +131,7 @@ export class Crud <
 
     const pred = this._filter(filter)
 
-    return this.arr.filter(pred)
+    return this.arrOfKind.filter(pred)
   }
 
   findManyNodeIndicies(filter?: Target | Partial<Props | Value>): number[] {
@@ -130,7 +139,7 @@ export class Crud <
 
     const pred = this._filter(filter)
 
-    return this.arr.map((node, i) => pred(node) && i).filter((i): i is number => typeof i === 'number')
+    return this.arrOfKind.map((node, i) => pred(node) && i).filter((i): i is number => typeof i === 'number')
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
@@ -157,7 +166,7 @@ export class Crud <
   // ────────────────────────────────────────────────────────────────────────────────
 
   findMany(filter?: Target | Partial<Props | Value>): Api[] {
-    if (filter === undefined) return this.arr.map(this.config.api)
+    if (filter === undefined) return this.arrOfKind.map(this.config.api)
 
     return this.findManyNodes(filter).map(this.config.api)
   }
@@ -176,7 +185,7 @@ export class Crud <
     const prev = this.findOneNode(target)
 
     if (prev) {
-      const msg = `cannot create '${this._target(props)}' in ${this._location()} because it already exists`
+      const msg = `cannot create ${this._target(props)} in ${this._location()} because it already exists`
       throw new GraphQLError(msg, [prev, this.config.parent])
     }
 
@@ -194,7 +203,7 @@ export class Crud <
       concat(this.arr, next)
     }
     else {
-      (this.arr)[index] = next
+      this.arr[index] = next
     }
 
 
@@ -206,11 +215,11 @@ export class Crud <
     const index = this.findOneNodeIndex(filter)
 
     if (index === -1) {
-      const msg = `cannot update '${this._target(filter)}' in ${this._location()} because it does not exist`
+      const msg = `cannot update ${this._target(filter)} in ${this._location()} because it does not exist`
       throw new GraphQLError(msg, this.config.parent)
     }
 
-    (this.arr)[index] = { ...this.arr[index], ...next }
+    this.arr[index] = { ...this.arr[index], ...next }
 
     return this
   }
@@ -219,33 +228,32 @@ export class Crud <
     const index = this.findOneNodeIndex(filter)
 
     if (index === -1) {
-      const msg = `cannot remove '${this._target(filter)}' in ${this._location()} because it does not exist`
+      const msg = `cannot remove ${this._target(filter)} in ${this._location()} because it does not exist`
       throw new GraphQLError(msg, this.config.parent)
     }
 
     // it works
-    (this.arr).splice(index, 1)
+    this.arr.splice(index, 1)
 
     return this
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
 
-
-  // TODO: also log kind of a child because - eg. for SelectionNode[] which are a union
-  // eslint-disable-next-line class-methods-use-this
   protected _target(filter: Target | Partial<Props | Value>): string {
+    const base = this.config.kind ? this.config.kind + ' ' : ''
+
     if (isPrimitive(filter)) {
-      return '' + filter
+      return `${base}'${filter}'`
     }
 
     const maybeName = getName(filter)
 
     if (maybeName !== 'unknown') {
-      return maybeName
+      return `${base}'${maybeName}'`
     }
 
-    return JSON.stringify(filter)
+    return `${base}'${JSON.stringify(filter)}'`
   }
 
 
