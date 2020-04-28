@@ -12,7 +12,7 @@ import { getName } from './get-name'
  */
 export function validationError <K extends KindEnum>(kinds: K | K[], node: ASTNode): GraphQLError {
   const message = `${node.kind} node "${getName(node)}" does not meet constraint `
-    + Array.isArray(kinds) ? (kinds as string[]).join(' | ') : kinds + ''
+    + (Array.isArray(kinds) ? (kinds as string[]).join(' | ') : kinds + '')
 
   return new GraphQLError(message, node)
 }
