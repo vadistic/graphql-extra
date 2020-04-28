@@ -26,6 +26,13 @@ export type Fragmentname = string
 /**
  * @category Helper
  */
+export type Variablename = string
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * @category Helper
+ */
 export type GuardType<T> = T extends (o: any) => o is infer U ? U : never
 
 /**

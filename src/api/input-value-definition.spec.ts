@@ -3,21 +3,11 @@ import { Api, Mixin, Ast } from '../internal'
 
 describe(Api.InputValueDefinitionApi.name, () => {
   const p = Api.InputValueDefinitionApi.prototype
-
   const node = Ast.inputValueDefinitionNode({ name: 'myField', type: 'Int' })
-
   const api = Api.inputValueDefinitionApi(node)
 
   describe('methods', () => {
     test.skip(p.toField.name, () => {
-      //
-    })
-
-    test.skip(p.getDefaultValue.name, () => {
-      //
-    })
-
-    test.skip(p.setDefaultValue.name, () => {
       //
     })
   })
@@ -33,6 +23,10 @@ describe(Api.InputValueDefinitionApi.name, () => {
 
     test.skip(Mixin.DirectivesMixin.name, () => {
       //
+    })
+
+    test(Mixin.DefaultValueMixin.name, () => {
+      expect(api.getDefaultValue()?.node).toBe(node.defaultValue)
     })
 
     test.skip(Mixin.TypeMixin.name, () => {

@@ -21,6 +21,7 @@ export type DirectivesMixinNode =
   | GQL.TypeDefinitionNode
   | GQL.TypeExtensionNode
   | GQL.InlineFragmentNode
+  | GQL.VariableDefinitionNode
 
 /**
  * @category API Mixins

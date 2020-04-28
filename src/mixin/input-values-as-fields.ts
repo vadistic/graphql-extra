@@ -87,9 +87,8 @@ export class InputValuesAsFieldsMixin {
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
-  // TODO: dafault value api
 
-  getFieldDefaultValue(fieldname: Fieldname): GQL.ValueNode | undefined {
+  getFieldDefaultValue(fieldname: Fieldname): Api.ValueApi | undefined {
     return this.getField(fieldname).getDefaultValue()
   }
 

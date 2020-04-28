@@ -130,11 +130,20 @@ export function variableDefinitionNode(props: VariableDefinitionNodeProps): GQL.
 // ────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * `VariableNode` create input subtype
+ *
+ * @category AST Node
+ */
+export type VariableNodeObjProps = {
+  name: string
+}
+
+/**
  * `VariableNode` create input
  *
  * @category AST Node
  */
-export type VariableNodeProps = NameNodeProps
+export type VariableNodeProps = string | VariableNodeObjProps
 
 /**
  * create `VariableNode`
@@ -1583,4 +1592,52 @@ export function selectionNode(
   const { kind = 'Field', ...rest } = props as Exclude<SelectionNodeProps, FieldNodeProps >
 
   return kindToSelection[kind](rest)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * `ValueNode` create input
+ *
+ * @category AST Node
+ */
+export type ValueNodeProps =
+  | WithKind<IntValueNodeObjProps, 'IntValue'>
+  | WithKind<BooleanValueNodeObjProps, 'BooleanValue'>
+  | WithKind<FloatValueNodeObjProps, 'FloatValue'>
+  | WithKind<StringValueNodeObjProps, 'StringValue'>
+  | WithKind<{}, 'NullValue'>
+  | WithKind<VariableNodeObjProps, 'Variable'>
+  | WithKind<EnumValueNodeObjProps, 'EnumValue'>
+  | WithKind<ListValueNodeProps, 'ListValue'>
+  | WithKind<ObjectValueNodeProps, 'ObjectValue'>
+
+/**
+ * map `ValueNode` kind to ast factory
+ *
+ * @category AST Node
+ */
+export const kindToValue: KindToAstMap<GQL.ValueNode> = {
+  IntValue: intValueNode,
+  BooleanValue: booleanValueNode,
+  Variable: variableNode,
+  FloatValue: floatValueNode,
+  StringValue: stringValueNode,
+  NullValue: nullValueNode,
+  EnumValue: enumValueNode,
+  ListValue: listValueNode,
+  ObjectValue: objectValueNode,
+}
+
+/**
+ * create `ValueNode`
+ *
+ * @category AST Node
+ */
+export function valueNode(
+  props: ValueNodeProps,
+): GQL.ValueNode {
+  const { kind, ...rest } = props
+
+  return kindToValue[kind](rest)
 }

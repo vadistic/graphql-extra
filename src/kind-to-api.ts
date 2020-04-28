@@ -8,12 +8,12 @@ import { ContstructorType } from './types'
  */
 export const kindToApiMap = {
   // NAME
-  // Name
+  Name: Api.NameApi,
 
   // DOCUMENT
   // Document:
   OperationDefinition: Api.OperationDefinitionApi,
-  // VariableDefinition:
+  VariableDefinition: Api.VariableDefinitionApi,
   SelectionSet: Api.SelectionSetApi,
   Field: Api.FieldApi,
   Argument: Api.ArgumentApi,
@@ -24,16 +24,17 @@ export const kindToApiMap = {
   FragmentDefinition: Api.FragmentDefinitionApi,
 
   // VALUES
-  // Variable:
-  // IntValue:
-  // FloatValue:
-  // StringValue:
-  // BooleanValue:
-  // NullValue:
-  // EnumValue:,
-  // ListValue:
-  // ObjectValue:
-  // ObjectField:
+  Variable: Api.VariableApi,
+
+  IntValue: Api.ValueApi,
+  FloatValue: Api.ValueApi,
+  StringValue: Api.ValueApi,
+  BooleanValue: Api.ValueApi,
+  NullValue: Api.ValueApi,
+  EnumValue: Api.ValueApi,
+  ListValue: Api.ValueApi,
+  ObjectValue: Api.ValueApi,
+  ObjectField: Api.ValueApi,
 
   // DIRECTIVES
   Directive: Api.DirectiveApi,

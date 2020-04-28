@@ -70,6 +70,16 @@ export const kindToNodeMap = {
   UnionTypeExtension: AST.unionTypeExtensionNode,
   EnumTypeExtension: AST.enumTypeExtensionNode,
   InputObjectTypeExtension: AST.inputObjectTypeExtensionNode,
+
+  // EXTRA
+  ValueNode: AST.valueNode,
+  SelectionNode: AST.selectionNode,
+  DefinitionNode: AST.definitionNode,
+  ExecutableDefinition: AST.executableDefinitionNode,
+  TypeSystemDefinition: AST.typeSystemDefinitionNode,
+  TypeSystemExtension: AST.typeSystemExtensionNode,
+  TypeExtension: AST.typeExtensionNode,
+  TypeDefinition: AST.typeDefinitionNode,
 }
 
 /**

@@ -86,7 +86,9 @@ export class InputValuesAsArgumentsMixin {
     return this
   }
 
-  getArgumentDefaultValue(argname: Argname): GQL.ValueNode | undefined {
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  getArgumentDefaultValue(argname: Argname): Api.ValueApi | undefined {
     return this._arguments.findOneOrFail(argname).getDefaultValue()
   }
 

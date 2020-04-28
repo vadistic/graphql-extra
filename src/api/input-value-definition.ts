@@ -4,7 +4,7 @@ import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
 import { Api, Mixin } from '../internal'
-import { mutable, validateNodeKind } from '../utils'
+import { validateNodeKind } from '../utils'
 
 /**
  * API for GraphQL `InputValueDefinitionNode`
@@ -16,10 +16,11 @@ export class InputValueDefinitionApi extends Mix(
   Mixin.DescriptionMixin,
   Mixin.DirectivesMixin,
   Mixin.TypeMixin,
+  Mixin.DefaultValueMixin,
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InputValueDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INPUT_VALUE_DEFINITION, node)
   }
@@ -30,18 +31,6 @@ export class InputValueDefinitionApi extends Mix(
     } = this.node
 
     return Api.fieldDefinitionApi({ kind: Kind.FIELD_DEFINITION, ...rest })
-  }
-
-  // TODO: value node helper
-  getDefaultValue(): GQL.ValueNode | undefined {
-    return this.node.defaultValue
-  }
-
-  // TODO: value node helper
-  setDefaultValue(value: GQL.ValueNode): InputValueDefinitionApi {
-    mutable(this.node).defaultValue = value
-
-    return this
   }
 }
 

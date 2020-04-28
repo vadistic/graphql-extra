@@ -1,5 +1,6 @@
 /* eslint-disable import/no-cycle */
 export * from './arguments'
+export * from './default-value'
 export * from './description'
 export * from './directives'
 export * from './enum-value-definitions'
@@ -15,3 +16,4 @@ export * from './selection-set'
 export * from './type-assertion'
 export * from './type'
 export * from './union-types'
+export * from './variable'
