@@ -3,13 +3,7 @@ import type * as GQL from 'graphql'
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Directivename } from '../types'
-import {
-  crudCreate,
-  crudUpdate,
-  crudUpsert,
-  crudRemove,
-  crudFindOne,
-} from '../utils'
+import { Crud } from '../utils'
 
 /**
  * @category API Mixins
@@ -34,39 +28,34 @@ export type DirectivesApiMixinNode =
 export class DirectivesApiMixin {
   constructor(readonly node: DirectivesApiMixinNode) {}
 
+  readonly _directives = new Crud({
+    parent: this.node,
+    key: 'directives',
+    api: Api.directiveApi,
+    factory: Ast.directiveNode,
+    matcher: (node): Directivename => node.name.value,
+  })
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
   getDirectiveNames(): Directivename[] {
-    return this.node.directives?.map((dir) => dir.name.value) ?? []
+    return this._directives.findManyNames()
   }
 
   hasDirective(directivename: Directivename): boolean {
-    if (!this.node.directives) return false
-
-    return this.node.directives.some((dir) => dir.name.value === directivename)
+    return this._directives.has(directivename)
   }
 
   getDirectives(): Api.DirectiveApi[] {
-    return this.node.directives?.map(Api.directiveApi) ?? []
+    return this._directives.findMany()
   }
 
   getDirective(directivename: Directivename): Api.DirectiveApi {
-    const directive = crudFindOne({
-      node: this.node,
-      key: 'directives',
-      getter: (el) => el.name.value,
-      target: directivename,
-    })
-
-    return Api.directiveApi(directive)
+    return this._directives.findOneOrFail(directivename)
   }
 
   createDirective(props: Ast.DirectiveNodeProps | GQL.DirectiveNode): this {
-    crudCreate({
-      node: this.node,
-      key: 'directives',
-      getter: (el) => el.name.value,
-      factory: Ast.directiveNode,
-      props,
-    })
+    this._directives.create(props)
 
     return this
   }
@@ -75,37 +64,19 @@ export class DirectivesApiMixin {
     directivename: Directivename,
     props: Ast.DirectiveNodeProps | Partial<Ast.DirectiveNodeProps | GQL.DirectiveNode>,
   ): this {
-    crudUpdate({
-      node: this.node,
-      key: 'directives',
-      getter: (el) => el.name.value,
-      factory: Ast.directiveNode,
-      props,
-      target: directivename,
-    })
+    this._directives.update(directivename, props)
 
     return this
   }
 
   upsertDirective(props: Ast.DirectiveNodeProps | GQL.DirectiveNode): this {
-    crudUpsert({
-      node: this.node,
-      key: 'directives',
-      getter: (el) => el.name.value,
-      factory: Ast.directiveNode,
-      props,
-    })
+    this._directives.upsert(props)
 
     return this
   }
 
   removeDirective(directivename: Directivename): this {
-    crudRemove({
-      node: this.node,
-      key: 'directives',
-      getter: (el) => el.name.value,
-      target: directivename,
-    })
+    this._directives.remove(directivename)
 
     return this
   }

@@ -23,10 +23,10 @@ export class SelectionSetApiMixin {
     return !!this.node.selectionSet
   }
 
-  // TODO: maybe add option to specify if this seletionSet should be created ??
   getSelectionSet(): Api.SelectionSetApi {
+    // TODO: do not create on default?
     if (!this.node.selectionSet) {
-      mutable(this.node).selectionSet = Ast.selectionSetNode([])
+      mutable(this.node).selectionSet = Ast.selectionSetNode({ selections: [] })
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

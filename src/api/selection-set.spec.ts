@@ -3,14 +3,16 @@ import { Ast, Api, Mixin } from '../internal'
 describe(Api.SelectionSetApi.name, () => {
   const p = Api.SelectionSetApi.prototype
 
-  const node = Ast.selectionSetNode([
-    'myField',
-    Ast.fragmentSpreadNode('MyFragment'),
-    Ast.inlineFragmentNode({
-      selections: ['nestedfield'],
-      typeCondition: 'MyType',
-    }),
-  ])
+  const node = Ast.selectionSetNode({
+    selections: [
+      'myField',
+      Ast.fragmentSpreadNode('MyFragment'),
+      Ast.inlineFragmentNode({
+        selections: ['nestedfield'],
+        typeCondition: 'MyType',
+      }),
+    ],
+  })
 
   const api = Api.selectionSetApi(node)
 
@@ -35,7 +37,7 @@ describe(Api.SelectionSetApi.name, () => {
       expect(api.hasField('anotherField')).toBe(true)
 
       expect(() => api.createField('anotherField')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot create 'anotherField' in selections of SelectionSet 'SelectionSet' because it already exists\"",
+        '"cannot create \'anotherField\' in selections of SelectionSet  because it already exists"',
       )
     })
 
@@ -45,26 +47,13 @@ describe(Api.SelectionSetApi.name, () => {
       expect(api.hasField('anotherField')).toBe(false)
 
       expect(() => api.updateField('random', 'random')).toThrowErrorMatchingInlineSnapshot(
-        "\"cannot update 'random' in selections of SelectionSet 'SelectionSet' because it does not exist\"",
+        '"cannot update \'random\' in selections of SelectionSet  because it does not exist"',
       )
     })
   })
 
   describe('inline fragment crud', () => {
-    test(p.getFirstInlineFragment.name, () => {
-      const inline = api.getFirstInlineFragment()
-      expect(inline).toBeInstanceOf(Api.InlineFragmentApi)
-
-      expect(() => api.getFirstInlineFragment('NotExistingType')).toThrowErrorMatchingInlineSnapshot(
-        '"cannot get \'NotExistingType\' in selections of SelectionSet \'SelectionSet\' because it does not exist"',
-      )
-    })
-
-    test(p.removeInlineFragment.name, () => {
-      api.removeInlineFragment()
-
-      expect(api.hasInlineFragment('MyType')).toBe(false)
-    })
+    // TODO: test
   })
 
   describe('mixins', () => {

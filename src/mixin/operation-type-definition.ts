@@ -3,13 +3,7 @@ import * as GQL from 'graphql'
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Typename } from '../types'
-import {
-  applyNullable,
-  crudCreate,
-  crudUpdate,
-  crudUpsert,
-  crudRemove,
-} from '../utils'
+import { Crud } from '../utils'
 
 /**
  * @category API Mixins
@@ -24,22 +18,30 @@ export type OperationTypeDefinitionApiMixinNode =
 export class OperationTypeDefinitionApiMixin {
   constructor(readonly node: OperationTypeDefinitionApiMixinNode) {}
 
-  getOperationType(operation: GQL.OperationTypeNode): Api.OperationTypeDefinitionApi | undefined {
-    const opType = this.node.operationTypes?.find((type) => type.operation === operation)
+  readonly _operationTypes = new Crud({
+    parent: this.node,
+    key: 'operationTypes',
+    factory: Ast.operationTypeDefinitionNode,
+    api: Api.operationTypeDefinitionApi,
+    matcher: (node): GQL.OperationTypeNode => node.operation,
+  })
 
-    return applyNullable(Api.operationTypeDefinitionApi)(opType)
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  getOperationType(operation: GQL.OperationTypeNode): Api.OperationTypeDefinitionApi | undefined {
+    return this._operationTypes.findOne(operation)
   }
 
   getOperationTypename(operation: GQL.OperationTypeNode): string | undefined {
-    return this.getOperationType(operation)?.getTypename()
+    return this._operationTypes.findOne(operation)?.getTypename()
   }
 
   hasOperationType(operation: GQL.OperationTypeNode): boolean {
-    return !!this.getOperationType(operation)
+    return !!this._operationTypes.has(operation)
   }
 
   getOperationTypes(): Api.OperationTypeDefinitionApi[] {
-    return this.node.operationTypes?.map(Api.operationTypeDefinitionApi) ?? []
+    return this._operationTypes.findMany()
   }
 
   getOperationTypenames(): Typename[] {
@@ -49,13 +51,7 @@ export class OperationTypeDefinitionApiMixin {
   // ────────────────────────────────────────────────────────────────────────────────
 
   createOperationType(props: GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps): this {
-    crudCreate({
-      node: this.node,
-      key: 'operationTypes',
-      getter: (el) => el.operation,
-      factory: Ast.operationTypeDefinitionNode,
-      props,
-    })
+    this._operationTypes.create(props)
 
     return this
   }
@@ -64,69 +60,47 @@ export class OperationTypeDefinitionApiMixin {
     operation: GQL.OperationTypeNode,
     props: Partial<GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps>,
   ): this {
-    crudUpdate({
-      node: this.node,
-      key: 'operationTypes',
-      getter: (el) => el.operation,
-      factory: Ast.operationTypeDefinitionNode,
-      props,
-      target: operation,
-    })
+    this._operationTypes.update(operation, props)
 
     return this
   }
-
 
   upsertOperationType(props: GQL.OperationTypeDefinitionNode | Ast.OperationTypeDefinitionNodeProps): this {
-    crudUpsert({
-      node: this.node,
-      key: 'operationTypes',
-      getter: (el) => el.operation,
-      factory: Ast.operationTypeDefinitionNode,
-      props,
-    })
+    this._operationTypes.upsert(props)
 
     return this
   }
-
 
   removeOperationType(operation: GQL.OperationTypeNode): this {
-    crudRemove({
-      node: this.node,
-      key: 'operationTypes',
-      getter: (el) => el.operation,
-      target: operation,
-    })
+    this._operationTypes.remove(operation)
 
     return this
   }
-
 
   // ────────────────────────────────────────────────────────────────────────────────
 
-
   getQuery(): Api.OperationTypeDefinitionApi | undefined {
-    return this.getOperationType('query')
+    return this._operationTypes.findOne('query')
   }
 
   getMutation(): Api.OperationTypeDefinitionApi | undefined {
-    return this.getOperationType('mutation')
+    return this._operationTypes.findOne('mutation')
   }
 
   getSubscription(): Api.OperationTypeDefinitionApi | undefined {
-    return this.getOperationType('subscription')
+    return this._operationTypes.findOne('subscription')
   }
 
   getQueryTypename(): Typename |undefined {
-    return this.getOperationTypename('query')
+    return this._operationTypes.findOne('query')?.getTypename()
   }
 
   getMutationTypename(): Typename |undefined {
-    return this.getOperationTypename('mutation')
+    return this._operationTypes.findOne('mutation')?.getTypename()
   }
 
   getSubscriptionTypename(): Typename |undefined {
-    return this.getOperationTypename('subscription')
+    return this._operationTypes.findOne('subscription')?.getTypename()
   }
 }
 

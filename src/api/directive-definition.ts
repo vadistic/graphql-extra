@@ -5,12 +5,9 @@ import { Mix } from 'mix-classes'
 // eslint-disable-next-line import/no-cycle
 import { Api, Mixin, Ast } from '../internal'
 import {
-  applyPropsArr,
   mutable,
   validateNodeKind,
-  getName,
-  crudCreate,
-  crudRemove,
+  Crud,
 } from '../utils'
 
 /**
@@ -28,6 +25,17 @@ export class DirectiveDefinitionApi extends Mix(
     validateNodeKind(Kind.DIRECTIVE_DEFINITION, node)
   }
 
+  readonly _locations = new Crud({
+    api: (node): GQL.DirectiveLocationEnum => node.value as GQL.DirectiveLocationEnum,
+    factory: Ast.nameNode,
+    key: 'locations',
+    matcher: (node): GQL.DirectiveLocationEnum => node.value as GQL.DirectiveLocationEnum,
+    parent: this.node,
+  })
+
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
   isRepeatable(): boolean {
     return this.node.repeatable
   }
@@ -38,41 +46,30 @@ export class DirectiveDefinitionApi extends Mix(
     return this
   }
 
-  hasLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): boolean {
-    const name = getName(location)
+  // ────────────────────────────────────────────────────────────────────────────────
 
-    return this.node.locations.some((loc) => loc.value === name)
+  hasLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): boolean {
+    return this._locations.test(location)
   }
 
   getLocations(): GQL.DirectiveLocationEnum[] {
-    return this.node.locations.map(getName) as GQL.DirectiveLocationEnum[]
+    return this._locations.findMany()
   }
 
   setLocations(locations: (GQL.NameNode | GQL.DirectiveLocationEnum)[]): this {
-    mutable(this.node).locations = applyPropsArr(Ast.nameNode, locations) as GQL.NameNode[]
+    this._locations.set(locations)
 
     return this
   }
 
   createLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): this {
-    crudCreate({
-      node: this.node,
-      key: 'locations',
-      factory: Ast.nameNode,
-      getter: (el) => el.value,
-      props: location,
-    })
+    this._locations.create(location)
 
     return this
   }
 
   removeLocation(location: GQL.NameNode | GQL.DirectiveLocationEnum): this {
-    crudRemove({
-      node: this.node,
-      key: 'locations',
-      getter: (el) => el.value,
-      target: getName(location),
-    })
+    this._locations.remove(location)
 
     return this
   }

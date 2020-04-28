@@ -2,6 +2,7 @@ import { GraphQLSchema, parse } from 'graphql'
 
 import { STARWARS_TYPEDEFS } from '../../test/fixture'
 import * as t from '../alias'
+import { matchNode } from '../utils'
 import { documentSchemaApi } from './document-schema'
 
 describe('DocumentSchemaApi', () => {
@@ -134,7 +135,7 @@ describe('DocumentSchemaApi', () => {
 
       const fix = t.unionType({ name: 'MyUnion', types: ['Starship', 'Human'] })
 
-      expect(api.node).toMatchObject(fix)
+      expect(matchNode(api.node, fix)).toBe(true)
       expect(api.node).toBe(prev.node)
     })
   })

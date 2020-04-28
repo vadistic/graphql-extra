@@ -244,12 +244,14 @@ export abstract class DocumentSchemaApiBase {
 
   /** serialise to `DocumentNode` */
   toDocument(): GQL.DocumentNode {
-    return Ast.documentNode([
-      ...(this.roots.schema ? [this.roots.schema] : []),
-      ...this.maps.directive.values(),
-      ...this.maps.type.values(),
-      ...this.maps.extension.values(),
-    ])
+    return Ast.documentNode({
+      definitions: [
+        ...(this.roots.schema ? [this.roots.schema] : []),
+        ...this.maps.directive.values(),
+        ...this.maps.type.values(),
+        ...this.maps.extension.values(),
+      ],
+    })
   }
 
   /** serialise to `string` */

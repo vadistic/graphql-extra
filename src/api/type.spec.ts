@@ -3,7 +3,7 @@ import { Api, Mixin, Ast } from '../internal'
 describe(Api.TypeApi.name, () => {
   const p = Api.TypeApi.prototype
 
-  const node = Ast.typeNode({ name: 'Int', list: true })
+  const node = Ast.typeNode({ named: 'Int', list: true })
 
   const api = Api.typeApi(node)
 

@@ -3,13 +3,7 @@ import type * as GQL from 'graphql'
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Fieldname, Typename } from '../types'
-import {
-  crudCreate,
-  crudFindOne,
-  crudRemove,
-  crudUpdate,
-  crudUpsert,
-} from '../utils'
+import { Crud } from '../utils'
 
 /**
  * @category API Mixins
@@ -26,45 +20,38 @@ export type FieldDefinitionsApiMixinNode =
 export class FieldDefinitionsApiMixin {
   constructor(readonly node: FieldDefinitionsApiMixinNode) {}
 
+  readonly _fields = new Crud({
+    parent: this.node,
+    key: 'fields',
+    api: Api.fieldDefinitionApi,
+    factory: Ast.fieldDefinitionNode,
+    matcher: (node): Fieldname => node.name.value,
+  })
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
   getFieldnames(): Fieldname[] {
-    return this.node.fields?.map((field) => field.name.value) ?? []
+    return this._fields.findManyNames()
   }
 
   getFields(): Api.FieldDefinitionApi[] {
-    return this.node.fields?.map(Api.fieldDefinitionApi) ?? []
+    return this._fields.findMany()
   }
 
   getFieldsByTypename(typename: Typename): Api.FieldDefinitionApi[] {
-    return this.getFields().filter((field) => field.getTypename() === typename)
+    return this._fields.findMany().filter((field) => field.getTypename() === typename)
   }
 
   hasField(fieldname: Fieldname): boolean {
-    if (!this.node.fields) {
-      return false
-    }
-
-    return this.node.fields.some((field) => field.name.value === fieldname)
+    return this._fields.has(fieldname)
   }
 
   getField(fieldname: Fieldname): Api.FieldDefinitionApi {
-    const field = crudFindOne({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      target: fieldname,
-    })
-
-    return Api.fieldDefinitionApi(field)
+    return this._fields.findOneOrFail(fieldname)
   }
 
   createField(props: Ast.FieldDefinitionNodeProps | GQL.FieldDefinitionNode): this {
-    crudCreate({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      factory: Ast.fieldDefinitionNode,
-      props,
-    })
+    this._fields.create(props)
 
     return this
   }
@@ -73,67 +60,49 @@ export class FieldDefinitionsApiMixin {
     fieldname: Fieldname,
     props: Partial<Ast.FieldDefinitionNodeProps | GQL.FieldDefinitionNode >,
   ): this {
-    crudUpdate({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      factory: Ast.fieldDefinitionNode,
-      props,
-      target: fieldname,
-    })
+    this._fields.update(fieldname, props)
 
     return this
   }
 
   upsertField(props: Ast.FieldDefinitionNodeProps | GQL.FieldDefinitionNode): this {
-    crudUpsert({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      factory: Ast.fieldDefinitionNode,
-      props,
-    })
+    this._fields.upsert(props)
 
     return this
   }
 
   removeField(fieldname: Fieldname): this {
-    crudRemove({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      target: fieldname,
-    })
+    this._fields.remove(fieldname)
 
     return this
   }
 
   getFieldTypename(fieldname: Fieldname): Typename {
-    return this.getField(fieldname).getTypename()
+    return this._fields.findOneOrFail(fieldname).getTypename()
   }
 
   setFieldTypename(fieldname: Fieldname, value: Typename): this {
-    this.getField(fieldname).setTypename(value)
+    this._fields.findOneOrFail(fieldname).setTypename(value)
 
     return this
   }
 
   getFieldType(fieldname: Fieldname): Api.TypeApi {
-    return this.getField(fieldname).getType()
+    return this._fields.findOneOrFail(fieldname).getType()
   }
 
   setFieldType(fieldname: Fieldname, props: Ast.TypeNodeProps | GQL.TypeNode): this {
-    this.getField(fieldname).setType(props)
+    this._fields.findOneOrFail(fieldname).setType(props)
 
     return this
   }
 
   getFieldArguments(fieldname: Fieldname): Api.InputValueDefinitionApi[] {
-    return this.getField(fieldname).getArguments()
+    return this._fields.findOneOrFail(fieldname).getArguments()
   }
 
   getFieldDirectives(fieldname: Fieldname): Api.DirectiveApi[] {
-    return this.getField(fieldname).getDirectives()
+    return this._fields.findOneOrFail(fieldname).getDirectives()
   }
 }
 

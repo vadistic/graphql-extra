@@ -34,9 +34,10 @@ export class DescriptionApiMixin {
   }
 
   setDescription(value: string | undefined): this {
-    if (typeof value === 'undefined') {
+    if (!value) {
       mutable(this.node).description = undefined
     }
+
     else {
       mutable(this.node).description = Ast.stringValueNode(value)
     }

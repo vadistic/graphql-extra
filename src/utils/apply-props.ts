@@ -95,12 +95,12 @@ export function applyPropsCloned <P, N>(fn: (props: P) => N, props: N | P): N {
   return nullableImplicitFn(clonedFn(propsOrNodeFn(fn)))(props)
 }
 
-/** implicitly nullable + props or node + partial */
+/** implicitly nullable + partial */
 export function applyPropsPartial <P, N>(fn: (props: P) => N, props: P | Partial<P | N>): Partial<N> {
-  return nullableImplicitFn(propsOrNodeFn(partialFn(fn)))(props)
+  return nullableImplicitFn(partialFn(fn))(props)
 }
 
-/** implicitly nullable + cloned input + props or node + partial */
+/** implicitly nullable + cloned input + partial */
 export function applyPropsClonedPartial <P, N>(fn: (props: P) => N, props: P | Partial<N | P>): Partial<N> {
-  return nullableImplicitFn(clonedFn(propsOrNodeFn(partialFn(fn))))(props)
+  return nullableImplicitFn(clonedFn(partialFn(fn)))(props)
 }

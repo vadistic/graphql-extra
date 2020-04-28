@@ -3,14 +3,7 @@ import type * as GQL from 'graphql'
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Argname, Typename } from '../types'
-import {
-  crudFindOne,
-  crudCreate,
-  crudRemove,
-  crudUpdate,
-  crudUpsert,
-  getName,
-} from '../utils'
+import { Crud } from '../utils'
 
 
 /**
@@ -26,55 +19,44 @@ export type InputValuesAsArgumentsApiMixinNode =
 export class InputValuesAsArgumentsApiMixin {
   constructor(readonly node: InputValuesAsArgumentsApiMixinNode) {}
 
+  readonly _arguments = new Crud({
+    parent: this.node,
+    key: 'arguments',
+    api: Api.inputValueDefinitionApi,
+    factory: Ast.inputValueDefinitionNode,
+    matcher: (node): Argname => node.name.value,
+  })
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
   getArgnames(): Argname[] {
-    return this.node.arguments?.map(getName) ?? []
+    return this._arguments.findManyNames()
   }
 
   getArguments(): Api.InputValueDefinitionApi[] {
-    return this.node.arguments?.map(Api.inputValueDefinitionApi) ?? []
+    return this._arguments.findMany()
   }
 
   getArgumentsByTypename(typename: Typename): Api.InputValueDefinitionApi[] {
-    return this.getArguments().filter((arg) => arg.getTypename() === typename)
+    return this._arguments.findMany().filter((arg) => arg.getTypename() === typename)
   }
 
   hasArgument(argname: Argname): boolean {
-    if (!this.node.arguments) return false
-
-    return this.node.arguments.some((arg) => arg.name.value === argname)
+    return this._arguments.has(argname)
   }
 
   getArgument(argname: Argname): Api.InputValueDefinitionApi {
-    const arg = crudFindOne({
-      node: this.node,
-      key: 'arguments',
-      getter: (el) => el.name.value,
-      target: argname,
-    })
-
-    return Api.inputValueDefinitionApi(arg)
+    return this._arguments.findOneOrFail(argname)
   }
 
   createArgument(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    crudCreate({
-      node: this.node,
-      key: 'arguments',
-      getter: (el) => el.name.value,
-      factory: Ast.inputValueDefinitionNode,
-      props,
-    })
+    this._arguments.create(props)
 
     return this
   }
 
   upsertArgument(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    crudUpsert({
-      node: this.node,
-      key: 'arguments',
-      getter: (el) => el.name.value,
-      factory: Ast.inputValueDefinitionNode,
-      props,
-    })
+    this._arguments.upsert(props)
 
     return this
   }
@@ -83,45 +65,33 @@ export class InputValuesAsArgumentsApiMixin {
     argname: Argname,
     props: Partial<GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps>,
   ): this {
-    crudUpdate({
-      node: this.node,
-      key: 'arguments',
-      getter: (el) => el.name.value,
-      factory: Ast.inputValueDefinitionNode,
-      props,
-      target: argname,
-    })
+    this._arguments.update(argname, props)
 
     return this
   }
 
   removeArgument(argname: Argname): this {
-    crudRemove({
-      node: this.node,
-      key: 'arguments',
-      getter: (el) => el.name.value,
-      target: argname,
-    })
+    this._arguments.remove(argname)
 
     return this
   }
 
   getArgumentType(argname: Argname): Api.TypeApi {
-    return this.getArgument(argname).getType()
+    return this._arguments.findOneOrFail(argname).getType()
   }
 
   setArgumentType(argname: Argname, props: GQL.TypeNode | Ast.TypeNodeProps): this {
-    this.getArgument(argname).setType(props)
+    this._arguments.findOneOrFail(argname).setType(props)
 
     return this
   }
 
   getArgumentDefaultValue(argname: Argname): GQL.ValueNode | undefined {
-    return this.getArgument(argname).getDefaultValue()
+    return this._arguments.findOneOrFail(argname).getDefaultValue()
   }
 
   setArgumentDefualtValue(argname: Argname, props: GQL.ValueNode): this {
-    this.getArgument(argname).setDefaultValue(props)
+    this._arguments.findOneOrFail(argname).setDefaultValue(props)
 
     return this
   }

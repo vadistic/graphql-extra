@@ -21,12 +21,10 @@ export class ArgumentApi extends Mix(
     validateNodeKind(Kind.ARGUMENT, node)
   }
 
-  // TODO: return js value
   getValue(): GQL.ValueNode {
     return this.node.value
   }
 
-  // TODO: use value helper to provide js value
   setValue(value: GQL.ValueNode): this {
     mutable(this.node).value = value
 

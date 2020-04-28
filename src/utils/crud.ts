@@ -1,180 +1,257 @@
 /* eslint-disable no-param-reassign */
-import { ASTNode, GraphQLError } from 'graphql'
+import type * as GQL from 'graphql'
+import { GraphQLError } from 'graphql'
 
-import { ArrayElement } from '../types'
-import { isPrimitive, applyPropsCloned, Primitive } from './apply-props'
+import {
+  applyNullable, applyPropsCloned, applyPropsClonedPartial, isPrimitive, applyPropsPartial, applyPropsArr,
+} from './apply-props'
 import { getName } from './get-name'
+import { matchNode } from './match-node'
 import { concat } from './mutable'
 
-export interface CrudProps<N extends ASTNode, K extends keyof N> {
-  node: N
-  key: K
+
+export interface CrudConfig <
+  Parent extends GQL.ASTNode,
+  Key extends keyof Parent,
+  Value extends GQL.ASTNode,
+  Api,
+  Props,
+  Target> {
+  /** parent node */
+  parent: Parent
+  /** parent key with an array */
+  key: Key
+  /** how provided value should be coerced */
+  factory: (props: Props) => Value
+  /** how returned value should be wrapped */
+  api: (el: Value) => Api
+  /** compare function - usually pointing to name */
+  matcher: (el: Value) => Target
 }
 
-type Getter<N extends ASTNode, K extends keyof N> = (el: ArrayElement<N[K]>) => string | boolean
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-export interface CrudFindOneProps<N extends ASTNode, K extends keyof N, E, P> {
-  getter: (el: E) => string | boolean
-  target: string | boolean
-}
-
-export function crudFindOne<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
-  node,
-  key,
-  getter,
-  target,
-}: CrudProps<N, K> & CrudFindOneProps<N, K, E, P>): ArrayElement<N[K]> {
-  const res = ((node[key] || []) as any[]).find((el: any) => getter(el) === target)
-
-  if (!res) {
-    throw new GraphQLError(
-      `cannot get '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it does not exist',
-      node,
-    )
+export class Crud <
+  Parent extends GQL.ASTNode,
+  Key extends keyof Parent,
+  Value extends GQL.ASTNode,
+  Api,
+  Props,
+  Target> {
+  constructor(protected config: CrudConfig<Parent, Key, Value, Api, Props, Target>) {
+    if (!config.parent[config.key]) {
+      config.parent[config.key] = [] as unknown as Parent[Key]
+    }
   }
 
-  return res
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-export interface CrudCreateProps<N extends ASTNode, K extends keyof N, E, P> {
-  getter: Getter<N, K>
-  factory: (props: P) => E
-  props: P | E
-}
-
-export function crudCreate<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
-  node,
-  key,
-  getter,
-  factory,
-  props,
-}: CrudProps<N, K> & CrudCreateProps<N, K, E, P>): void {
-  const next = applyPropsCloned(factory, props)
-  const target = getter(next)
-  const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
-
-  if (index !== -1) {
-    throw new GraphQLError(
-      `cannot create '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it already exists',
-      node,
-    )
+  get arr(): Value[] {
+    return this.config.parent[this.config.key] as unknown as Value[]
   }
 
-  const arr = (node[key] || []) as any[]
-
-  if (!node[key]) {
-    node[key] = arr as any
+  set arr(next: Value[]) {
+    this.config.parent[this.config.key] = next as any
   }
 
-  concat(arr, next)
-}
 
-// ────────────────────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────────────────────
 
-export interface CrudUpdateProps<N extends ASTNode, K extends keyof N, E, P> {
-  getter: Getter<N, K>
-  factory: (props: P) => E
-  target: string | boolean
-  // this allows primitives and force typescript to infer P from factory props
-  props: P extends Primitive ? P : Partial<P> | E
-}
+  has(filter: Target): boolean {
+    const pred = this._filter(filter)
 
-export function crudUpdate<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
-  node,
-  key,
-  getter,
-  factory,
-  props,
-  target,
-}: CrudProps<N, K> & CrudUpdateProps<N, K, E, P>): void {
-  const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
-
-  if (index === -1) {
-    throw new GraphQLError(
-      `cannot update '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it does not exist',
-      node,
-    )
+    return this.arr.some(pred)
   }
 
-  const arr = (node[key] || []) as any[]
+  test(filter: Partial<Props | Value>): boolean {
+    const pred = this._filter(filter)
 
-  if (!node[key]) {
-    node[key] = arr as any
+    return this.arr.some(pred)
   }
 
-  // remove kind so prev node is converted to "props"
-  const { kind, ...prev } = arr[index]
+  set(props: (Props | Value)[]): this {
+    this.arr = applyPropsArr(this.config.factory, props) as Value[]
 
-  arr[index] = isPrimitive(props)
-    // cannot spread primitive props values
-    ? { ...prev, ...(applyPropsCloned(factory, props as P) as any) }
-    // merge because there is slight chance partial would not play well with factory fns
-    : applyPropsCloned(factory, { ...prev, ...(props as P) })
-}
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-export interface CrudUpsertProps<N extends ASTNode, K extends keyof N, E, P> {
-  getter: Getter<N, K>
-  factory: (props: P) => E
-  props: P | E
-}
-
-export function crudUpsert<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
-  node,
-  key,
-  getter,
-  factory,
-  props,
-}: CrudProps<N, K> & CrudUpsertProps<N, K, E, P>): void {
-  const next = applyPropsCloned(factory, props)
-  const target = getter(next)
-  const index = ((node[key] || []) as any[]).findIndex((el) => getter(el) === target)
-
-  const arr = (node[key] || []) as any[]
-
-  if (!node[key]) {
-    node[key] = arr as any
+    return this
   }
 
-  if (index === -1) {
-    concat(arr, next)
-  }
-  else {
-    arr[index] = { ...arr[index], ...next }
-  }
-}
+  // ────────────────────────────────────────────────────────────────────────────────
 
-// ────────────────────────────────────────────────────────────────────────────────
+  findOneNode(filter: Target | Partial<Props | Value>): Value | undefined {
+    const pred = this._filter(filter)
 
-export interface CrudRemoveProps<N extends ASTNode, K extends keyof N, E, P> {
-  getter: Getter<N, K>
-  target: string | boolean
-}
-
-export function crudRemove<N extends ASTNode, K extends keyof N, E extends ArrayElement<N[K]> & {}, P>({
-  node,
-  key,
-  getter,
-  target,
-}: CrudProps<N, K> & CrudRemoveProps<N, K, E, P>): void {
-  const arr = (node[key] as unknown) as any[]
-  const index = (arr || []).findIndex((el) => getter(el) === target)
-
-  if (index === -1) {
-    throw new GraphQLError(
-      `cannot remove '${target}' in ${key} of ${node.kind} '${getName(node)}' `
-      + 'because it does not exist',
-      node,
-    )
+    return this.arr.find(pred)
   }
 
-  arr.splice(index, 1)
+  findOneNodeIndex(filter: Target | Partial<Props | Value>): number {
+    const pred = this._filter(filter)
+
+    return this.arr.findIndex(pred)
+  }
+
+  findOneNodeOrFail(filter: Target | Partial<Props | Value>): Value {
+    const pred = this._filter(filter)
+    const el = this.arr.find(pred)
+
+    if (!el) {
+      const msg = `cannot find '${filter}' in ${this._location()} because it does not exist`
+      throw new GraphQLError(msg, this.config.parent)
+    }
+
+    return el
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  findManyNodes(filter?: Target | Partial<Props | Value>): Value[] {
+    if (filter === undefined) return this.arr
+
+    const pred = this._filter(filter)
+
+    return this.arr.filter(pred)
+  }
+
+  findManyNodeIndicies(filter?: Target | Partial<Props | Value>): number[] {
+    if (filter === undefined) return this.arr.map((node, i) => i)
+
+    const pred = this._filter(filter)
+
+    return this.arr.map((node, i) => pred(node) && i).filter((i): i is number => typeof i === 'number')
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+
+  findOne(filter: Target | Partial<Props | Value>): Api | undefined {
+    const el = this.findOneNode(filter)
+
+    return applyNullable(this.config.api, el)
+  }
+
+  findOneName(filter: Target | Partial<Props | Value>): Target | undefined {
+    const el = this.findOneNode(filter)
+
+    return applyNullable(this.config.matcher, el)
+  }
+
+  findOneOrFail(filter: Target | Partial<Props | Value>): Api {
+    const node = this.findOneNodeOrFail(filter)
+
+    return this.config.api(node)
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  findMany(filter?: Target | Partial<Props | Value>): Api[] {
+    if (filter === undefined) return this.arr.map(this.config.api)
+
+    return this.findManyNodes(filter).map(this.config.api)
+  }
+
+  findManyNames(filter?: Target | Partial<Props | Value>): Target[] {
+    const arr = this.findManyNodes(filter)
+
+    return arr.map(this.config.matcher)
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  create(props: Props | Value): this {
+    const next = applyPropsCloned(this.config.factory, props)
+    const target = this.config.matcher(next)
+    const prev = this.findOneNode(target)
+
+    if (prev) {
+      const msg = `cannot create '${this._target(props)}' in ${this._location()} because it already exists`
+      throw new GraphQLError(msg, [prev, this.config.parent])
+    }
+
+    concat(this.arr, next)
+
+    return this
+  }
+
+  upsert(props: Props | Value): this {
+    const next = applyPropsCloned(this.config.factory, props)
+    const target = this.config.matcher(next)
+    const index = this.findOneNodeIndex(target)
+
+    if (index === -1) {
+      concat(this.arr, next)
+    }
+    else {
+      (this.arr)[index] = next
+    }
+
+
+    return this
+  }
+
+  update(filter: Target | Partial<Props | Value>, props: Partial<Props | Value>): this {
+    const next = applyPropsClonedPartial(this.config.factory, props)
+    const index = this.findOneNodeIndex(filter)
+
+    if (index === -1) {
+      const msg = `cannot update '${this._target(filter)}' in ${this._location()} because it does not exist`
+      throw new GraphQLError(msg, this.config.parent)
+    }
+
+    (this.arr)[index] = { ...this.arr[index], ...next }
+
+    return this
+  }
+
+  remove(filter: Target | Props | Value): this {
+    const index = this.findOneNodeIndex(filter)
+
+    if (index === -1) {
+      const msg = `cannot remove '${this._target(filter)}' in ${this._location()} because it does not exist`
+      throw new GraphQLError(msg, this.config.parent)
+    }
+
+    // it works
+    (this.arr).splice(index, 1)
+
+    return this
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+
+  // eslint-disable-next-line class-methods-use-this
+  protected _target(filter: Target | Partial<Props | Value>): string {
+    if (isPrimitive(filter)) {
+      return '' + filter
+    }
+
+    const maybeName = getName(filter)
+
+    if (maybeName !== 'unknown') {
+      return maybeName
+    }
+
+    return JSON.stringify(filter)
+  }
+
+
+  protected _location(): string {
+    let parentName = ''
+
+    const maybeName = getName(this.config.parent)
+
+    if (maybeName !== 'unknown' && maybeName !== this.config.parent.kind) {
+      parentName = `'${maybeName}'`
+    }
+
+
+    return `${this.config.key} of ${this.config.parent.kind} ${parentName}`
+  }
+
+  protected _filter(filter: Target | Partial<Props | Value>): (node: Value) => boolean {
+    // simple filter
+    if (isPrimitive(filter)) {
+      return (node: Value): boolean => this.config.matcher(node) === filter
+    }
+
+    // object filter
+    const subset = applyPropsPartial(this.config.factory, filter)
+
+    return (node: Value): boolean => matchNode(node, subset)
+  }
 }

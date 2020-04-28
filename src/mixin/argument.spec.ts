@@ -28,6 +28,6 @@ describe(Mixin.ArgumentsApiMixin.name, () => {
 
   test(p.getArgument.name, () => {
     expect(api.getArgument('maxAge')).toBeInstanceOf(Api.ArgumentApi)
-    expect(() => api.getArgument('something')).toThrowError('cannot get')
+    expect(() => api.getArgument('something')).toThrowError('cannot find')
   })
 })

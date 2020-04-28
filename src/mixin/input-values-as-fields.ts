@@ -3,14 +3,7 @@ import type * as GQL from 'graphql'
 // eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Fieldname, Typename } from '../types'
-import {
-  crudCreate,
-  crudUpsert,
-  crudUpdate,
-  crudRemove,
-  crudFindOne,
-  getName,
-} from '../utils'
+import { Crud } from '../utils'
 
 /**
  * @category API Mixins
@@ -25,57 +18,45 @@ export type InputValuesAsFieldsApiMixinNode =
 export class InputValuesAsFieldsApiMixin {
   constructor(protected node: InputValuesAsFieldsApiMixinNode) {}
 
+  readonly _fields = new Crud({
+    parent: this.node,
+    key: 'fields',
+    api: Api.inputValueDefinitionApi,
+    factory: Ast.inputValueDefinitionNode,
+    matcher: (node): Fieldname => node.name.value,
+  })
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
   getFieldnames(): Fieldname[] {
-    return this.node.fields?.map(getName) ?? []
+    return this._fields.findManyNames()
   }
 
   getFields(): Api.InputValueDefinitionApi[] {
-    return this.node.fields?.map(Api.inputValueDefinitionApi) ?? []
+    return this._fields.findMany()
   }
 
+  // TODO: add getFieldsByType with deep compare fn
   getFieldsByTypename(typename: Typename): Api.InputValueDefinitionApi[] {
     return this.getFields().filter((field) => field.getType().getTypename() === typename)
   }
 
-  // TODO: add getFieldsByType with deep compare fn
-
   hasField(fieldname: Fieldname): boolean {
-    if (!this.node.fields) return false
-
-    return this.node.fields.some((field) => field.name.value === fieldname)
+    return this._fields.has(fieldname)
   }
 
   getField(fieldname: Fieldname): Api.InputValueDefinitionApi {
-    const field = crudFindOne({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      target: fieldname,
-    })
-
-    return Api.inputValueDefinitionApi(field)
+    return this._fields.findOneOrFail(fieldname)
   }
 
   createField(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    crudCreate({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      factory: Ast.inputValueDefinitionNode,
-      props,
-    })
+    this._fields.create(props)
 
     return this
   }
 
   upsertField(props: GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps): this {
-    crudUpsert({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      factory: Ast.inputValueDefinitionNode,
-      props,
-    })
+    this._fields.upsert(props)
 
     return this
   }
@@ -84,25 +65,13 @@ export class InputValuesAsFieldsApiMixin {
     fieldname: Fieldname,
     props: Partial<GQL.InputValueDefinitionNode | Ast.InputValueDefinitionNodeProps>,
   ): this {
-    crudUpdate({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      factory: Ast.inputValueDefinitionNode,
-      props,
-      target: fieldname,
-    })
+    this._fields.update(fieldname, props)
 
     return this
   }
 
   removeField(fieldname: Fieldname): this {
-    crudRemove({
-      node: this.node,
-      key: 'fields',
-      getter: (el) => el.name.value,
-      target: fieldname,
-    })
+    this._fields.remove(fieldname)
 
     return this
   }
@@ -116,6 +85,9 @@ export class InputValuesAsFieldsApiMixin {
 
     return this
   }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+  // TODO: dafault value api
 
   getFieldDefaultValue(fieldname: Fieldname): GQL.ValueNode | undefined {
     return this.getField(fieldname).getDefaultValue()
