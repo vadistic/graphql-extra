@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import { Api, Mixin, Ast } from '../internal'
 
 describe(Api.InputValueDefinitionApi.name, () => {
@@ -8,39 +9,33 @@ describe(Api.InputValueDefinitionApi.name, () => {
   const api = Api.inputValueDefinitionApi(node)
 
   describe('methods', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(p.toField.name, () => {
+    test.skip(p.toField.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.getDefaultValue.name, () => {
+    test.skip(p.getDefaultValue.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.setDefaultValue.name, () => {
+    test.skip(p.setDefaultValue.name, () => {
       //
     })
   })
 
   describe('mixins', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.NameApiMixin.name, () => {
+    test.skip(Mixin.NameApiMixin.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.DescriptionApiMixin.name, () => {
-      //
-    })
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.DirectivesApiMixin.name, () => {
+    test.skip(Mixin.DescriptionApiMixin.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.TypeApiMixin.name, () => {
+    test.skip(Mixin.DirectivesApiMixin.name, () => {
+      //
+    })
+
+    test.skip(Mixin.TypeApiMixin.name, () => {
       //
     })
 

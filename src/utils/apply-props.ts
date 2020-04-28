@@ -90,9 +90,16 @@ readonly N[] | undefined {
   return nullableFn(arrayableFn(propsOrNodeFn(fn)))(props)
 }
 
+
+// ! partials always apply function without nodeOrProps skip
+// because it cannot be easily determined if a partial is a valid ast node
+// it's safe because all ast functions are partial-ready
+
+// cloned also does it because it's used in crud methods that can accept kind
+
 /** implicitly nullable + cloned input + props or node */
 export function applyPropsCloned <P, N>(fn: (props: P) => N, props: N | P): N {
-  return nullableImplicitFn(clonedFn(propsOrNodeFn(fn)))(props)
+  return nullableImplicitFn(clonedFn(fn))(props as P)
 }
 
 /** implicitly nullable + partial */

@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import { Api, Mixin, Ast } from '../internal'
 
 describe(Api.TypeApi.name, () => {
@@ -8,43 +9,35 @@ describe(Api.TypeApi.name, () => {
   const api = Api.typeApi(node)
 
   describe('methods', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(p.getNamedType.name, () => {
+    test.skip(p.getNamedType.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.getTypename.name, () => {
+    test.skip(p.getTypename.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.setTypename.name, () => {
+    test.skip(p.setTypename.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.setType.name, () => {
+    test.skip(p.setType.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.isNonNull.name, () => {
+    test.skip(p.isNonNull.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.isList.name, () => {
+    test.skip(p.isList.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.setNonNull.name, () => {
+    test.skip(p.setNonNull.name, () => {
     //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.setList.name, () => {
+    test.skip(p.setList.name, () => {
     //
     })
   })
@@ -66,13 +59,11 @@ describe(Api.NamedTypeApi.name, () => {
   const api = Api.namedTypeApi(node)
 
   describe('methods', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(p.getTypename.name, () => {
+    test.skip(p.getTypename.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(p.setTypename.name, () => {
+    test.skip(p.setTypename.name, () => {
       //
     })
   })

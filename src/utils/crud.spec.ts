@@ -26,6 +26,12 @@ describe('crud util', () => {
         '"cannot create \'hello\' in arguments of Directive \'Cache\' because it already exists"',
       )
     })
+
+    test('create works with kind in props', () => {
+      api.createArgument({ name: 'myAnotherArgument', value, kind: 'Argument' })
+
+      expect(api.hasArgument('myAnotherArgument')).toBe(true)
+    })
   })
 
   describe('update', () => {

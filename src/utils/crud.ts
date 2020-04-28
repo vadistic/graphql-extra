@@ -11,43 +11,50 @@ import { concat } from './mutable'
 
 
 export interface CrudConfig <
-  Parent extends GQL.ASTNode,
-  Key extends keyof Parent,
-  Value extends GQL.ASTNode,
+  Value,
   Api,
   Props,
   Target> {
   /** parent node */
-  parent: Parent
+  parent: GQL.ASTNode
   /** parent key with an array */
-  key: Key
+  key: string
   /** how provided value should be coerced */
   factory: (props: Props) => Value
   /** how returned value should be wrapped */
   api: (el: Value) => Api
   /** compare function - usually pointing to name */
   matcher: (el: Value) => Target
+  /** custom getter/ ref callback instead of parent[key] */
+  ref?: (next?: Value[]) => Value[]
 }
 
 export class Crud <
-  Parent extends GQL.ASTNode,
-  Key extends keyof Parent,
   Value extends GQL.ASTNode,
   Api,
   Props,
   Target> {
-  constructor(protected config: CrudConfig<Parent, Key, Value, Api, Props, Target>) {
-    if (!config.parent[config.key]) {
-      config.parent[config.key] = [] as unknown as Parent[Key]
+  constructor(protected config: CrudConfig<Value, Api, Props, Target>) {
+    if (!config.ref && !config.parent[config.key as keyof typeof config.parent]) {
+      (config.parent as any)[config.key] = []
     }
   }
 
   get arr(): Value[] {
-    return this.config.parent[this.config.key] as unknown as Value[]
+    if (this.config.ref) {
+      return this.config.ref()
+    }
+
+    return (this.config.parent as any)[this.config.key] as Value[]
   }
 
   set arr(next: Value[]) {
-    this.config.parent[this.config.key] = next as any
+    if (this.config.ref) {
+      this.config.ref(next)
+    }
+    else {
+      (this.config.parent as any)[this.config.key] = next
+    }
   }
 
 
@@ -90,7 +97,7 @@ export class Crud <
     const el = this.arr.find(pred)
 
     if (!el) {
-      const msg = `cannot find '${filter}' in ${this._location()} because it does not exist`
+      const msg = `cannot find '${this._target(filter)}' in ${this._location()} because it does not exist`
       throw new GraphQLError(msg, this.config.parent)
     }
 
@@ -197,7 +204,7 @@ export class Crud <
     return this
   }
 
-  remove(filter: Target | Props | Value): this {
+  remove(filter: Target | Partial<Props | Value>): this {
     const index = this.findOneNodeIndex(filter)
 
     if (index === -1) {
@@ -214,6 +221,7 @@ export class Crud <
   // ────────────────────────────────────────────────────────────────────────────────
 
 
+  // TODO: also log kind of a child because - eg. for SelectionNode[] which are a union
   // eslint-disable-next-line class-methods-use-this
   protected _target(filter: Target | Partial<Props | Value>): string {
     if (isPrimitive(filter)) {
@@ -236,11 +244,11 @@ export class Crud <
     const maybeName = getName(this.config.parent)
 
     if (maybeName !== 'unknown' && maybeName !== this.config.parent.kind) {
-      parentName = `'${maybeName}'`
+      parentName = ` '${maybeName}'`
     }
 
 
-    return `${this.config.key} of ${this.config.parent.kind} ${parentName}`
+    return `${this.config.key} of ${this.config.parent.kind}${parentName}`
   }
 
   protected _filter(filter: Target | Partial<Props | Value>): (node: Value) => boolean {

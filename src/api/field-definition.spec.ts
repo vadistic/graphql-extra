@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import { Api, Mixin, Ast } from '../internal'
 
 
@@ -16,27 +17,23 @@ describe(Api.FieldDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.NameApiMixin.name, () => {
+    test.skip(Mixin.NameApiMixin.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.DescriptionApiMixin.name, () => {
+    test.skip(Mixin.DescriptionApiMixin.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.DirectivesApiMixin.name, () => {
-      //
-    })
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.InputValuesAsArgumentsApiMixin.name, () => {
+    test.skip(Mixin.DirectivesApiMixin.name, () => {
       //
     })
 
-    // eslint-disable-next-line jest/expect-expect
-    test(Mixin.TypeApiMixin.name, () => {
+    test.skip(Mixin.InputValuesAsArgumentsApiMixin.name, () => {
+      //
+    })
+
+    test.skip(Mixin.TypeApiMixin.name, () => {
       //
     })
 
