@@ -30,7 +30,6 @@ export class SelectionAssertionApiMixin {
     return this.node.kind === Kind.INLINE_FRAGMENT
   }
 
-
   // ────────────────────────────────────────────────────────────────────────────────
 
   assertField(): Api.FieldApi {

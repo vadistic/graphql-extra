@@ -91,11 +91,12 @@ export class UnionTypeApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
+  Mixin.UnionTypesMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.UNION_TYPE_DEFINITION, node)
   }

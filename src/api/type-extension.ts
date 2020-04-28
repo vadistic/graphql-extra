@@ -89,11 +89,12 @@ export function interfaceExtApi(node: GQL.InterfaceTypeExtensionNode): Interface
 export class UnionExtApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
+  Mixin.UnionTypesMixin,
   Mixin.TypeExtensionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeExtensionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.UNION_TYPE_EXTENSION, node)
   }

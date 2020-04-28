@@ -10,8 +10,7 @@ describe(Api.FieldDefinitionApi.name, () => {
   const api = Api.fieldDefinitionApi(node)
 
   describe('methods', () => {
-    // eslint-disable-next-line jest/expect-expect
-    test(p.toInputValue.name, () => {
+    test.skip(p.toInputValue.name, () => {
       //
     })
   })

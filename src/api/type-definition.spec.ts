@@ -88,6 +88,10 @@ describe(Api.UnionTypeApi.name, () => {
       expect(api.getDirectives().map((a) => a.node)).toEqual(node.directives)
     })
 
+    test(Mixin.UnionTypesMixin.name, () => {
+      expect(api.getTypes().map((a) => a.node)).toEqual(node.types)
+    })
+
     test(Mixin.TypeDefinitionAssertionApiMixin.name, () => {
       expect(api.isUnionType()).toBe(true)
     })
