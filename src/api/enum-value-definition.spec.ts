@@ -5,6 +5,7 @@ describe(Api.EnumValueDefinitionApi.name, () => {
     name: 'TEST',
     description: 'this is a test case',
     directives: ['Client'],
+
   })
 
   const api = Api.enumValueDefinitionApi(node)

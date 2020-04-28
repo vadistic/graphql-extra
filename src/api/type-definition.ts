@@ -24,6 +24,7 @@ export type TypeDefinitonApi =
  *
  * @category API Public
  */
+// TODO: add interfaces mixin!
 export class ObjectTypeApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,
@@ -150,11 +151,12 @@ export class EnumTypeApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DescriptionApiMixin,
   Mixin.DirectivesApiMixin,
+  Mixin.EnumValueDefinitionMixin,
   Mixin.TypeDefinitionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.ENUM_TYPE_DEFINITION, node)
   }

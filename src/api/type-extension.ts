@@ -147,11 +147,12 @@ export function scalarExtApi(node: GQL.ScalarTypeExtensionNode): ScalarExtApi {
 export class EnumExtApi extends Mix(
   Mixin.NameApiMixin,
   Mixin.DirectivesApiMixin,
+  Mixin.EnumValueDefinitionMixin,
   Mixin.TypeExtensionAssertionApiMixin,
   Mixin.KindAssertionApiMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeExtensionNode) {
-    super([node], [node], [node], [node])
+    super([node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.ENUM_TYPE_EXTENSION, node)
   }
