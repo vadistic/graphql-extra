@@ -38,21 +38,25 @@ export class DirectivesMixin {
 
   // ────────────────────────────────────────────────────────────────────────────────
 
+  getDirectives(): Api.DirectiveApi[] {
+    return this._directives.findMany()
+  }
+
   getDirectiveNames(): Directivename[] {
     return this._directives.findManyNames()
   }
+
+  // ────────────────────────────────────────────────────────────────────────────────
 
   hasDirective(directivename: Directivename): boolean {
     return this._directives.has(directivename)
   }
 
-  getDirectives(): Api.DirectiveApi[] {
-    return this._directives.findMany()
-  }
-
   getDirective(directivename: Directivename): Api.DirectiveApi {
     return this._directives.findOneOrFail(directivename)
   }
+
+  // ────────────────────────────────────────────────────────────────────────────────
 
   createDirective(props: Ast.DirectiveNodeProps | GQL.DirectiveNode): this {
     this._directives.create(props)

@@ -22,6 +22,10 @@ describe(Api.ObjectTypeApi.name, () => {
       expect(api.getFields().map((a) => a.node)).toEqual(node.fields)
     })
 
+    test(Mixin.InterfacesMixin.name, () => {
+      expect(api.getInterfaces().map((a) => a.node)).toEqual(node.interfaces)
+    })
+
     test(Mixin.TypeDefinitionAssertionMixin.name, () => {
       expect(api.isObjectType()).toBe(true)
     })
@@ -55,6 +59,10 @@ describe(Api.InterfaceTypeApi.name, () => {
 
     test(Mixin.FieldDefinitionsMixin.name, () => {
       expect(api.getFields().map((a) => a.node)).toEqual(node.fields)
+    })
+
+    test(Mixin.InterfacesMixin.name, () => {
+      expect(api.getInterfaces().map((a) => a.node)).toEqual(node.interfaces)
     })
 
     test(Mixin.TypeDefinitionAssertionMixin.name, () => {

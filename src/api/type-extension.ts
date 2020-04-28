@@ -30,11 +30,12 @@ export class ObjectExtApi extends Mix(
   Mixin.NameMixin,
   Mixin.DirectivesMixin,
   Mixin.FieldDefinitionsMixin,
+  Mixin.InterfacesMixin,
   Mixin.TypeExtensionAssertionMixin,
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ObjectTypeExtensionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.OBJECT_TYPE_EXTENSION, node)
   }
@@ -60,11 +61,12 @@ export class InterfaceExtApi extends Mix(
   Mixin.NameMixin,
   Mixin.DirectivesMixin,
   Mixin.FieldDefinitionsMixin,
+  Mixin.InterfacesMixin,
   Mixin.TypeExtensionAssertionMixin,
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InterfaceTypeExtensionNode) {
-    super([node], [node], [node], [node], [node])
+    super([node], [node], [node], [node], [node], [node])
 
     validateNodeKind(Kind.INTERFACE_TYPE_EXTENSION, node)
   }
