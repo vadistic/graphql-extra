@@ -41,12 +41,12 @@ export function selectionApi(node: GQL.SelectionNode): SelectionApi {
 
 // TODO: add alias
 export class FieldApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.ArgumentsApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
-  Mixin.SelectionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.ArgumentsMixin,
+  Mixin.DirectivesMixin,
+  Mixin.SelectionSetMixin,
+  Mixin.SelectionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.FieldNode) {
     super([node], [node], [node], [node], [node], [node])
@@ -71,10 +71,10 @@ export function fieldApi(node: GQL.FieldNode): FieldApi {
  * @category API Public
  */
 export class FragmentSpreadApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DirectivesMixin,
+  Mixin.SelectionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.FragmentSpreadNode) {
     super([node], [node], [node], [node])
@@ -101,10 +101,10 @@ export function fragmentSpreadApi(node: GQL.FragmentSpreadNode): FragmentSpreadA
  */
 // TODO: add typecondition api mixin
 export class InlineFragmentApi extends Mix(
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
-  Mixin.SelectionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.DirectivesMixin,
+  Mixin.SelectionSetMixin,
+  Mixin.SelectionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InlineFragmentNode) {
     super([node], [node], [node])

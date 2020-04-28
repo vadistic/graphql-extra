@@ -12,10 +12,10 @@ import { mutable, validateNodeKind } from '../utils'
  * @category API Public
  */
 export class OperationDefinitionApi extends Mix(
-  Mixin.NameOptionalApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameOptionalMixin,
+  Mixin.DirectivesMixin,
+  Mixin.SelectionSetMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.OperationDefinitionNode) {
     super([node], [node], [node], [node])

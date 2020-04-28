@@ -23,7 +23,7 @@ describe(Api.OperationDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.NameOptionalApiMixin.name, () => {
+    test(Mixin.NameOptionalMixin.name, () => {
       expect(api.getName()).toBeUndefined()
 
       api.setName('MyQuery')
@@ -31,15 +31,15 @@ describe(Api.OperationDefinitionApi.name, () => {
       expect(api.getName()).toBe('MyQuery')
     })
 
-    test(Mixin.DirectivesApiMixin.name, () => {
+    test(Mixin.DirectivesMixin.name, () => {
       expect(api.hasDirective('Client')).toBeTruthy()
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
+    test(Mixin.SelectionSetMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('OperationDefinition')).toBe(true)
     })
   })

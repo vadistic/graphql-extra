@@ -12,12 +12,12 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class FieldDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.InputValuesAsArgumentsApiMixin,
-  Mixin.TypeApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.InputValuesAsArgumentsMixin,
+  Mixin.TypeMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.FieldDefinitionNode) {
     super([node], [node], [node], [node], [node], [node])

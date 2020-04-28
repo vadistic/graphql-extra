@@ -15,19 +15,19 @@ describe(Api.EnumValueDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
+    test(Mixin.NameMixin.name, () => {
       expect(api.getName()).toBe('TEST')
     })
 
-    test(Mixin.DescriptionApiMixin.name, () => {
+    test(Mixin.DescriptionMixin.name, () => {
       expect(api.getDescription()).toBe('this is a test case')
     })
 
-    test(Mixin.DirectivesApiMixin.name, () => {
+    test(Mixin.DirectivesMixin.name, () => {
       expect(api.hasDirective('Client')).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('EnumValueDefinition')).toBe(true)
     })
   })

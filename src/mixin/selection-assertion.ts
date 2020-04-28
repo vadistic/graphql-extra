@@ -7,7 +7,7 @@ import { assertionError } from '../utils'
 /**
  * @category API Mixins
  */
-export type SelectionAssertionApiMixinNode =
+export type SelectionAssertionMixinNode =
   | GQL.FieldNode
   | GQL.InlineFragmentNode
   | GQL.FragmentSpreadNode
@@ -15,8 +15,8 @@ export type SelectionAssertionApiMixinNode =
 /**
  * @category API Mixins
  */
-export class SelectionAssertionApiMixin {
-  constructor(readonly node: SelectionAssertionApiMixinNode) {}
+export class SelectionAssertionMixin {
+  constructor(readonly node: SelectionAssertionMixinNode) {}
 
   isField(): this is Api.FieldApi {
     return this.node.kind === Kind.FIELD
@@ -54,6 +54,6 @@ export class SelectionAssertionApiMixin {
 /**
  * @category API Mixins
  */
-export function selectionApiMixin(node: SelectionAssertionApiMixinNode): SelectionAssertionApiMixin {
-  return new SelectionAssertionApiMixin(node)
+export function selectionMixin(node: SelectionAssertionMixinNode): SelectionAssertionMixin {
+  return new SelectionAssertionMixin(node)
 }

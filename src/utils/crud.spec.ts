@@ -8,7 +8,7 @@ describe('crud util', () => {
     arguments: args,
   })
 
-  const api = Mixin.argumentsApiMixin(node)
+  const api = Mixin.argumentsMixin(node)
 
   describe('create', () => {
     const argname = 'hello'

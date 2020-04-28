@@ -32,7 +32,7 @@ describe(Api.OperationTypeDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.NamedTypeApiMixin.name, () => {
+    test(Mixin.NamedTypeMixin.name, () => {
       expect(api.getTypename()).toBe('AnotherQuery')
 
       api.setTypename('ApiQuery')
@@ -41,7 +41,7 @@ describe(Api.OperationTypeDefinitionApi.name, () => {
     })
   })
 
-  test(Mixin.KindAssertionApiMixin.name, () => {
+  test(Mixin.KindAssertionMixin.name, () => {
     expect(api.isKind('OperationTypeDefinition')).toBe(true)
   })
 })

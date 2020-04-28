@@ -8,15 +8,15 @@ import { Crud } from '../utils'
 /**
  * @category API Mixins
  */
-export type ArgumentsApiMixinNode =
+export type ArgumentsMixinNode =
   | GQL.DirectiveNode
   | GQL.FieldNode
 
 /**
  * @category API Mixins
  */
-export class ArgumentsApiMixin {
-  constructor(protected node: ArgumentsApiMixinNode) {}
+export class ArgumentsMixin {
+  constructor(protected node: ArgumentsMixinNode) {}
 
   readonly _arguments = new Crud({
     parent: this.node,
@@ -72,6 +72,6 @@ export class ArgumentsApiMixin {
 /**
  * @category API Mixins
  */
-export function argumentsApiMixin(node: ArgumentsApiMixinNode): ArgumentsApiMixin {
-  return new ArgumentsApiMixin(node)
+export function argumentsMixin(node: ArgumentsMixinNode): ArgumentsMixin {
+  return new ArgumentsMixin(node)
 }

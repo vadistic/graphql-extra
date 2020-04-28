@@ -26,12 +26,12 @@ export type TypeDefinitonApi =
  */
 // TODO: add interfaces mixin!
 export class ObjectTypeApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.FieldDefinitionsApiMixin,
-  Mixin.TypeDefinitionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.FieldDefinitionsMixin,
+  Mixin.TypeDefinitionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ObjectTypeDefinitionNode) {
     super([node], [node], [node], [node], [node], [node])
@@ -57,12 +57,12 @@ export function objectTypeApi(node: GQL.ObjectTypeDefinitionNode): ObjectTypeApi
  * @category API Public
  */
 export class InterfaceTypeApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.FieldDefinitionsApiMixin,
-  Mixin.TypeDefinitionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.FieldDefinitionsMixin,
+  Mixin.TypeDefinitionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InterfaceTypeDefinitionNode) {
     super([node], [node], [node], [node], [node], [node])
@@ -88,12 +88,12 @@ export function interfaceTypeApi(node: GQL.InterfaceTypeDefinitionNode): Interfa
  * @category API Public
  */
 export class UnionTypeApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
   Mixin.UnionTypesMixin,
-  Mixin.TypeDefinitionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.TypeDefinitionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeDefinitionNode) {
     super([node], [node], [node], [node], [node], [node])
@@ -119,11 +119,11 @@ export function unionTypeApi(node: GQL.UnionTypeDefinitionNode): UnionTypeApi {
  * @category API Public
  */
 export class ScalarTypeApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.TypeDefinitionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.TypeDefinitionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ScalarTypeDefinitionNode) {
     super([node], [node], [node], [node], [node])
@@ -149,12 +149,12 @@ export function scalarTypeApi(node: GQL.ScalarTypeDefinitionNode): ScalarTypeApi
  * @category API Public
  */
 export class EnumTypeApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
   Mixin.EnumValueDefinitionMixin,
-  Mixin.TypeDefinitionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.TypeDefinitionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeDefinitionNode) {
     super([node], [node], [node], [node], [node], [node])
@@ -180,12 +180,12 @@ export function enumTypeApi(node: GQL.EnumTypeDefinitionNode): EnumTypeApi {
  * @category API Public
  */
 export class InputTypeApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.InputValuesAsFieldsApiMixin,
-  Mixin.TypeDefinitionAssertionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.InputValuesAsFieldsMixin,
+  Mixin.TypeDefinitionAssertionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InputObjectTypeDefinitionNode) {
     super([node], [node], [node], [node], [node], [node])

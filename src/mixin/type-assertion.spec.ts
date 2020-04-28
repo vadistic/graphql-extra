@@ -1,23 +1,23 @@
 import { Mixin, Ast } from '../internal'
 
-describe(Mixin.TypeDefinitionAssertionApiMixin, () => {
-  const p = Mixin.TypeDefinitionAssertionApiMixin.prototype
+describe(Mixin.TypeDefinitionAssertionMixin, () => {
+  const p = Mixin.TypeDefinitionAssertionMixin.prototype
 
   const node = Ast.objectTypeDefinitionNode({
     name: 'MyType',
     fields: [{ name: 'myField', type: 'String!' }],
   })
 
-  const api = Mixin.typeDefinitionAssertionApiMixin(node)
+  const mixin = Mixin.typeDefinitionAssertionMixin(node)
 
   test(p.isObjectType.name, () => {
-    expect(api.isObjectType()).toBe(true)
-    expect(api.isEnumType()).toBe(false)
+    expect(mixin.isObjectType()).toBe(true)
+    expect(mixin.isEnumType()).toBe(false)
   })
 
   test(p.assertObjectType.name, () => {
-    expect(() => api.assertObjectType()).not.toThrowError()
-    expect(() => api.assertEnumType()).toThrowErrorMatchingInlineSnapshot(
+    expect(() => mixin.assertObjectType()).not.toThrowError()
+    expect(() => mixin.assertEnumType()).toThrowErrorMatchingInlineSnapshot(
       '"ObjectTypeDefinition node \\"MyType\\" cannot be asserted as EnumTypeDefinition"',
     )
   })

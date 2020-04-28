@@ -8,7 +8,7 @@ import { Crud } from '../utils'
 /**
  * @category API Mixins
  */
-export type DirectivesApiMixinNode =
+export type DirectivesMixinNode =
   | GQL.EnumValueDefinitionNode
   | GQL.FieldDefinitionNode
   | GQL.FieldNode
@@ -25,8 +25,8 @@ export type DirectivesApiMixinNode =
 /**
  * @category API Mixins
  */
-export class DirectivesApiMixin {
-  constructor(readonly node: DirectivesApiMixinNode) {}
+export class DirectivesMixin {
+  constructor(readonly node: DirectivesMixinNode) {}
 
   readonly _directives = new Crud({
     parent: this.node,
@@ -85,6 +85,6 @@ export class DirectivesApiMixin {
 /**
  * @category API Mixins
  */
-export function directivesApiMixin(node: DirectivesApiMixinNode): DirectivesApiMixin {
-  return new DirectivesApiMixin(node)
+export function directivesMixin(node: DirectivesMixinNode): DirectivesMixin {
+  return new DirectivesMixin(node)
 }

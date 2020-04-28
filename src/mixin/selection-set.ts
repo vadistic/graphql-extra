@@ -9,7 +9,7 @@ import { mutable, Crud, Mutable } from '../utils'
 /**
  * @category API Mixins
  */
-export type SelectionSetApiMixinNode =
+export type SelectionSetMixinNode =
   | GQL.FieldNode
   | GQL.FragmentDefinitionNode
   | GQL.InlineFragmentNode
@@ -20,8 +20,8 @@ export type SelectionSetApiMixinNode =
 /**
  * @category API Mixins
  */
-export class SelectionSetApiMixin {
-  constructor(readonly node: SelectionSetApiMixinNode) {
+export class SelectionSetMixin {
+  constructor(readonly node: SelectionSetMixinNode) {
   }
 
   readonly _selections = new Crud({
@@ -36,7 +36,7 @@ export class SelectionSetApiMixin {
     // TODO: try to run those evaluations only once, not on all access
     // TODO: clean up code
     ref: this.node.kind === Kind.SELECTION_SET ? undefined : (next): GQL.SelectionNode[] => {
-      const _node = this.node as Mutable<Exclude<SelectionSetApiMixinNode, GQL.SelectionSetNode>>
+      const _node = this.node as Mutable<Exclude<SelectionSetMixinNode, GQL.SelectionSetNode>>
 
       if (!_node.selectionSet) {
         _node.selectionSet = Ast.selectionSetNode({ selections: [] })
@@ -253,6 +253,6 @@ export class SelectionSetApiMixin {
 /**
  * @category API Mixins
  */
-export function selectionSetApiMixin(node: SelectionSetApiMixinNode): SelectionSetApiMixin {
-  return new SelectionSetApiMixin(node)
+export function selectionSetMixin(node: SelectionSetMixinNode): SelectionSetMixin {
+  return new SelectionSetMixin(node)
 }

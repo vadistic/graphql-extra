@@ -1,8 +1,7 @@
 import { Api, Mixin, Ast } from '../internal'
 
-describe(Mixin.ArgumentsApiMixin.name, () => {
-  const p = Mixin.ArgumentsApiMixin.prototype
-
+describe(Mixin.ArgumentsMixin.name, () => {
+  const p = Mixin.ArgumentsMixin.prototype
   const args = [{ name: 'maxAge', value: Ast.intValueNode(123) }]
 
   const node = Ast.directiveNode({
@@ -10,24 +9,24 @@ describe(Mixin.ArgumentsApiMixin.name, () => {
     arguments: args,
   })
 
-  const api = Mixin.argumentsApiMixin(node)
+  const mixin = Mixin.argumentsMixin(node)
 
 
   test(p.getArgumentNames.name, () => {
-    expect(api.getArgumentNames()).toEqual(['maxAge'])
+    expect(mixin.getArgumentNames()).toEqual(['maxAge'])
   })
 
   test(p.hasArgument.name, () => {
-    expect(api.hasArgument('maxAge')).toBe(true)
-    expect(api.hasArgument('something')).toBe(false)
+    expect(mixin.hasArgument('maxAge')).toBe(true)
+    expect(mixin.hasArgument('something')).toBe(false)
   })
 
   test(p.getArguments.name, () => {
-    expect(api.getArguments().every((arg) => arg instanceof Api.ArgumentApi)).toBe(true)
+    expect(mixin.getArguments().every((arg) => arg instanceof Api.ArgumentApi)).toBe(true)
   })
 
   test(p.getArgument.name, () => {
-    expect(api.getArgument('maxAge')).toBeInstanceOf(Api.ArgumentApi)
-    expect(() => api.getArgument('something')).toThrowError('cannot find')
+    expect(mixin.getArgument('maxAge')).toBeInstanceOf(Api.ArgumentApi)
+    expect(() => mixin.getArgument('something')).toThrowError('cannot find')
   })
 })

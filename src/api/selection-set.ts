@@ -13,8 +13,8 @@ import { validateNodeKind } from '../utils'
  */
 
 export class SelectionSetApi extends Mix(
-  Mixin.SelectionSetApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.SelectionSetMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.SelectionSetNode) {
     super([node])

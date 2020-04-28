@@ -8,7 +8,7 @@ import { Crud } from '../utils'
 /**
  * @category API Mixins
  */
-export type FieldDefinitionsApiMixinNode =
+export type FieldDefinitionsMixinNode =
   | GQL.InterfaceTypeDefinitionNode
   | GQL.InterfaceTypeExtensionNode
   | GQL.ObjectTypeDefinitionNode
@@ -17,8 +17,8 @@ export type FieldDefinitionsApiMixinNode =
 /**
  * @category API Mixins
  */
-export class FieldDefinitionsApiMixin {
-  constructor(readonly node: FieldDefinitionsApiMixinNode) {}
+export class FieldDefinitionsMixin {
+  constructor(readonly node: FieldDefinitionsMixinNode) {}
 
   readonly _fields = new Crud({
     parent: this.node,
@@ -109,8 +109,8 @@ export class FieldDefinitionsApiMixin {
 /**
  * @category API Mixins
  */
-export function fieldDefinitionsApiMixin(
-  node: FieldDefinitionsApiMixinNode,
-): FieldDefinitionsApiMixin {
-  return new FieldDefinitionsApiMixin(node)
+export function fieldDefinitionsMixin(
+  node: FieldDefinitionsMixinNode,
+): FieldDefinitionsMixin {
+  return new FieldDefinitionsMixin(node)
 }

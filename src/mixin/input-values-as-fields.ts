@@ -8,15 +8,15 @@ import { Crud } from '../utils'
 /**
  * @category API Mixins
  */
-export type InputValuesAsFieldsApiMixinNode =
+export type InputValuesAsFieldsMixinNode =
   | GQL.InputObjectTypeDefinitionNode
   | GQL.InputObjectTypeExtensionNode
 
 /**
  * @category API Mixins
  */
-export class InputValuesAsFieldsApiMixin {
-  constructor(protected node: InputValuesAsFieldsApiMixinNode) {}
+export class InputValuesAsFieldsMixin {
+  constructor(protected node: InputValuesAsFieldsMixinNode) {}
 
   readonly _fields = new Crud({
     parent: this.node,
@@ -103,8 +103,8 @@ export class InputValuesAsFieldsApiMixin {
 /**
  * @category API Mixins
  */
-export function inputValuesAsFieldsApiMixin(
-  node: InputValuesAsFieldsApiMixinNode,
-): InputValuesAsFieldsApiMixin {
-  return new InputValuesAsFieldsApiMixin(node)
+export function inputValuesAsFieldsMixin(
+  node: InputValuesAsFieldsMixinNode,
+): InputValuesAsFieldsMixin {
+  return new InputValuesAsFieldsMixin(node)
 }

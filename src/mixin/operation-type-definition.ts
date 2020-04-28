@@ -8,15 +8,15 @@ import { Crud } from '../utils'
 /**
  * @category API Mixins
  */
-export type OperationTypeDefinitionApiMixinNode =
+export type OperationTypeDefinitionMixinNode =
   | GQL.SchemaDefinitionNode
   | GQL.SchemaExtensionNode
 
 /**
  * @category API Mixins
  */
-export class OperationTypeDefinitionApiMixin {
-  constructor(readonly node: OperationTypeDefinitionApiMixinNode) {}
+export class OperationTypeDefinitionMixin {
+  constructor(readonly node: OperationTypeDefinitionMixinNode) {}
 
   readonly _operationTypes = new Crud({
     parent: this.node,
@@ -107,8 +107,8 @@ export class OperationTypeDefinitionApiMixin {
 /**
  * @category API Mixins
  */
-export function operationTypeDefinitionApiMixin(
-  node: OperationTypeDefinitionApiMixinNode,
-): OperationTypeDefinitionApiMixin {
-  return new OperationTypeDefinitionApiMixin(node)
+export function operationTypeDefinitionMixin(
+  node: OperationTypeDefinitionMixinNode,
+): OperationTypeDefinitionMixin {
+  return new OperationTypeDefinitionMixin(node)
 }

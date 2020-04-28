@@ -44,7 +44,7 @@ describe(Api.TypeApi.name, () => {
 
 
   describe('mixins', () => {
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('ListType')).toBe(true)
     })
   })
@@ -69,7 +69,7 @@ describe(Api.NamedTypeApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('NamedType')).toBe(true)
     })
   })

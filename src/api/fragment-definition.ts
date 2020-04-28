@@ -12,10 +12,10 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class FragmentDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.SelectionSetApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DirectivesMixin,
+  Mixin.SelectionSetMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.FragmentDefinitionNode) {
     super([node], [node], [node], [node])

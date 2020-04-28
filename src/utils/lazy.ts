@@ -1,3 +1,6 @@
+/**
+ * @category Internal
+ */
 export const lazy = <R>(cb: () => R): () => R => {
   let store: R | undefined
 

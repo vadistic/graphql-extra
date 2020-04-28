@@ -17,19 +17,19 @@ describe(Api.FragmentDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.NameOptionalApiMixin.name, () => {
+    test(Mixin.NameOptionalMixin.name, () => {
       expect(api.getName()).toBe('MyFragment')
     })
 
-    test(Mixin.NameApiMixin.name, () => {
+    test(Mixin.NameMixin.name, () => {
       expect(api.getName()).toBe('MyFragment')
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
+    test(Mixin.SelectionSetMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('FragmentDefinition')).toBe(true)
     })
   })

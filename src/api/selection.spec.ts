@@ -11,27 +11,27 @@ describe(Api.FieldApi.name, () => {
   const api = Api.fieldApi(node)
 
   describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
+    test(Mixin.NameMixin.name, () => {
       expect(api.getName()).toBe('myField')
     })
 
-    test(Mixin.ArgumentsApiMixin.name, () => {
+    test(Mixin.ArgumentsMixin.name, () => {
       expect(api.getArgumentNames()).toMatchObject(['age'])
     })
 
-    test(Mixin.DirectivesApiMixin.name, () => {
+    test(Mixin.DirectivesMixin.name, () => {
       expect(api.getDirectiveNames()).toMatchObject(['Client'])
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
+    test(Mixin.SelectionSetMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
     })
 
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
+    test(Mixin.SelectionAssertionMixin.name, () => {
       expect(api.isField()).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('Field')).toBe(true)
     })
   })
@@ -46,20 +46,20 @@ describe(Api.FragmentSpreadApi.name, () => {
   const api = Api.fragmentSpreadApi(node)
 
   describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
+    test(Mixin.NameMixin.name, () => {
       expect(api.getName()).toBe('MyFragment')
     })
 
 
-    test(Mixin.DirectivesApiMixin.name, () => {
+    test(Mixin.DirectivesMixin.name, () => {
       expect(api.hasDirective('Client')).toBeTruthy()
     })
 
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
+    test(Mixin.SelectionAssertionMixin.name, () => {
       expect(api.isFragmentSpread()).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('FragmentSpread')).toBe(true)
     })
   })
@@ -76,19 +76,19 @@ describe(Api.InlineFragmentApi.name, () => {
   const api = Api.inlineFragmentApi(node)
 
   describe('mixins', () => {
-    test(Mixin.DirectivesApiMixin.name, () => {
+    test(Mixin.DirectivesMixin.name, () => {
       expect(api.hasDirective('Client')).toBeTruthy()
     })
 
-    test(Mixin.SelectionSetApiMixin.name, () => {
+    test(Mixin.SelectionSetMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
     })
 
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
+    test(Mixin.SelectionAssertionMixin.name, () => {
       expect(api.hasSelectionSet()).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('InlineFragment')).toBe(true)
     })
   })

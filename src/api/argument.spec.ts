@@ -2,11 +2,8 @@ import { Api, Mixin, Ast } from '../internal'
 
 describe(Api.ArgumentApi.name, () => {
   const p = Api.ArgumentApi.prototype
-
   const value = Ast.intValueNode(123)
-
   const node = Ast.argumentNode({ name: 'age', value })
-
   const api = Api.argumentApi(node)
 
   describe('methods', () => {
@@ -22,11 +19,11 @@ describe(Api.ArgumentApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
+    test(Mixin.NameMixin.name, () => {
       expect(api.getName()).toBe('age')
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('Argument')).toBe(true)
     })
   })

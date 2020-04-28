@@ -12,8 +12,8 @@ import { validateNodeKind, mutable, applyProps } from '../utils'
  * @category API Public
  */
 export class OperationTypeDefinitionApi extends Mix(
-  Mixin.NamedTypeApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NamedTypeMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.OperationTypeDefinitionNode) {
     super([node], [node])

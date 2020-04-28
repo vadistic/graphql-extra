@@ -8,7 +8,7 @@ import { mutable } from '../utils'
 /**
  * @category API Mixins
  */
-export type TypeApiMixinNode =
+export type TypeMixinNode =
   | GQL.FieldDefinitionNode
   | GQL.InputValueDefinitionNode
   | GQL.VariableDefinitionNode
@@ -16,8 +16,8 @@ export type TypeApiMixinNode =
 /**
  * @category API Mixins
  */
-export class TypeApiMixin {
-  constructor(protected node: TypeApiMixinNode) {}
+export class TypeMixin {
+  constructor(protected node: TypeMixinNode) {}
 
   getType(): Api.TypeApi {
     return Api.typeApi(this.node.type)
@@ -67,8 +67,8 @@ export class TypeApiMixin {
 /**
  * @category API Mixins
  */
-export function typeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
-  return new TypeApiMixin(node)
+export function typeMixin(node: TypeMixinNode): TypeMixin {
+  return new TypeMixin(node)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -76,14 +76,14 @@ export function typeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
 /**
  * @category API Mixins
  */
-export type NamedTypeApiMixinNode =
+export type NamedTypeMixinNode =
   | GQL.OperationTypeDefinitionNode
 
 /**
  * @category API Mixins
  */
-export class NamedTypeApiMixin {
-  constructor(protected node: NamedTypeApiMixinNode) {}
+export class NamedTypeMixin {
+  constructor(protected node: NamedTypeMixinNode) {}
 
   getNamedType(): Api.NamedTypeApi {
     return Api.namedTypeApi(this.node.type)
@@ -103,6 +103,6 @@ export class NamedTypeApiMixin {
 /**
  * @category API Mixins
  */
-export function namedTypeApiMixin(node: TypeApiMixinNode): TypeApiMixin {
-  return new TypeApiMixin(node)
+export function namedTypeMixin(node: TypeMixinNode): TypeMixin {
+  return new TypeMixin(node)
 }

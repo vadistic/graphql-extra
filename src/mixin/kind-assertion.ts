@@ -6,7 +6,7 @@ import { assertionError } from '../utils'
 /**
  * @category API Mixins
  */
-export class KindAssertionApiMixin {
+export class KindAssertionMixin {
   constructor(readonly node: GQL.ASTNode) {}
 
   isKind<K extends GQL.KindEnum>(kind: K): this is KindToApiType<K> {
@@ -23,8 +23,8 @@ export class KindAssertionApiMixin {
 /**
  * @category API Mixins
  */
-export function kindAssertionApiMixin(
+export function kindAssertionMixin(
   node: GQL.ASTNode,
-): KindAssertionApiMixin {
-  return new KindAssertionApiMixin(node)
+): KindAssertionMixin {
+  return new KindAssertionMixin(node)
 }

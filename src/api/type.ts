@@ -17,7 +17,7 @@ import {
  *
  * @category API Public
  */
-export class TypeApi extends Mix(Mixin.KindAssertionApiMixin) {
+export class TypeApi extends Mix(Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.TypeNode) {
     super([node])
 
@@ -121,7 +121,7 @@ export function typeApi(node: GQL.TypeNode): TypeApi {
  *
  * @category API Public
  */
-export class NamedTypeApi extends Mix(Mixin.KindAssertionApiMixin) {
+export class NamedTypeApi extends Mix(Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.NamedTypeNode) {
     super([node])
 

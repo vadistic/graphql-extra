@@ -9,15 +9,15 @@ import { Crud } from '../utils'
 /**
  * @category API Mixins
  */
-export type InputValuesAsArgumentsApiMixinNode =
+export type InputValuesAsArgumentsMixinNode =
   | GQL.FieldDefinitionNode
   | GQL.DirectiveDefinitionNode
 
 /**
  * @category API Mixins
  */
-export class InputValuesAsArgumentsApiMixin {
-  constructor(readonly node: InputValuesAsArgumentsApiMixinNode) {}
+export class InputValuesAsArgumentsMixin {
+  constructor(readonly node: InputValuesAsArgumentsMixinNode) {}
 
   readonly _arguments = new Crud({
     parent: this.node,

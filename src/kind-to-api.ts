@@ -15,8 +15,8 @@ export const kindToApiMap = {
   OperationDefinition: Api.OperationDefinitionApi,
   // VariableDefinition:
   SelectionSet: Api.SelectionSetApi,
-  // Field:
-  // Argument:
+  Field: Api.FieldApi,
+  Argument: Api.ArgumentApi,
 
   // FRAGMENTS
   FragmentSpread: Api.FragmentSpreadApi,

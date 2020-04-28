@@ -1,7 +1,7 @@
 import { Mixin, Ast } from '../internal'
 
-describe(Mixin.OperationTypeDefinitionApiMixin, () => {
-  const p = Mixin.OperationTypeDefinitionApiMixin.prototype
+describe(Mixin.OperationTypeDefinitionMixin, () => {
+  const p = Mixin.OperationTypeDefinitionMixin.prototype
 
   const operation = Ast.operationTypeDefinitionNode({
     operation: 'query',
@@ -10,31 +10,31 @@ describe(Mixin.OperationTypeDefinitionApiMixin, () => {
 
   const node = Ast.schemaDefinitionNode({ operationTypes: [operation] })
 
-  const api = Mixin.operationTypeDefinitionApiMixin(node)
+  const mixin = Mixin.operationTypeDefinitionMixin(node)
 
   test(p.getOperationType.name, () => {
-    expect(api.getOperationType('query')?.getTypename()).toBe('MyQuery')
+    expect(mixin.getOperationType('query')?.getTypename()).toBe('MyQuery')
   })
 
   test(p.hasOperationType.name, () => {
-    expect(api.hasOperationType('subscription')).toBe(false)
+    expect(mixin.hasOperationType('subscription')).toBe(false)
   })
 
   test(p.getOperationTypenames.name, () => {
-    expect(api.getOperationTypenames()).toEqual(['MyQuery'])
+    expect(mixin.getOperationTypenames()).toEqual(['MyQuery'])
   })
 
   test(p.createOperationType.name, () => {
-    api.createOperationType({ operation: 'mutation', type: 'MyMutation' })
+    mixin.createOperationType({ operation: 'mutation', type: 'MyMutation' })
 
-    expect(api.hasOperationType('mutation')).toEqual(true)
+    expect(mixin.hasOperationType('mutation')).toEqual(true)
 
     expect(() =>
-      api.createOperationType({ operation: 'mutation', type: 'MyMutation' }))
+      mixin.createOperationType({ operation: 'mutation', type: 'MyMutation' }))
       .toThrowError('cannot create')
   })
 
   test(p.getQuery.name, () => {
-    expect(api.getQuery()?.getTypename()).toEqual('MyQuery')
+    expect(mixin.getQuery()?.getTypename()).toEqual('MyQuery')
   })
 })

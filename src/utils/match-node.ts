@@ -1,9 +1,9 @@
 /**
  * deep equality of subset
  *
- * works like jest.matchObject()
+ * works like jest.matchObject() while skips "loc"
  *
- * TODO: add comparing types based on partial type node props
+ * @category Helper
  */
 export function matchNode(main: any, subset: any): boolean {
   if (main === subset) {

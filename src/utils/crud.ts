@@ -3,13 +3,21 @@ import type * as GQL from 'graphql'
 import { GraphQLError } from 'graphql'
 
 import {
-  applyNullable, applyPropsCloned, applyPropsClonedPartial, isPrimitive, applyPropsPartial, applyPropsArr,
+  applyNullable,
+  applyPropsCloned,
+  applyPropsClonedPartial,
+  isPrimitive,
+  applyPropsPartial,
+  applyPropsArr,
 } from './apply-props'
 import { getName } from './get-name'
 import { matchNode } from './match-node'
 import { concat } from './mutable'
 
 
+/**
+ * @category Internal
+ */
 export interface CrudConfig <
   Value,
   Api,
@@ -29,6 +37,9 @@ export interface CrudConfig <
   ref?: (next?: Value[]) => Value[]
 }
 
+/**
+ * @category Internal
+ */
 export class Crud <
   Value extends GQL.ASTNode,
   Api,

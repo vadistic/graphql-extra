@@ -1,5 +1,6 @@
 import type * as GQL from 'graphql'
 
+// eslint-disable-next-line import/no-cycle
 import { Api, Ast } from '../internal'
 import { Typename } from '../types'
 import { Crud } from '../utils'

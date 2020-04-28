@@ -13,15 +13,15 @@ describe(Api.DirectiveApi.name, () => {
   })
 
   describe('mixins', () => {
-    test(Mixin.NameApiMixin.name, () => {
+    test(Mixin.NameMixin.name, () => {
       expect(api.getName()).toBe('Cache')
     })
 
-    test(Mixin.ArgumentsApiMixin.name, () => {
+    test(Mixin.ArgumentsMixin.name, () => {
       expect(api.getArgument('age').getValue()).toEqual(value)
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('Directive')).toBe(true)
     })
   })

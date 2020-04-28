@@ -7,7 +7,7 @@ import { mutable } from '../utils'
 /**
  * @category API Mixins
  */
-export type NameApiMixinNode =
+export type NameMixinNode =
   | GQL.ArgumentNode
   | GQL.DirectiveDefinitionNode
   | GQL.DirectiveNode
@@ -23,8 +23,8 @@ export type NameApiMixinNode =
 /**
  * @category API Mixins
  */
-export class NameApiMixin {
-  constructor(readonly node: NameApiMixinNode) {}
+export class NameMixin {
+  constructor(readonly node: NameMixinNode) {}
 
   getName(): string {
     return this.node.name.value
@@ -40,8 +40,8 @@ export class NameApiMixin {
 /**
  * @category API Mixins
  */
-export function nameApiMixin(node: NameApiMixinNode): NameApiMixin {
-  return new NameApiMixin(node)
+export function nameMixin(node: NameMixinNode): NameMixin {
+  return new NameMixin(node)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -49,14 +49,14 @@ export function nameApiMixin(node: NameApiMixinNode): NameApiMixin {
 /**
  * @category API Mixins
  */
-export type NameOptionalApiMixinNode =
+export type NameOptionalMixinNode =
   | GQL.OperationDefinitionNode
 
 /**
  * @category API Mixins
  */
-export class NameOptionalApiMixin {
-  constructor(readonly node: NameOptionalApiMixinNode) {}
+export class NameOptionalMixin {
+  constructor(readonly node: NameOptionalMixinNode) {}
 
   getName(): string | undefined {
     return this.node.name?.value
@@ -72,6 +72,6 @@ export class NameOptionalApiMixin {
 /**
  * @category API Mixins
  */
-export function nameOptionalApiMixin(node: NameOptionalApiMixinNode): NameOptionalApiMixin {
-  return new NameOptionalApiMixin(node)
+export function nameOptionalMixin(node: NameOptionalMixinNode): NameOptionalMixin {
+  return new NameOptionalMixin(node)
 }

@@ -12,11 +12,11 @@ import { mutable, validateNodeKind } from '../utils'
  * @category API Public
  */
 export class InputValueDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.TypeApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.TypeMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InputValueDefinitionNode) {
     super([node], [node], [node], [node], [node])

@@ -16,27 +16,27 @@ describe(Api.FieldDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    test.skip(Mixin.NameApiMixin.name, () => {
+    test.skip(Mixin.NameMixin.name, () => {
       //
     })
 
-    test.skip(Mixin.DescriptionApiMixin.name, () => {
+    test.skip(Mixin.DescriptionMixin.name, () => {
       //
     })
 
-    test.skip(Mixin.DirectivesApiMixin.name, () => {
+    test.skip(Mixin.DirectivesMixin.name, () => {
       //
     })
 
-    test.skip(Mixin.InputValuesAsArgumentsApiMixin.name, () => {
+    test.skip(Mixin.InputValuesAsArgumentsMixin.name, () => {
       //
     })
 
-    test.skip(Mixin.TypeApiMixin.name, () => {
+    test.skip(Mixin.TypeMixin.name, () => {
       //
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('FieldDefinition')).toBe(true)
     })
   })

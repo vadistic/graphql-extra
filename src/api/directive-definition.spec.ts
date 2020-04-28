@@ -62,13 +62,13 @@ describe(Api.DirectiveDefinitionApi.name, () => {
   })
 
   describe('mixins', () => {
-    test.skip(Mixin.NameApiMixin.name, () => {})
+    test.skip(Mixin.NameMixin.name, () => {})
 
-    test.skip(Mixin.DescriptionApiMixin.name, () => {})
+    test.skip(Mixin.DescriptionMixin.name, () => {})
 
-    test.skip(Mixin.InputValuesAsArgumentsApiMixin.name, () => {})
+    test.skip(Mixin.InputValuesAsArgumentsMixin.name, () => {})
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('DirectiveDefinition')).toBe(true)
     })
   })

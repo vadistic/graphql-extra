@@ -1,58 +1,68 @@
 import { Api, Mixin, Ast } from '../internal'
 
-describe(Api.SchemaDefinitionApi.name + ' & ' + Api.SchemaExtensionApi.name, () => {
-  const defNode = Ast.schemaDefinitionNode({
+describe(Api.SchemaDefinitionApi.name, () => {
+  const node = Ast.schemaDefinitionNode({
     operationTypes: [
       { operation: 'query', type: 'MyQueryRootType' },
       { operation: 'mutation', type: 'MyMutationRootType' },
     ],
   })
 
-  const extNode = Ast.schemaExtensionNode({
-    operationTypes: [
-      { operation: 'query', type: 'MyQueryRootType' },
-      { operation: 'mutation', type: 'MyMutationRootType' },
-    ],
-  })
-
-  const apiDef = Api.schemaDefinitionApi(defNode)
-  const apiExt = Api.schemaExtensionApi(extNode)
-
-  const cases = [
-    apiDef,
-    apiExt,
-  ]
+  const api = Api.schemaDefinitionApi(node)
 
   describe('mixins', () => {
-    test(Mixin.DescriptionApiMixin.name, () => {
-      apiDef.setDescription('ABC')
+    test(Mixin.DescriptionMixin.name, () => {
+      api.setDescription('ABC')
 
-      expect(apiDef.node.description?.value).toBe('ABC')
-      expect(apiDef.hasDescription('ABC')).toBeTruthy()
+      expect(api.node.description?.value).toBe('ABC')
+      expect(api.hasDescription('ABC')).toBeTruthy()
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(apiDef.isKind('SchemaDefinition')).toBe(true)
+    test(Mixin.KindAssertionMixin.name, () => {
+      expect(api.isKind('SchemaDefinition')).toBe(true)
     })
 
-    test(Mixin.KindAssertionApiMixin.name, () => {
-      expect(apiExt.isKind('SchemaExtension')).toBe(true)
-    })
-
-    test.each(cases)(Mixin.DirectivesApiMixin.name, (api) => {
+    test(Mixin.DirectivesMixin.name, () => {
       api.upsertDirective('Client')
-
       expect(api.node.directives?.[0].name.value).toBe('Client')
       expect(api.hasDirective('Client')).toBeTruthy()
     })
 
-    test.each(cases)(Mixin.OperationTypeDefinitionApiMixin.name, (api) => {
+    test(Mixin.OperationTypeDefinitionMixin.name, () => {
       expect(api.getOperationTypename('query')).toBe('MyQueryRootType')
       api.updateOperationType('mutation', { type: 'MyRenamedMutationRootType' })
-
       expect(api.getMutationTypename()).toBe('MyRenamedMutationRootType')
-      expect(api.node.operationTypes?.find((op) => op.operation === 'mutation')?.type.name.value)
-        .toBe('MyRenamedMutationRootType')
+    })
+  })
+})
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+describe(Api.SchemaExtensionApi.name, () => {
+  const mode = Ast.schemaExtensionNode({
+    operationTypes: [
+      { operation: 'query', type: 'MyQueryRootType' },
+      { operation: 'mutation', type: 'MyMutationRootType' },
+    ],
+  })
+
+  const api = Api.schemaExtensionApi(mode)
+
+  describe('mixins', () => {
+    test(Mixin.KindAssertionMixin.name, () => {
+      expect(api.isKind('SchemaExtension')).toBe(true)
+    })
+
+    test(Mixin.DirectivesMixin.name, () => {
+      api.upsertDirective('Client')
+      expect(api.node.directives?.[0].name.value).toBe('Client')
+      expect(api.hasDirective('Client')).toBeTruthy()
+    })
+
+    test(Mixin.OperationTypeDefinitionMixin.name, () => {
+      expect(api.getOperationTypename('query')).toBe('MyQueryRootType')
+      api.updateOperationType('mutation', { type: 'MyRenamedMutationRootType' })
+      expect(api.getMutationTypename()).toBe('MyRenamedMutationRootType')
     })
   })
 })

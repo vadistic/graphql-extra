@@ -20,11 +20,11 @@ describe(Api.SelectionSetApi.name, () => {
 
 
   describe('mixins', () => {
-    test(Mixin.KindAssertionApiMixin.name, () => {
+    test(Mixin.KindAssertionMixin.name, () => {
       expect(api.isKind('SelectionSet')).toBe(true)
     })
 
-    test(Mixin.SelectionAssertionApiMixin.name, () => {
+    test(Mixin.SelectionAssertionMixin.name, () => {
       expect(api.isKind('SelectionSet')).toBe(true)
     })
   })

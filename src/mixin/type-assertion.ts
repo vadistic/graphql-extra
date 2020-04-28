@@ -8,7 +8,7 @@ import { assertionError } from '../utils'
 /**
  * @category API Mixins
  */
-export class TypeDefinitionAssertionApiMixin {
+export class TypeDefinitionAssertionMixin {
   constructor(readonly node: GQL.TypeDefinitionNode) {}
 
   isEnumType(): this is Api.EnumTypeApi {
@@ -75,10 +75,10 @@ export class TypeDefinitionAssertionApiMixin {
 /**
  * @category API Mixins
  */
-export function typeDefinitionAssertionApiMixin(
+export function typeDefinitionAssertionMixin(
   node: GQL.TypeDefinitionNode,
-): TypeDefinitionAssertionApiMixin {
-  return new TypeDefinitionAssertionApiMixin(node)
+): TypeDefinitionAssertionMixin {
+  return new TypeDefinitionAssertionMixin(node)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export function typeDefinitionAssertionApiMixin(
 /**
  * @category API Mixins
  */
-export class TypeExtensionAssertionApiMixin {
+export class TypeExtensionAssertionMixin {
   constructor(readonly node: GQL.TypeExtensionNode) {}
 
   isEnumExt(): this is Api.EnumExtApi {
@@ -155,8 +155,8 @@ export class TypeExtensionAssertionApiMixin {
 /**
  * @category API Mixins
  */
-export function typeExtensionAssertionApiMixin(
+export function typeExtensionAssertionMixin(
   node: GQL.TypeExtensionNode,
-): TypeExtensionAssertionApiMixin {
-  return new TypeExtensionAssertionApiMixin(node)
+): TypeExtensionAssertionMixin {
+  return new TypeExtensionAssertionMixin(node)
 }

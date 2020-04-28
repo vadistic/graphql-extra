@@ -46,6 +46,9 @@ export type DocumentSchemaRoots = {
   subscription: GQL.ObjectTypeDefinitionNode | undefined
 }
 
+/**
+ * @category API Public
+ */
 export abstract class DocumentSchemaApiBase {
   maps: DocumentSchemaTypeMap = {
     type: new Map(),

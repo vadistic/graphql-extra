@@ -12,10 +12,10 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class EnumValueDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.EnumValueDefinitionNode) {
     super([node], [node], [node], [node])

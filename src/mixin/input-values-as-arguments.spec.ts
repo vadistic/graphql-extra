@@ -1,27 +1,27 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable jest/no-disabled-tests */
 import { Mixin } from '../internal'
 
-describe(Mixin.InputValuesAsArgumentsApiMixin.name, () => {
-  const p = Mixin.InputValuesAsArgumentsApiMixin.prototype
+describe(Mixin.InputValuesAsArgumentsMixin.name, () => {
+  const p = Mixin.InputValuesAsArgumentsMixin.prototype
 
-  test(p.getArgnames.name, () => {
+  test.skip(p.getArgnames.name, () => {
     //
   })
 
-  test(p.getArguments.name, () => {
+  test.skip(p.getArguments.name, () => {
     //
   })
 
-  test(p.getArgumentsByTypename.name, () => {
+  test.skip(p.getArgumentsByTypename.name, () => {
     //
   })
 
-  test(p.hasArgument.name, () => {
+  test.skip(p.hasArgument.name, () => {
     //
   })
 
 
-  test(p.getArgument.name, () => {
+  test.skip(p.getArgument.name, () => {
     //
   })
 })

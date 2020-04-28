@@ -1,5 +1,7 @@
 /**
  * standard object clone deep fn
+ *
+ * @category Helper
  */
 export function cloneDeep<T>(target: T): T {
   if (target === null) {

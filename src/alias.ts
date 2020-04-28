@@ -19,13 +19,13 @@ export const queryType = (props: RootTypeDefinitionProps): GQL.ObjectTypeDefinit
  * @category AST Alias
  */
 export const mutationType = (props: RootTypeDefinitionProps): GQL.ObjectTypeDefinitionNode =>
-  AST.objectTypeDefinitionNode({ name: 'Query', ...props })
+  AST.objectTypeDefinitionNode({ name: 'Mutation', ...props })
 
 /**
  * @category AST Alias
  */
 export const subscriptionType = (props: RootTypeDefinitionProps): GQL.ObjectTypeDefinitionNode =>
-  AST.objectTypeDefinitionNode({ name: 'Query', ...props })
+  AST.objectTypeDefinitionNode({ name: 'Subscription', ...props })
 
 // NAME
 

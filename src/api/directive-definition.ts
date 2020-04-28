@@ -14,10 +14,10 @@ import {
  * @category API Public
  */
 export class DirectiveDefinitionApi extends Mix(
-  Mixin.NameApiMixin,
-  Mixin.DescriptionApiMixin,
-  Mixin.InputValuesAsArgumentsApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.NameMixin,
+  Mixin.DescriptionMixin,
+  Mixin.InputValuesAsArgumentsMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.DirectiveDefinitionNode) {
     super([node], [node], [node], [node])

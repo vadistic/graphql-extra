@@ -12,10 +12,10 @@ import { validateNodeKind } from '../utils'
  * @category API Public
  */
 export class SchemaDefinitionApi extends Mix(
-  Mixin.DescriptionApiMixin,
-  Mixin.DirectivesApiMixin,
-  Mixin.OperationTypeDefinitionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.DescriptionMixin,
+  Mixin.DirectivesMixin,
+  Mixin.OperationTypeDefinitionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.SchemaDefinitionNode) {
     super([node], [node], [node], [node])
@@ -42,9 +42,9 @@ export function schemaDefinitionApi(node: GQL.SchemaDefinitionNode): SchemaDefin
  * @category API Public
  */
 export class SchemaExtensionApi extends Mix(
-  Mixin.DirectivesApiMixin,
-  Mixin.OperationTypeDefinitionApiMixin,
-  Mixin.KindAssertionApiMixin,
+  Mixin.DirectivesMixin,
+  Mixin.OperationTypeDefinitionMixin,
+  Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.SchemaExtensionNode) {
     super([node], [node], [node])

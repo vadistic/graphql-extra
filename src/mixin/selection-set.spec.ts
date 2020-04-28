@@ -3,11 +3,11 @@ import type * as GQL from 'graphql'
 
 import { Mixin, Ast, Api } from '../internal'
 
-describe(Mixin.SelectionSetApiMixin.name, () => {
-  const p = Mixin.SelectionSetApiMixin.prototype
+describe(Mixin.SelectionSetMixin.name, () => {
+  const p = Mixin.SelectionSetMixin.prototype
 
   let node: GQL.OperationDefinitionNode
-  let mixin: Mixin.SelectionSetApiMixin
+  let mixin: Mixin.SelectionSetMixin
 
   beforeEach(() => {
     node = Ast.operationDefinitionNode({
@@ -23,7 +23,7 @@ describe(Mixin.SelectionSetApiMixin.name, () => {
       ],
     })
 
-    mixin = Mixin.selectionSetApiMixin(node)
+    mixin = Mixin.selectionSetMixin(node)
   })
 
   describe('basic', () => {

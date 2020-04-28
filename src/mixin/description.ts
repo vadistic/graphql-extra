@@ -7,7 +7,7 @@ import { mutable } from '../utils'
 /**
  * @category API Mixins
  */
-export type DescriptionApiMixinNode =
+export type DescriptionMixinNode =
   | GQL.DirectiveDefinitionNode
   | GQL.EnumValueDefinitionNode
   | GQL.FieldDefinitionNode
@@ -18,8 +18,8 @@ export type DescriptionApiMixinNode =
 /**
  * @category API Mixins
  */
-export class DescriptionApiMixin {
-  constructor(readonly node: DescriptionApiMixinNode) {}
+export class DescriptionMixin {
+  constructor(readonly node: DescriptionMixinNode) {}
 
   hasDescription(value?: string): boolean {
     if (value) {
@@ -49,6 +49,6 @@ export class DescriptionApiMixin {
 /**
  * @category API Mixins
  */
-export function descriptionApiMixin(node: DescriptionApiMixinNode): DescriptionApiMixin {
-  return new DescriptionApiMixin(node)
+export function descriptionMixin(node: DescriptionMixinNode): DescriptionMixin {
+  return new DescriptionMixin(node)
 }
