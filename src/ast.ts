@@ -1,6 +1,7 @@
 import type * as GQL from 'graphql'
 import { Kind, parseType } from 'graphql'
 
+import { WithKind, KindToAstMapping } from './types'
 import {
   applyPropsNullableArr,
   applyProps,
@@ -1326,22 +1327,9 @@ export function inputObjectTypeExtensionNode(
   }
 }
 
-
 //
 // ─── UNIONS ─────────────────────────────────────────────────────────────────────
 //
-
-/**
- * @category Helper
- */
-export type WithKind<T, K extends GQL.KindEnum> = T & {kind: K}
-
-/**
- * @category Internal
- */
-export type KindToAstMap<N extends GQL.ASTNode> = {[K in N['kind']]: (props: any) => GQL.ASTKindToNode[K]}
-
-// ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * `TypeDefinitionNode` create input
@@ -1362,7 +1350,7 @@ export type TypeDefinitionNodeProps =
  *
  * @category AST Node
  */
-export const kindToTypeDefinition: KindToAstMap<GQL.TypeDefinitionNode> = {
+export const kindToTypeDefinitionNode: KindToAstMapping<GQL.TypeDefinitionNode> = {
   ObjectTypeDefinition: objectTypeDefinitionNode,
   InterfaceTypeDefinition: interfaceTypeDefinitionNode,
   ScalarTypeDefinition: scalarTypeDefinitionNode,
@@ -1377,7 +1365,7 @@ export const kindToTypeDefinition: KindToAstMap<GQL.TypeDefinitionNode> = {
  * @category AST Node
  */
 export function typeDefinitionNode({ kind, ...props }: TypeDefinitionNodeProps): GQL.TypeDefinitionNode {
-  return kindToTypeDefinition[kind](props)
+  return kindToTypeDefinitionNode[kind](props)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1400,7 +1388,7 @@ export type TypeExtensionNodeProps =
  *
  * @category AST Node
  */
-export const kindToTypeExtension: KindToAstMap<GQL.TypeExtensionNode> = {
+export const kindToTypeExtensionNode: KindToAstMapping<GQL.TypeExtensionNode> = {
   ObjectTypeExtension: objectTypeExtensionNode,
   InterfaceTypeExtension: interfaceTypeExtensionNode,
   ScalarTypeExtension: scalarTypeExtensionNode,
@@ -1415,7 +1403,7 @@ export const kindToTypeExtension: KindToAstMap<GQL.TypeExtensionNode> = {
  * @category AST Node
  */
 export function typeExtensionNode({ kind, ...props }: TypeExtensionNodeProps): GQL.TypeExtensionNode {
-  return kindToTypeExtension[kind](props)
+  return kindToTypeExtensionNode[kind](props)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1435,8 +1423,8 @@ export type TypeSystemDefinitionNodeProps =
  *
  * @category AST Node
  */
-export const kindToTypeSystemDefinition: KindToAstMap<GQL.TypeSystemDefinitionNode> = {
-  ...kindToTypeDefinition,
+export const kindToTypeSystemDefinitionNode: KindToAstMapping<GQL.TypeSystemDefinitionNode> = {
+  ...kindToTypeDefinitionNode,
   SchemaDefinition: schemaDefinitionNode,
   DirectiveDefinition: directiveDefinitionNode,
 }
@@ -1449,7 +1437,7 @@ export const kindToTypeSystemDefinition: KindToAstMap<GQL.TypeSystemDefinitionNo
 export function typeSystemDefinitionNode(
   { kind, ...props }: TypeSystemDefinitionNodeProps,
 ): GQL.TypeSystemDefinitionNode {
-  return kindToTypeSystemDefinition[kind](props)
+  return kindToTypeSystemDefinitionNode[kind](props)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1468,8 +1456,8 @@ export type TypeSystemExtensionNodeProps =
  *
  * @category AST Node
  */
-export const kindToTypeSystemExtension: KindToAstMap<GQL.TypeSystemExtensionNode> = {
-  ...kindToTypeExtension,
+export const kindToTypeSystemExtensionNode: KindToAstMapping<GQL.TypeSystemExtensionNode> = {
+  ...kindToTypeExtensionNode,
   SchemaExtension: schemaExtensionNode,
 }
 
@@ -1481,7 +1469,7 @@ export const kindToTypeSystemExtension: KindToAstMap<GQL.TypeSystemExtensionNode
 export function typeSystemExtensionNode(
   { kind, ...props }: TypeSystemExtensionNodeProps,
 ): GQL.TypeSystemExtensionNode {
-  return kindToTypeSystemExtension[kind](props)
+  return kindToTypeSystemExtensionNode[kind](props)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1500,7 +1488,7 @@ export type ExecutableDefinitionNodeProps =
  *
  * @category AST Node
  */
-export const kindToTypeExecutableDefinition: KindToAstMap<GQL.ExecutableDefinitionNode> = {
+export const kindToTypeExecutableDefinitionNode: KindToAstMapping<GQL.ExecutableDefinitionNode> = {
   OperationDefinition: operationDefinitionNode,
   FragmentDefinition: fragmentDefinitionNode,
 }
@@ -1513,7 +1501,7 @@ export const kindToTypeExecutableDefinition: KindToAstMap<GQL.ExecutableDefiniti
 export function executableDefinitionNode(
   { kind, ...props }: ExecutableDefinitionNodeProps,
 ): GQL.ExecutableDefinitionNode {
-  return kindToTypeExecutableDefinition[kind](props)
+  return kindToTypeExecutableDefinitionNode[kind](props)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1534,10 +1522,10 @@ export type DefinitionNodeProps =
  *
  * @category AST Node
  */
-export const kindToDefinition: KindToAstMap<GQL.DefinitionNode> = {
-  ...kindToTypeSystemDefinition,
-  ...kindToTypeSystemExtension,
-  ...kindToTypeExecutableDefinition,
+export const kindToDefinitionNode: KindToAstMapping<GQL.DefinitionNode> = {
+  ...kindToTypeSystemDefinitionNode,
+  ...kindToTypeSystemExtensionNode,
+  ...kindToTypeExecutableDefinitionNode,
 }
 
 /**
@@ -1548,7 +1536,7 @@ export const kindToDefinition: KindToAstMap<GQL.DefinitionNode> = {
 export function definitionNode(
   { kind, ...props }: DefinitionNodeProps,
 ): GQL.DefinitionNode {
-  return kindToDefinition[kind](props)
+  return kindToDefinitionNode[kind](props)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1571,7 +1559,7 @@ export type SelectionNodeProps =
  *
  * @category AST Node
  */
-export const kindToSelection: KindToAstMap<GQL.SelectionNode> = {
+export const kindToSelectionNode: KindToAstMapping<GQL.SelectionNode> = {
   Field: fieldNode,
   FragmentSpread: fragmentSpreadNode,
   InlineFragment: inlineFragmentNode,
@@ -1591,7 +1579,7 @@ export function selectionNode(
 
   const { kind = 'Field', ...rest } = props as Exclude<SelectionNodeProps, FieldNodeProps >
 
-  return kindToSelection[kind](rest)
+  return kindToSelectionNode[kind](rest)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1617,7 +1605,7 @@ export type ValueNodeProps =
  *
  * @category AST Node
  */
-export const kindToValue: KindToAstMap<GQL.ValueNode> = {
+export const kindToValueNode: KindToAstMapping<GQL.ValueNode> = {
   IntValue: intValueNode,
   BooleanValue: booleanValueNode,
   Variable: variableNode,
@@ -1639,5 +1627,5 @@ export function valueNode(
 ): GQL.ValueNode {
   const { kind, ...rest } = props
 
-  return kindToValue[kind](rest)
+  return kindToValueNode[kind](rest)
 }

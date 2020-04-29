@@ -1,3 +1,5 @@
+import type * as GQL from 'graphql'
+
 /**
  * @category Helper
  */
@@ -44,3 +46,13 @@ export type ContstructorType<T> = T extends new (...args: any) => infer U ? U : 
  * @category Helper
  */
 export type ArrayElement<T> = T extends ReadonlyArray<infer U> ? U : never
+
+/**
+ * @category Helper
+ */
+export type WithKind<T, K extends GQL.KindEnum> = T & {kind: K}
+
+/**
+ * @category Internal
+ */
+export type KindToAstMapping<N extends GQL.ASTNode> = {[K in N['kind']]: (props: any) => GQL.ASTKindToNode[K]}

@@ -3,33 +3,9 @@ import { Kind } from 'graphql'
 import { Mix } from 'mix-classes'
 
 // eslint-disable-next-line import/no-cycle
-import { Mixin, Api } from '../internal'
+import { Mixin } from '../internal'
 import { validateNodeKind, validationError } from '../utils'
 
-
-/**
- * API for GraphQL `SelectionNode`
- *
- * @category API Public
- */
-export type SelectionApi =
-  | FragmentSpreadApi
-  | InlineFragmentApi
-  | FieldApi
-
-
-/**
- *  polymorfic contructor fn for `SelectionApi`
- *
- * @category API Public
- */
-export function selectionApi(node: GQL.SelectionNode): SelectionApi {
-  if (node.kind === Kind.FIELD) return Api.fieldApi(node)
-  if (node.kind === Kind.FRAGMENT_SPREAD) return Api.fragmentSpreadApi(node)
-  if (node.kind === Kind.INLINE_FRAGMENT) return Api.inlineFragmentApi(node)
-
-  throw validationError([Kind.FIELD, Kind.FRAGMENT_SPREAD, Kind.INLINE_FRAGMENT], node)
-}
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -120,4 +96,40 @@ export class InlineFragmentApi extends Mix(
  */
 export function inlineFragmentApi(node: GQL.InlineFragmentNode): InlineFragmentApi {
   return new InlineFragmentApi(node)
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * API for GraphQL `SelectionNode`
+ *
+ * @category API Public
+ */
+export type SelectionApi =
+  | FragmentSpreadApi
+  | InlineFragmentApi
+  | FieldApi
+
+/**
+ * map `SelectionNode` kind to api
+ *
+ * @category API Public
+ */
+export const kindToSelectionApi = {
+  Field: FieldApi,
+  FragmentSpread: FragmentSpreadApi,
+  InlineFragment: InlineFragmentApi,
+}
+
+/**
+ *  polymorfic contructor fn for `SelectionApi`
+ *
+ * @category API Public
+ */
+export function selectionApi(node: GQL.SelectionNode): SelectionApi {
+  const Clazz = kindToSelectionApi[node.kind]
+
+  if (Clazz) return new Clazz(node as any)
+
+  throw validationError([Kind.FIELD, Kind.FRAGMENT_SPREAD, Kind.INLINE_FRAGMENT], node)
 }

@@ -6,18 +6,6 @@ import { Mix } from 'mix-classes'
 import { Mixin } from '../internal'
 import { validateNodeKind } from '../utils'
 
-/**
- * API for GraphQL `TypeDefinitionNode`
- *
- * @category API Public
- */
-export type TypeDefinitonApi =
-  | EnumTypeApi
-  | InputTypeApi
-  | InterfaceTypeApi
-  | ObjectTypeApi
-  | ScalarTypeApi
-  | UnionTypeApi
 
 /**
  * API for GraphQL `ObjectTypeDefinitionNode`
@@ -204,3 +192,18 @@ export class InputTypeApi extends Mix(
 export function inputTypeApi(node: GQL.InputObjectTypeDefinitionNode): InputTypeApi {
   return new InputTypeApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * API for GraphQL `TypeDefinitionNode`
+ *
+ * @category API Public
+ */
+export type TypeDefinitonApi =
+  | EnumTypeApi
+  | InputTypeApi
+  | InterfaceTypeApi
+  | ObjectTypeApi
+  | ScalarTypeApi
+  | UnionTypeApi

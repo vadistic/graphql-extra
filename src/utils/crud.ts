@@ -36,7 +36,7 @@ export interface CrudConfig <
   /** custom getter/ ref callback instead of parent[key] */
   ref?: (next?: any[]) => any[]
   /** additional kind filter */
-  kind?: GQL.KindEnum
+  kind?: string
 }
 
 /**
@@ -73,7 +73,9 @@ export class Crud <
   protected get arrOfKind(): Value[] {
     if (!this.config.kind) return this.arr
 
-    return this.arr.filter((node) => node.kind === this.config.kind)
+    const exp = new RegExp(this.config.kind)
+
+    return this.arr.filter((node) => exp.test(node.kind))
   }
 
 
@@ -127,7 +129,7 @@ export class Crud <
   // ────────────────────────────────────────────────────────────────────────────────
 
   findManyNodes(filter?: Target | Partial<Props | Value>): Value[] {
-    if (filter === undefined) return this.arr
+    if (filter === undefined) return this.arrOfKind
 
     const pred = this._filter(filter)
 

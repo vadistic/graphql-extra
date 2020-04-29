@@ -31,9 +31,11 @@ export const deepMutable = <T>(node: T): DeepMutable<T> => node
  *
  * @category Internal
  */
-export const concat = <T>(arr: readonly T[], el: T): readonly T[] => {
-  // eslint-disable-next-line no-param-reassign
-  (arr as any)[arr.length] = el
+export const concat = <T>(arr: readonly T[], ...els: T[]): readonly T[] => {
+  for (const el of els) {
+    // eslint-disable-next-line no-param-reassign
+    (arr as any)[arr.length] = el
+  }
 
   return arr
 }

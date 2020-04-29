@@ -1,2 +1,3 @@
-export * from './document-schema'
-export * from './document-operation'
+export * from './document'
+export * from './document-base'
+export * from './definition'

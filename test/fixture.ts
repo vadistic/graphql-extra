@@ -142,3 +142,20 @@ export const STARWARS_TYPEDEFS = /* GraphQL */ `
 
   union SearchResult = Human | Droid | Starship
 `
+
+
+export const STARWARS_QUERY = /* GraphQL */ `
+  query HeroQuery {
+    hero {
+      name
+      # Queries can have comments!
+      friends {
+        ...FriendsFragment
+      }
+    }
+  }
+
+  fragment FriendsFragment on Character {
+    name
+  }
+`

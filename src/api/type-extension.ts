@@ -7,21 +7,6 @@ import { Mixin } from '../internal'
 import { validateNodeKind } from '../utils'
 
 /**
- * API for GraphQL `TypeExtensionNode`
- *
- * @category API Public
- */
-export type TypeExtensionApi =
-  | EnumExtApi
-  | InputExtApi
-  | InterfaceExtApi
-  | ObjectExtApi
-  | ScalarExtApi
-  | UnionExtApi
-
-// ────────────────────────────────────────────────────────────────────────────────
-
-/**
  * API for GraphQL `ObjectTypeExtensionNode`
  *
  * @category API Public
@@ -199,3 +184,18 @@ export class InputExtApi extends Mix(
 export function inputExtApi(node: GQL.InputObjectTypeExtensionNode): InputExtApi {
   return new InputExtApi(node)
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * API for GraphQL `TypeExtensionNode`
+ *
+ * @category API Public
+ */
+export type TypeExtensionApi =
+  | EnumExtApi
+  | InputExtApi
+  | InterfaceExtApi
+  | ObjectExtApi
+  | ScalarExtApi
+  | UnionExtApi

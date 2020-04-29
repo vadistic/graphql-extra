@@ -1,5 +1,6 @@
 import type { ASTKindToNode, KindEnum, ASTNode } from 'graphql'
 
+import { DocumentApi } from './document'
 import { Api } from './internal'
 import { ContstructorType } from './types'
 
@@ -11,7 +12,7 @@ export const kindToApiMap = {
   Name: Api.NameApi,
 
   // DOCUMENT
-  // Document:
+  Document: DocumentApi,
   OperationDefinition: Api.OperationDefinitionApi,
   VariableDefinition: Api.VariableDefinitionApi,
   SelectionSet: Api.SelectionSetApi,
