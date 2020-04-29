@@ -4,11 +4,11 @@
 
 Inspired by code-first schema generation tools like [`graphql-compose`](https://github.com/graphql-compose/graphql-compose) or [`graphql-nexus`](https://github.com/graphql-nexus/schema), but focused on AST/SDL, instead of executable schema.
 
-The aim is to provide lightweight, flexible and very interoperable tooling for GraphQL generation & testing.
+The aim is to provide flexible and very interoperable tooling for GraphQL generation & testing.
 
 ## Use cases
 
-- code-first buy-in in any specific framework
+- code-first SDL
 - testing of graphql code
 - writing all kinds `*-to-graphql/graphql-to-*` generators
 
@@ -17,23 +17,19 @@ The aim is to provide lightweight, flexible and very interoperable tooling for G
 - almost no deps
 - semantic, verbose aprroach - no magic
 - clean fluent apis
-- all apis are just a function on `ASTNote`
-- multi build thanks to [@pika](`https://github.com/pikapkg/pack`)
+- all is a function over some `GraphQL.ASTNote`
 
-### creation functions
+### AST factories
 
 - neat create functions for all kinds of ast nodes
 - mix simplified props & ast nodes on all nesting levels
 - aliased export `t` for `graphql-nexus`-like experience
 
-### mutation APIs
+### SDL APIs
 
 - uniform `graphql-compose`-like crud methods for common operations
 - stateless & puggable - it's just higher order function on any `ASTNode`
-
-### document API
-
-- top-level entry point for other api methods, that keeps whole document reference (`typeMap` / `extMap`)
+- also for `DocumentNode` with operation suspport
 
 ## Docs
 
@@ -45,24 +41,9 @@ Check [source](https://github.com/vadistic/graphql-extra/tree/master/src) or [do
 $ yarn add graphql-extra
 ```
 
-Both commonjs and esm builds are bundled with @pika/pack, so if you're consuming it - you'll need to use only top import.
-
-There is also unbundled ES modules ES2020 build in `dist-src` that can be quite easily consumed by rewiring whatever build tool you're using (or importing from `graphql-extra/pkg/dist-src/*`)
-
-```ts
-// GOOD
-import { a, b, c } from 'graphql-extra'
-
-// BAD
-import { a, b, c } from 'graphql-extra/api'
-
-// WEIRD
-import { a, b, c } from 'graphql-extra/pkg/dist-src/api'
-```
-
 ## Sneak peek
 
-### create
+### AST
 
 ```ts
 import { namedtypeNode } from 'graphql-extra'
@@ -102,7 +83,9 @@ const node: ObjectTypeDefinitionNode = t.objectType({
 })
 ```
 
-### modify
+### API
+
+Low-level apis for any graphql AST node
 
 ```ts
 import { objectTypeApi } from 'graphql-extra'
@@ -119,9 +102,7 @@ if(node === obj.node) {
 }
 ```
 
-### document
-
-Top-level entry point/ schema alternative
+Which also works for `DocumentNode`
 
 ```ts
 import { documentSchemaApi } from 'graphql-extra'
@@ -141,7 +122,7 @@ const moreTypeDefs = /* GraphQL */ `
   }
 `
 
-const ast = documentSchemaApi(typeDefs).addSDL(moreTypeDefs)
+const ast = documentSchemaApi().addSDL(moreTypeDefs)
 
 const obj1 = ast.getType('Person')
                 .getField('id')

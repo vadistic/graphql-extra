@@ -221,15 +221,9 @@ export class DocumentBaseApi {
     return buildASTSchema(this.toDocument(), options)
   }
 
-  // TODO: optimise?
   /** serialise to graphql introspection query result */
   toJson(options?: GQL.BuildSchemaOptions): GQL.ExecutionResult {
-    // const roots = this._getRoots()
-
-    // if (!roots.query && !roots.mutation && !roots.subscription) {
-    //   throw Error('cannot generate instrospection query result on schema without root types')
-    // }
-
+    // ! not validating if schema is valid!
     const result = execute({
       schema: this.toSchema(options),
       document: parse(getIntrospectionQuery()),

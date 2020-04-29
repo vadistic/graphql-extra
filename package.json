@@ -1,84 +1,51 @@
 {
   "name": "graphql-extra",
   "description": "GraphQL AST/SDL toolkit with extra features for code generation & testing",
-  "version": "0.2.2",
+  "version": "0.3.0-alpha.1",
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
   "homepage": "https://graphql-extra.netlify.com",
-  "private": true,
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/vadistic/graphql-extra"
   },
   "scripts": {
-    "clean": "rm -rf pkg coverage tmp docs dist",
+    "clean": "rm -rf coverage tmp docs dist",
     "lint": "eslint --ext .ts src test",
     "typecheck": "tsc -p tsconfig.json --noEmit --incremental false",
-    "build": "pika build",
+    "build": "yarn clean && yarn build:esm && yarn build:cjs && yarn build:types && yarn build:cp",
+    "build:esm": "tsc -p tsconfig.build.json --module esnext --outDir dist/esm --removeComments --declaration false",
+    "build:cjs": "tsc -p tsconfig.build.json --module commonjs --outDir dist/cjs --removeComments --declaration false",
+    "build:types": "tsc -p tsconfig.build.json --module esnext --outDir dist/types --emitDeclarationOnly",
+    "build:cp": "cp -t dist LICENSE package.json",
     "docs": "typedoc src",
     "test": "jest",
     "cov": "jest --coverage",
-    "all": "yarn lint && yarn typecheck && yarn test && yarn docs && yarn clean && yarn build "
+    "all": "yarn lint && yarn typecheck && yarn test && yarn clean && yarn docs && yarn build "
   },
   "peerDependencies": {
     "graphql": ">=15.0.0"
   },
+  "dependencies": {
+    "mix-classes": "^1.1.10"
+  },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
-    "@babel/plugin-proposal-optional-chaining": "^7.9.0",
-    "@pika/pack": "^0.5.0",
-    "@pika/plugin-build-node": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-build-node/pkg",
-    "@pika/plugin-build-types": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-build-types/pkg",
-    "@pika/plugin-build-web": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-build-web/pkg",
-    "@pika/plugin-standard-pkg": "https://gitpkg.now.sh/pikapkg/builders/packages/plugin-standard-pkg/pkg",
     "@types/jest": "^25.2.1",
     "@vadistic/eslint-config": "^0.3.1",
-    "@vadistic/pika-plugin-publish-config": "^0.3.0",
     "@vadistic/tsask": "^0.2.2",
     "eslint": "^6.8.0",
     "graphql": "^15.0.0",
-    "jest": "^25.4.0",
-    "rollup": "^2.7.2",
+    "jest": "^25.5.0",
+    "prettier": "^2.0.5",
     "ts-jest": "^25.4.0",
-    "ts-node": "^8.9.0",
-    "typedoc": "^0.17.4",
+    "ts-node": "^8.9.1",
+    "typedoc": "^0.17.6",
     "typescript": "^3.8.3"
-  },
-  "resolutions": {
-    "rollup": "^2.7.2"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "@pika/pack": {
-    "pipeline": [
-      [
-        "@pika/plugin-standard-pkg",
-        {
-          "exclude": [
-            "test/**/*"
-          ]
-        }
-      ],
-      [
-        "@pika/plugin-build-types",
-        {
-          "tsconfig": "./tsconfig.build.json"
-        }
-      ],
-      [
-        "@vadistic/pika-plugin-publish-config"
-      ],
-      [
-        "@pika/plugin-build-node"
-      ],
-      [
-        "@pika/plugin-build-web"
-      ]
-    ]
-  },
-  "dependencies": {
-    "mix-classes": "^1.1.10"
   }
 }
