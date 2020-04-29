@@ -1,7 +1,7 @@
 {
   "name": "graphql-extra",
   "description": "GraphQL AST/SDL toolkit with extra features for code generation & testing",
-  "version": "0.3.0-alpha.1",
+  "version": "0.3.0-alpha.2",
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
   "homepage": "https://graphql-extra.netlify.com",
@@ -20,7 +20,7 @@
     "build:esm": "tsc -p tsconfig.build.json --module esnext --outDir dist/esm --removeComments --declaration false",
     "build:cjs": "tsc -p tsconfig.build.json --module commonjs --outDir dist/cjs --removeComments --declaration false",
     "build:types": "tsc -p tsconfig.build.json --module esnext --outDir dist/types --emitDeclarationOnly",
-    "build:cp": "cp -t dist LICENSE package.json",
+    "build:cp": "cp -t dist LICENSE package.json README.md",
     "docs": "typedoc src",
     "test": "jest",
     "cov": "jest --coverage",
