@@ -12,4 +12,10 @@ describe(DocumentApi.name, () => {
     doc.getEnumExt('MyExtension').createValue('NEXT')
     expect(doc.getEnumExt('MyExtension').hasValue('NEXT')).toBeTruthy()
   })
+
+  test('roots', () => {
+    const query = doc.getQuery()
+
+    expect(query?.hasField('hero')).toBeTruthy()
+  })
 })

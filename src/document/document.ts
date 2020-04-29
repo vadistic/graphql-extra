@@ -17,6 +17,100 @@ export class DocumentApi extends DocumentBaseApi {
   }
 
   // ────────────────────────────────────────────────────────────────────────────────
+
+  hasSchemaDefinition(): boolean {
+    return this._definitions.test({ kind: 'SchemaDefinition' })
+  }
+
+  getSchemaDefinition(): Api.SchemaDefinitionApi | undefined {
+    return this._definitions.findOne({ kind: 'SchemaDefinition' }) as Api.SchemaDefinitionApi
+  }
+
+  createSchemaDefinition(props: Ast.SchemaDefinitionNodeProps): this {
+    this._definitions.create({ kind: 'SchemaDefinition', ...props })
+
+    return this
+  }
+
+  updateSchemaDefinition(props: Partial<Ast.SchemaDefinitionNodeProps>): this {
+    this._definitions.update({ kind: 'SchemaDefinition' }, { kind: 'SchemaDefinition', ...props })
+
+    return this
+  }
+
+  upsertSchemaDefinition(props: Ast.SchemaDefinitionNodeProps): this {
+    this._definitions.upsert({ kind: 'SchemaDefinition', ...props })
+
+    return this
+  }
+
+  removeSchemaDefinition(): this {
+    this._definitions.remove({ kind: 'SchemaDefinition' })
+
+    return this
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  hasSchemaExtension(): boolean {
+    return this._definitions.test({ kind: 'SchemaExtension' })
+  }
+
+  getSchemaExtension(): Api.SchemaExtensionApi | undefined {
+    return this._definitions.findOne({ kind: 'SchemaExtension' }) as Api.SchemaExtensionApi
+  }
+
+  createSchemaExtension(props: Ast.SchemaExtensionNodeProps): this {
+    this._definitions.create({ kind: 'SchemaExtension', ...props })
+
+    return this
+  }
+
+  updateSchemaExtension(props: Partial<Ast.SchemaExtensionNodeProps>): this {
+    this._definitions.update({ kind: 'SchemaExtension' }, { kind: 'SchemaExtension', ...props })
+
+    return this
+  }
+
+  upsertSchemaExtension(props: Ast.SchemaExtensionNodeProps): this {
+    this._definitions.upsert({ kind: 'SchemaExtension', ...props })
+
+    return this
+  }
+
+  removeSchemaExtension(): this {
+    this._definitions.remove({ kind: 'SchemaExtension' })
+
+    return this
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
+
+  getOperationRoot(operation: GQL.OperationTypeNode): Api.ObjectTypeApi | undefined {
+    const ext = this.getSchemaExtension()?.getOperationTypename(operation)
+
+    if (ext) return this._objectTypes.findOne(ext)
+
+    const def = this.getSchemaDefinition()?.getOperationTypename(operation)
+
+    if (def) return this._objectTypes.findOne(def)
+
+    return undefined
+  }
+
+  getQuery(): Api.ObjectTypeApi | undefined {
+    return this.getOperationRoot('query')
+  }
+
+  getMutation(): Api.ObjectTypeApi | undefined {
+    return this.getOperationRoot('mutation')
+  }
+
+  getSubscription(): Api.ObjectTypeApi | undefined {
+    return this.getOperationRoot('subscription')
+  }
+
+  // ────────────────────────────────────────────────────────────────────────────────
   // operations api
 
   getAllOperations(): Api.OperationDefinitionApi[] {
