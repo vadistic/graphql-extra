@@ -1,7 +1,6 @@
+
 import { t, Api, nodeToApi } from '../src'
 import { objectTypeApi } from '../src/api'
-
-// TODO: do it from dist!
 
 describe('Api e2e', () => {
   const node = t.objectType({ name: 'MyType', fields: [{ name: 'myField', type: 'Int!' }] })

@@ -65,7 +65,7 @@ export class SelectionSetMixin {
     factory: Ast.fieldNode,
     matcher: (node): Fieldname => node.name.value,
     ref: this._selectionsRef,
-    kind: Kind.FIELD,
+    kindFilter: [Kind.FIELD],
   })
 
   readonly _fragmentSpreads = new Crud({
@@ -75,7 +75,7 @@ export class SelectionSetMixin {
     factory: Ast.fragmentSpreadNode,
     matcher: (node): Fragmentname => node.name.value,
     ref: this._selectionsRef,
-    kind: Kind.FRAGMENT_SPREAD,
+    kindFilter: [Kind.FRAGMENT_SPREAD],
   })
 
   readonly _inlineFragments = new Crud({
@@ -85,7 +85,7 @@ export class SelectionSetMixin {
     factory: Ast.inlineFragmentNode,
     matcher: (node): Typename | undefined => node.typeCondition?.name.value,
     ref: this._selectionsRef,
-    kind: Kind.INLINE_FRAGMENT,
+    kindFilter: [Kind.INLINE_FRAGMENT],
   })
 
   // ────────────────────────────────────────────────────────────────────────────────

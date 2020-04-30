@@ -18,4 +18,10 @@ describe(DocumentApi.name, () => {
 
     expect(query?.hasField('hero')).toBeTruthy()
   })
+
+  test('getTypeOfKind', () => {
+    const objectTypes = doc.getAllObjectTypes()
+
+    expect(objectTypes.every((a) => a.isObjectType())).toBeTruthy()
+  })
 })

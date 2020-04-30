@@ -40,7 +40,14 @@ export class DocumentBaseApi {
     api: typeDefinitionApi,
     factory: Ast.typeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: 'TypeDefinition',
+    kindFilter: [
+      Kind.OBJECT_TYPE_DEFINITION,
+      Kind.INPUT_OBJECT_TYPE_DEFINITION,
+      Kind.SCALAR_TYPE_DEFINITION,
+      Kind.ENUM_TYPE_DEFINITION,
+      Kind.UNION_TYPE_DEFINITION,
+      Kind.INPUT_OBJECT_TYPE_DEFINITION,
+    ],
   })
 
   readonly _typeExtensions = new Crud({
@@ -49,7 +56,14 @@ export class DocumentBaseApi {
     api: typeExtensionApi,
     factory: Ast.typeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: 'TypeExtension',
+    kindFilter: [
+      Kind.OBJECT_TYPE_EXTENSION,
+      Kind.INPUT_OBJECT_TYPE_EXTENSION,
+      Kind.SCALAR_TYPE_EXTENSION,
+      Kind.ENUM_TYPE_EXTENSION,
+      Kind.UNION_TYPE_EXTENSION,
+      Kind.INPUT_OBJECT_TYPE_EXTENSION,
+    ],
   })
 
   readonly _directiveDefinitions = new Crud({
@@ -58,7 +72,7 @@ export class DocumentBaseApi {
     api: Api.directiveDefinitionApi,
     factory: Ast.directiveDefinitionNode,
     matcher: (n): Directivename => n.name.value,
-    kind: Kind.DIRECTIVE_DEFINITION,
+    kindFilter: [Kind.DIRECTIVE_DEFINITION],
   })
 
   // ────────────────────────────────────────────────────────────────────────────────
@@ -69,7 +83,7 @@ export class DocumentBaseApi {
     api: Api.fragmentDefinitionApi,
     factory: Ast.fragmentDefinitionNode,
     matcher: (n): Fragmentname => n.name.value,
-    kind: Kind.FRAGMENT_DEFINITION,
+    kindFilter: [Kind.FRAGMENT_DEFINITION],
   })
 
   readonly _operationDefinitions = new Crud({
@@ -78,7 +92,7 @@ export class DocumentBaseApi {
     api: Api.operationDefinitionApi,
     factory: Ast.operationDefinitionNode,
     matcher: (n): string | undefined => n.name?.value,
-    kind: Kind.OPERATION_DEFINITION,
+    kindFilter: [Kind.OPERATION_DEFINITION],
   })
 
   // ────────────────────────────────────────────────────────────────────────────────
@@ -89,7 +103,7 @@ export class DocumentBaseApi {
     api: Api.objectTypeApi,
     factory: Ast.objectTypeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.OBJECT_TYPE_DEFINITION,
+    kindFilter: [Kind.OBJECT_TYPE_DEFINITION],
   })
 
   readonly _objectExts = new Crud({
@@ -98,7 +112,7 @@ export class DocumentBaseApi {
     api: Api.objectExtApi,
     factory: Ast.objectTypeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.OBJECT_TYPE_EXTENSION,
+    kindFilter: [Kind.OBJECT_TYPE_EXTENSION],
   })
 
   readonly _interfaceTypes = new Crud({
@@ -107,7 +121,7 @@ export class DocumentBaseApi {
     api: Api.interfaceTypeApi,
     factory: Ast.interfaceTypeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.INTERFACE_TYPE_DEFINITION,
+    kindFilter: [Kind.INTERFACE_TYPE_DEFINITION],
   })
 
   readonly _interfaceExts = new Crud({
@@ -116,7 +130,7 @@ export class DocumentBaseApi {
     api: Api.interfaceExtApi,
     factory: Ast.interfaceTypeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.INTERFACE_TYPE_EXTENSION,
+    kindFilter: [Kind.INTERFACE_TYPE_EXTENSION],
   })
 
   readonly _scalarTypes = new Crud({
@@ -125,7 +139,7 @@ export class DocumentBaseApi {
     api: Api.scalarTypeApi,
     factory: Ast.scalarTypeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.SCALAR_TYPE_DEFINITION,
+    kindFilter: [Kind.SCALAR_TYPE_DEFINITION],
   })
 
   readonly _scalarExts = new Crud({
@@ -134,7 +148,7 @@ export class DocumentBaseApi {
     api: Api.scalarExtApi,
     factory: Ast.scalarTypeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.SCALAR_TYPE_EXTENSION,
+    kindFilter: [Kind.SCALAR_TYPE_EXTENSION],
   })
 
   readonly _unionTypes = new Crud({
@@ -143,7 +157,7 @@ export class DocumentBaseApi {
     api: Api.unionTypeApi,
     factory: Ast.unionTypeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.UNION_TYPE_DEFINITION,
+    kindFilter: [Kind.UNION_TYPE_DEFINITION],
   })
 
   readonly _unionExts = new Crud({
@@ -152,7 +166,7 @@ export class DocumentBaseApi {
     api: Api.unionExtApi,
     factory: Ast.unionTypeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.UNION_TYPE_EXTENSION,
+    kindFilter: [Kind.UNION_TYPE_EXTENSION],
   })
 
   readonly _enumTypes = new Crud({
@@ -161,7 +175,7 @@ export class DocumentBaseApi {
     api: Api.enumTypeApi,
     factory: Ast.enumTypeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.ENUM_TYPE_DEFINITION,
+    kindFilter: [Kind.ENUM_TYPE_DEFINITION],
   })
 
   readonly _enumExts = new Crud({
@@ -170,7 +184,7 @@ export class DocumentBaseApi {
     api: Api.enumExtApi,
     factory: Ast.enumTypeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.ENUM_TYPE_EXTENSION,
+    kindFilter: [Kind.ENUM_TYPE_EXTENSION],
   })
 
   readonly _inputTypes = new Crud({
@@ -179,7 +193,7 @@ export class DocumentBaseApi {
     api: Api.inputTypeApi,
     factory: Ast.inputObjectTypeDefinitionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
+    kindFilter: [Kind.INPUT_OBJECT_TYPE_DEFINITION],
   })
 
   readonly _inputExts = new Crud({
@@ -188,7 +202,7 @@ export class DocumentBaseApi {
     api: Api.inputExtApi,
     factory: Ast.inputObjectTypeExtensionNode,
     matcher: (n): Typename => n.name.value,
-    kind: Kind.INPUT_OBJECT_TYPE_EXTENSION,
+    kindFilter: [Kind.INPUT_OBJECT_TYPE_EXTENSION],
   })
 
   // ────────────────────────────────────────────────────────────────────────────────
@@ -205,6 +219,12 @@ export class DocumentBaseApi {
 
   // ────────────────────────────────────────────────────────────────────────────────
   // serialisation
+
+  get typeMap(): Map<Typename, GQL.TypeDefinitionNode> {
+    return new Map(this._typeDefinitions
+      .findManyNodes()
+      .map<[string, GQL.TypeDefinitionNode]>((n) => ([n.name.value, n])))
+  }
 
   /** serialise to `DocumentNode` */
   toDocument(): GQL.DocumentNode {

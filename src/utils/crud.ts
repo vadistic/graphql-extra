@@ -19,7 +19,7 @@ import { concat } from './mutable'
  * @category Internal
  */
 export interface CrudConfig <
-  Value,
+  Node,
   Api,
   Props,
   Target> {
@@ -27,16 +27,16 @@ export interface CrudConfig <
   parent: GQL.ASTNode
   /** parent key with an array */
   key: string
-  /** how provided value should be coerced */
-  factory: (props: Props) => Value
-  /** how returned value should be wrapped */
-  api: (el: Value) => Api
+  /** how provided props should be coerced to node */
+  factory: (props: Props) => Node
+  /** how returned node should be wrapped */
+  api: (el: Node) => Api
   /** compare function - usually pointing to name */
-  matcher: (el: Value) => Target
+  matcher: (el: Node) => Target
   /** custom getter/ ref callback instead of parent[key] */
   ref?: (next?: any[]) => any[]
   /** additional kind filter */
-  kind?: string
+  kindFilter?: GQL.KindEnum[]
 }
 
 /**
@@ -71,11 +71,10 @@ export class Crud <
   }
 
   protected get arrOfKind(): Value[] {
-    if (!this.config.kind) return this.arr
+    if (!this.config.kindFilter) return this.arr
 
-    const exp = new RegExp(this.config.kind)
-
-    return this.arr.filter((node) => exp.test(node.kind))
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.arr.filter((node) => this.config.kindFilter!.includes(node.kind))
   }
 
 
@@ -110,8 +109,9 @@ export class Crud <
   findOneNodeIndex(filter: Target | Partial<Props | Value>): number {
     const pred = this._filter(filter)
 
-    // ! index need to be searched on arr
-    return this.arr.findIndex((node) => (!this.config.kind || this.config.kind === node.kind) && pred(node))
+    // ! index need to be searched on while arr, not filtered subset
+    return this.arr.findIndex((node) =>
+      (!this.config.kindFilter || this.config.kindFilter.includes(node.kind)) && pred(node))
   }
 
   findOneNodeOrFail(filter: Target | Partial<Props | Value>): Value {
@@ -243,7 +243,7 @@ export class Crud <
   // ────────────────────────────────────────────────────────────────────────────────
 
   protected _target(filter: Target | Partial<Props | Value>): string {
-    const base = this.config.kind ? this.config.kind + ' ' : ''
+    const base = this.config.kindFilter ? this.config.kindFilter + ' ' : ''
 
     if (isPrimitive(filter)) {
       return `${base}'${filter}'`
