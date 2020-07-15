@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
@@ -20,7 +20,7 @@ export class ObjectExtApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ObjectTypeExtensionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.OBJECT_TYPE_EXTENSION, node)
   }
@@ -51,7 +51,7 @@ export class InterfaceExtApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InterfaceTypeExtensionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.INTERFACE_TYPE_EXTENSION, node)
   }
@@ -81,7 +81,7 @@ export class UnionExtApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeExtensionNode) {
-    super([node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.UNION_TYPE_EXTENSION, node)
   }
@@ -110,7 +110,7 @@ export class ScalarExtApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ScalarTypeExtensionNode) {
-    super([node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.SCALAR_TYPE_EXTENSION, node)
   }
@@ -140,7 +140,7 @@ export class EnumExtApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeExtensionNode) {
-    super([node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.ENUM_TYPE_EXTENSION, node)
   }
@@ -170,7 +170,7 @@ export class InputExtApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InputObjectTypeExtensionNode) {
-    super([node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.INPUT_OBJECT_TYPE_EXTENSION, node)
   }
@@ -192,10 +192,4 @@ export function inputExtApi(node: GQL.InputObjectTypeExtensionNode): InputExtApi
  *
  * @category API Public
  */
-export type TypeExtensionApi =
-  | EnumExtApi
-  | InputExtApi
-  | InterfaceExtApi
-  | ObjectExtApi
-  | ScalarExtApi
-  | UnionExtApi
+export type TypeExtensionApi = EnumExtApi | InputExtApi | InterfaceExtApi | ObjectExtApi | ScalarExtApi | UnionExtApi

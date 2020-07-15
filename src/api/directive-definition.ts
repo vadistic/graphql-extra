@@ -1,14 +1,10 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Api, Mixin, Ast } from '../internal'
-import {
-  mutable,
-  validateNodeKind,
-  Crud,
-} from '../utils'
+import { mutable, validateNodeKind, Crud } from '../utils'
 
 /**
  * @category API Public
@@ -20,7 +16,7 @@ export class DirectiveDefinitionApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.DirectiveDefinitionNode) {
-    super([node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.DIRECTIVE_DEFINITION, node)
   }
@@ -32,7 +28,6 @@ export class DirectiveDefinitionApi extends Mix(
     matcher: (node): GQL.DirectiveLocationEnum => node.value as GQL.DirectiveLocationEnum,
     parent: this.node,
   })
-
 
   // ────────────────────────────────────────────────────────────────────────────────
 
@@ -74,7 +69,6 @@ export class DirectiveDefinitionApi extends Mix(
     return this
   }
 }
-
 
 /**
  * @category API Public

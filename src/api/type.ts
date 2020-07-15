@@ -1,16 +1,11 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Ast, Mixin } from '../internal'
 import { Typename } from '../types'
-import {
-  applyPropsCloned,
-  mutable,
-  validateNodeKindsArr,
-  validateNodeKind,
-} from '../utils'
+import { applyPropsCloned, mutable, validateNodeKindsArr, validateNodeKind } from '../utils'
 
 /**
  * API for GraphQL `TypeNode`
@@ -19,7 +14,7 @@ import {
  */
 export class TypeApi extends Mix(Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.TypeNode) {
-    super([node])
+    super(node)
 
     validateNodeKindsArr([Kind.NAMED_TYPE, Kind.LIST_TYPE, Kind.NON_NULL_TYPE], node)
   }
@@ -123,7 +118,7 @@ export function typeApi(node: GQL.TypeNode): TypeApi {
  */
 export class NamedTypeApi extends Mix(Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.NamedTypeNode) {
-    super([node])
+    super(node)
 
     validateNodeKind(Kind.NAMED_TYPE, node)
   }

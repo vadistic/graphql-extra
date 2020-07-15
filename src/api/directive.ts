@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
@@ -11,13 +11,9 @@ import { validateNodeKind } from '../utils'
  *
  * @category API Public
  */
-export class DirectiveApi extends Mix(
-  Mixin.NameMixin,
-  Mixin.ArgumentsMixin,
-  Mixin.KindAssertionMixin,
-) {
+export class DirectiveApi extends Mix(Mixin.NameMixin, Mixin.ArgumentsMixin, Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.DirectiveNode) {
-    super([node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.DIRECTIVE, node)
   }

@@ -1,11 +1,10 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
 import { validateNodeKind } from '../utils'
-
 
 /**
  * API for GraphQL `ObjectTypeDefinitionNode`
@@ -23,7 +22,7 @@ export class ObjectTypeApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ObjectTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.OBJECT_TYPE_DEFINITION, node)
   }
@@ -55,7 +54,7 @@ export class InterfaceTypeApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InterfaceTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.INTERFACE_TYPE_DEFINITION, node)
   }
@@ -86,7 +85,7 @@ export class UnionTypeApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.UnionTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.UNION_TYPE_DEFINITION, node)
   }
@@ -116,7 +115,7 @@ export class ScalarTypeApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.ScalarTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.SCALAR_TYPE_DEFINITION, node)
   }
@@ -147,7 +146,7 @@ export class EnumTypeApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.EnumTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.ENUM_TYPE_DEFINITION, node)
   }
@@ -178,7 +177,7 @@ export class InputTypeApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.InputObjectTypeDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.INPUT_OBJECT_TYPE_DEFINITION, node)
   }
