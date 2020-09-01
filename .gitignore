@@ -118,5 +118,5 @@ dist
 # Custom
 tmp
 docs
-#dist
+dist
 pkg
