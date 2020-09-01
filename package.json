@@ -1,7 +1,7 @@
 {
   "name": "graphql-extra",
   "description": "GraphQL AST/SDL toolkit with extra features for code generation & testing",
-  "version": "0.3.0-alpha.3",
+  "version": "0.3.0-alpha.4",
   "author": "Jakub Wadas <vadistic@gmail.com>",
   "license": "MIT",
   "homepage": "https://graphql-extra.netlify.com",
@@ -30,7 +30,7 @@
     "graphql": ">=15.0.0"
   },
   "dependencies": {
-    "mix-classes": "^1.1.10"
+    "ts-mixer": "^5.3.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",

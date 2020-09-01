@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
@@ -18,7 +18,7 @@ export class OperationDefinitionApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.OperationDefinitionNode) {
-    super([node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.OPERATION_DEFINITION, node)
   }

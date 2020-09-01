@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind, valueFromASTUntyped } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin, Ast } from '../internal'
@@ -11,23 +11,14 @@ import { validateNodeKindsArr, applyProps } from '../utils'
  *
  * @category API Public
  */
-export class ValueApi extends Mix(
-  Mixin.KindAssertionMixin,
-) {
+export class ValueApi extends Mix(Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.ValueNode) {
-    super([node])
+    super(node)
 
-    validateNodeKindsArr([
-      Kind.INT,
-      Kind.BOOLEAN,
-      Kind.VARIABLE,
-      Kind.FLOAT,
-      Kind.STRING,
-      Kind.NULL,
-      Kind.ENUM,
-      Kind.LIST,
-      Kind.OBJECT,
-    ], node)
+    validateNodeKindsArr(
+      [Kind.INT, Kind.BOOLEAN, Kind.VARIABLE, Kind.FLOAT, Kind.STRING, Kind.NULL, Kind.ENUM, Kind.LIST, Kind.OBJECT],
+      node,
+    )
   }
 
   toJs(): any {

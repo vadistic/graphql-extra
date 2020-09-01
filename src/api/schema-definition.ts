@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
@@ -18,12 +18,11 @@ export class SchemaDefinitionApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.SchemaDefinitionNode) {
-    super([node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.SCHEMA_DEFINITION, node)
   }
 }
-
 
 /**
  * `SchemaDefinitionApi` constructor fn
@@ -47,7 +46,7 @@ export class SchemaExtensionApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.SchemaExtensionNode) {
-    super([node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.SCHEMA_EXTENSION, node)
   }

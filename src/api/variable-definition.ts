@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
@@ -19,7 +19,7 @@ export class VariableDefinitionApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.VariableDefinitionNode) {
-    super([node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.VARIABLE_DEFINITION, node)
   }

@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Mixin } from '../internal'
@@ -11,11 +11,9 @@ import { validateNodeKind } from '../utils'
  *
  * @category API Public
  */
-export class NameApi extends Mix(
-  Mixin.KindAssertionMixin,
-) {
+export class NameApi extends Mix(Mixin.KindAssertionMixin) {
   constructor(readonly node: GQL.NameNode) {
-    super([node])
+    super(node)
 
     validateNodeKind(Kind.NAME, node)
   }

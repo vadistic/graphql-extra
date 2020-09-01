@@ -1,6 +1,6 @@
 import type * as GQL from 'graphql'
 import { Kind } from 'graphql'
-import { Mix } from 'mix-classes'
+import { Mixin as Mix } from 'ts-mixer'
 
 // eslint-disable-next-line import/no-cycle
 import { Api, Mixin } from '../internal'
@@ -20,20 +20,17 @@ export class FieldDefinitionApi extends Mix(
   Mixin.KindAssertionMixin,
 ) {
   constructor(readonly node: GQL.FieldDefinitionNode) {
-    super([node], [node], [node], [node], [node], [node])
+    super(node)
 
     validateNodeKind(Kind.FIELD_DEFINITION, node)
   }
 
   toInputValue(): Api.InputValueDefinitionApi {
-    const {
-      kind, arguments: args, loc, ...rest
-    } = this.node
+    const { kind, arguments: args, loc, ...rest } = this.node
 
     return Api.inputValueDefinitionApi({ kind: Kind.INPUT_VALUE_DEFINITION, ...rest })
   }
 }
-
 
 /**
  * `FieldDefinitionApi` constructor fn
